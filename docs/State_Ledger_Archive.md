@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-057)
+# Last Updated: 2026-11-23 (D-058)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-053)
+## Archived entry log (through D-054)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -49,6 +49,7 @@
 | D-051 | 2026-11-22 | Owner: GitHub account `arhariz` for frontend + backend repos (different-project context); never touch other project files. WP11-T05 remains GOV-01-blocked on repo URL/default branch; commit identity TBD. |
 | D-052 | 2026-11-23 | Backend repo `https://github.com/arhariz/financial-portal-backend` created (private, `main`) and pushed (`7f3f38f`, `b77fbe8`). `gh` 2.105.0 installed; auth reused from Desktop credential. Secret scanning + branch protection blocked by free plan → Q-009. Frontend repo not created. |
 | D-053 | 2026-11-23 | Owner made repo **PUBLIC**; enabled secret scanning + push protection and branch protection on `main` (1 review, code-owner, no force-push/delete). `enforce_admins=false` after single-owner self-approval deadlock; PR #1 squash-merged. **Q-009 CLOSED**. |
+| D-054 | 2026-11-23 | **WP11-T01 DONE** — disk gate re-run green (C: 3.19 GB > 2 GB), no cache deletion needed; **Q-008 CLOSED**. Next card: **WP11-T03**. |
 
 ## Archived implemented modules
 
