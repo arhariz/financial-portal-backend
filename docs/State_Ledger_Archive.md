@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-052)
+# Last Updated: 2026-11-23 (D-053)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-048)
+## Archived entry log (through D-049)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -44,6 +44,7 @@
 | D-046 | 2026-11-21 | Host `C:` hit 0 bytes free; cleared ~660 MB regenerable cache, reinstalled Pint 1.32.3; gates green again (Pint/PHPStan/PHPUnit 15/15); logged as **Q-008**. |
 | D-047 | 2026-11-21 | WP1-T05 DONE: Sanctum v4.5 + API skeleton — `routes/api.php`, explicit `config/cors.php`, `User` gains `HasApiTokens`, `bootstrap/app.php` registers `api` routes + `statefulApi()`; gates green. Next card: **WP1-T06**. |
 | D-048 | 2026-11-21 | WP1-T06 DONE: App layer structure — `app/Actions`, `app/Repositories`, `app/Enums`, `app/Services`, `tests/Unit/*`; autoload verified; gates green. Next card: **WP1-T07**. |
+| D-049 | 2026-11-22 | UNIFIED SESSION START added to `docs/Prompt_Library.md` Part 0: find next queue card → ACK → STOP and ask START → 5-point pre-check gate → implement one card. Stale root duplicate removed. |
 
 ## Archived implemented modules
 
