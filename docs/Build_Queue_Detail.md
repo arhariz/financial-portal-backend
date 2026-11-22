@@ -1,6 +1,6 @@
 # docs/Build_Queue_Detail.md — Task cards for the live BUILD_QUEUE
 # Authority: Owner / CTO
-# Last Updated: 2026-11-23 (D-052)
+# Last Updated: 2026-11-23 (D-053)
 # Source of truth for: granular implementation tasks, dependencies, verification
 # Does NOT contain: executed state (docs/State_Ledger.md), code rules (rules/*.md), business policy (docs/EXECUTION_LOCKS_ACTIVE.md)
 # Conflict rule: STATE_LEDGER wins for current queue position; this file defines HOW each item is split.
@@ -174,7 +174,7 @@ Every feature ships a seeder that creates the minimum data needed to exercise it
 
 ## WP11 — Repository & environment setup (5 tasks)
 
-> **Progress (2026-11-23, D-052):** WP11-T02 **DONE** — `git init` on `main`, local author `arhariz <arhariz.com@gmail.com>`, root commit `7f3f38f`; WP11-T05 remote **DONE** — private repo `https://github.com/arhariz/financial-portal-backend`, pushed `7f3f38f` + `b77fbe8` (CODEOWNERS + README). Branch policy **blocked Q-009** (GitHub Pro/public required for protection + secret scanning). `C:` now 3.28 GB free. Still pending: WP11-T01 (verify), T03 scanners, T04 Boost. Next card: **WP11-T01**.
+> **Progress (2026-11-23, D-052):** WP11-T02 **DONE** — `git init` on `main`, local author `arhariz <arhariz.com@gmail.com>`, root commit `7f3f38f`; WP11-T05 remote **DONE** — private repo `https://github.com/arhariz/financial-portal-backend`, pushed `7f3f38f` + `b77fbe8` (CODEOWNERS + README). Branch policy **DONE (D-053)** — owner made repo PUBLIC; secret scanning + push protection enabled; branch protection on `main` verified (1 review, code-owner, no force-push/delete, admins enforced). `C:` now 3.28 GB free. Still pending: WP11-T01 (verify), T03 scanners, T04 Boost. Next card: **WP11-T01**.
 
 This package prepares the local toolchain and repository only: no application code, no business policy, no money/KYC/commission path, no schema tables. Owner values (remote URL, default branch, protection rules) are required before WP11-T05 — never invent them (GOV-01).
 
@@ -184,7 +184,7 @@ This package prepares the local toolchain and repository only: no application co
 | WP11-T02 | Initialize local Git repository **(DONE, D-052)** | `git init -b main`, local author `arhariz <arhariz.com@gmail.com>`, commit `7f3f38f` (650 files, no secrets) | D-050, D-051, D-052 (owner confirmed identity) | COD-01, GOV-01, GOV-09 | `git rev-parse` true; `git status` clean; `git log -1` = `7f3f38f` — verified |
 | WP11-T03 | Install security scanners | gitleaks, Trivy, Semgrep installed and on PATH | D-032, WP11-T01 (disk) | TST-12 | `gitleaks version`, `trivy --version`, `semgrep --version` all exit 0 |
 | WP11-T04 | Install Laravel Boost | `composer require laravel/boost --dev && php artisan boost:install`; re-read `AGENTS.md` | AGENTS.md Laravel Boost guideline, WP11-T01 (disk), D-050 | GOV-07, GOV-09 | `laravel/boost` present in `vendor/`; `AGENTS.md` carries generated project guidelines |
-| WP11-T05 | Git remote & branch policy **(remote DONE / policy blocked Q-009)** | Remote `origin` = `https://github.com/arhariz/financial-portal-backend.git` (private, `main`), pushed `7f3f38f` + `b77fbe8`. Branch protection + secret scanning need GitHub Pro/public → Q-009. Frontend repo not created (separate workspace). | D-051, D-052; owner decision Q-009 | GOV-01, GOV-09 | `git remote -v` verified; repo private + `main` verified via `gh repo view`; policy pending owner decision |
+| WP11-T05 | Git remote & branch policy **(DONE, D-053)** | Remote `origin` = `https://github.com/arhariz/financial-portal-backend.git` (**public**, `main`), pushed `7f3f38f` + `b77fbe8` + `0d813f9`. Secret scanning + push protection enabled; branch protection verified. Frontend repo not created (separate workspace). | D-051, D-052, D-053 (Q-009 closed) | GOV-01, GOV-09 | `gh repo view` → PUBLIC; `gh api` → scanning enabled + protection rules present — verified |
 
 ---
 
