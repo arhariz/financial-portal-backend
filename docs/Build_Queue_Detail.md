@@ -1,6 +1,6 @@
 # docs/Build_Queue_Detail.md — Task cards for the live BUILD_QUEUE
 # Authority: Owner / CTO
-# Last Updated: 2026-11-23 (D-056)
+# Last Updated: 2026-11-23 (D-057)
 # Source of truth for: granular implementation tasks, dependencies, verification
 # Does NOT contain: executed state (docs/State_Ledger.md), code rules (rules/*.md), business policy (docs/EXECUTION_LOCKS_ACTIVE.md)
 # Conflict rule: STATE_LEDGER wins for current queue position; this file defines HOW each item is split.
@@ -22,7 +22,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 
 ## WP1 — Laravel 13 bootstrap + Filament 5 skeleton (7 tasks)
 
-> **Progress (2026-11-22, D-050):** WP1-T01…WP1-T06 **DONE** — Laravel 13.43.0 + `/health`; Filament 5.11.4 at `/admin`; Spatie RBAC 30 permissions / 12 roles; PHPStan L6 zero-baseline + Pint PSR-12, **18 tests green**. Next card: **WP1-T07 — UNBLOCKED** (WP11 complete per D-056).
+> **Progress (2026-11-22, D-050):** WP1-T01…WP1-T06 **DONE** — Laravel 13.43.0 + `/health`; Filament 5.11.4 at `/admin`; Spatie RBAC 30 permissions / 12 roles; PHPStan L6 zero-baseline + Pint PSR-12, **18 tests green**. WP1-T07 **DONE (D-057)** — `.github/workflows/ci.yml` added; YAML valid; test/PHPStan/Pint all exit 0. **WP1 COMPLETE.** Next card: **WP2-T01**.
 
 | ID | Task | Scope / files | Inputs | Rules | Verify / Done |
 |---|---|---|---|---|---|
@@ -32,7 +32,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 | WP1-T04 | Configure PHPStan 6 + Pint + tests | `phpstan.neon`, `pint.json`, `phpunit.xml`/`pest.php`, `tests/` | D-032 | COD-02/03/04, TST-12 | `phpstan analyse --memory-limit=2G` 0 errors; `pint --test` pass |
 | WP1-T05 | Sanctum + API skeleton | `routes/api.php`, `config/cors.php`, `config/sanctum.php`, `/api/v1/health`, `tests/Feature/ApiSkeletonTest.php` | D-022 | API-01, SEC-04/05 | auth:sanctum route responds; CORS config explicit; 3 tests green; PHPStan 0, Pint pass |
 | WP1-T06 | App layer structure | `app/Actions`, `app/Repositories`, `app/Enums`, `app/Services`, test folders | rules/backend.md | COD-05/06 | namespace autoload verified with tinker |
-| WP1-T07 | CI workflow skeleton | `.github/workflows/ci.yml` | D-032 | TST-12 | CI runs test + phpstan L6 + pint --test |
+| WP1-T07 | CI workflow skeleton **(DONE, D-057)** | `.github/workflows/ci.yml` — PHP 8.3, composer install, key generate, then test + PHPStan L6 + Pint; SQLite in-memory | D-032, D-057 | TST-12 | YAML parses (1 job, 8 steps) ✅; `php artisan test` 18/18 ✅; PHPStan 0 errors ✅; Pint pass ✅ |
 
 ## WP2 — Schema + ledger migrations (11 tasks)
 
