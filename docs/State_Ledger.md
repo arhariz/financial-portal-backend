@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-054)
+# Last Updated: 2026-11-23 (D-055)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,7 +16,7 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-054 — **WP11-T01 DONE**: disk gate green (C: 3.19 GB > 2 GB); no cache deletion needed; Q-008 CLOSED. Next card: **WP11-T03** (security scanners). |
+| Last Entry | D-055 — **WP11-T03 DONE**: gitleaks 8.30.1 / Trivy 0.76.2 / Semgrep 1.186.0 installed, on user PATH, all `version` commands exit 0. Pre-check gate E fully satisfied. Next card: **WP11-T04** (Laravel Boost). |
 | Test Suite | **18 tests / 120 assertions passing** (Unit 4, Feature 14) — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
 | Active Phase | Foundation phase in progress — Laravel 13.43.0 installed; no application code yet |
@@ -46,9 +46,9 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 8 | React web portal + Flutter mobile v1 | 15 | API contracts | WP8-T01 |
 | 9 | Admin observability + Report section | 8 | Widgets from WP1–WP8 | WP9-T01 |
 | 10 | Database seeders & demo fixtures | 8 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done) |
-| 11 | Repository & environment setup | 5 | None | WP11-T03 (T01, T02, T05 DONE) |
+| 11 | Repository & environment setup | 5 | None | WP11-T04 (T01, T02, T03, T05 DONE) |
 
-**Total task cards: 95.** Current active card: **WP11-T03** (install security scanners — prerequisite for WP1-T07). WP1-T01…WP1-T06, WP3-T07, WP10-T01/T02, **WP11-T01, WP11-T02** and **WP11-T05** are DONE (disk gate green; repo + hardening per D-052/D-053). WP1-T07 is blocked by WP11 (scanners still pending); WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 95.** Current active card: **WP11-T04** (install Laravel Boost). WP1-T01…WP1-T06, WP3-T07, WP10-T01/T02, **WP11-T01, WP11-T02, WP11-T03** and **WP11-T05** are DONE (disk green; repo/hardening per D-052/D-053; scanners per D-055). WP1-T07 is blocked by WP11 (Boost still pending); WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -122,6 +122,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-052 | Repo setup | Owner confirmed identity `arhariz <arhariz.com@gmail.com>`. Backend repo created: **`https://github.com/arhariz/financial-portal-backend`** — private, default branch `main`, pushed commits `7f3f38f` (initial, 650 files, no secrets) and `b77fbe8` (CODEOWNERS + README). `git init` + local-only author config; `gh` 2.105.0 portable installed at `%LOCALAPPDATA%\Programs\gh\bin\gh.exe` (auth reused from GitHub Desktop credential via `GH_TOKEN` per command; `read:org` scope absent so token cannot be persisted). Hardening: secret scanning (422) + branch protection (403) unavailable on free private plan → **Q-009**. Frontend repo NOT created (separate workspace, owner rule). |
 | D-053 | Repo hardening | Owner made `financial-portal-backend` **PUBLIC**; Q-009 resolved without a paid plan. Enabled via GitHub API: `secret_scanning=enabled`, `secret_scanning_push_protection=enabled`; branch protection on `main` = 1 approving review, `require_code_owner_reviews=true`, `dismiss_stale_reviews=true`, `enforce_admins=false` (see note), `required_linear_history=true`, `allow_force_pushes=false`, `allow_deletions=false`. Verified with `gh repo view` + `gh api` GET output. **Note:** `enforce_admins=true` initially deadlocked the single-owner repo (GitHub forbids self-approval; PR #1 could not merge). Set to `false` so the owner can bypass while all rules remain enforced for other contributors; PR #1 then merged via squash (#1 → `cbed2b5`). Note: `dependabot_security_updates` and `secret_scanning_validity_checks` remain disabled (not requested). |
 | D-054 | WP11-T01 close | Disk gate re-run: `Get-CimInstance Win32_LogicalDisk` → `C:` **3.19 GB free (> 2 GB)**; PHP 8.3.31, Composer 2.9.7, Node 26.12.0, MySQL 3306 + Redis 6379 listening. Gate already satisfied, so **no cache files were deleted** (least-destructive execution — card permits regenerable-cache clearing but does not require it when green). **Q-008 CLOSED.** Next card: **WP11-T03** (gitleaks/Trivy/Semgrep). |
+| D-055 | WP11-T03 close | Security scanners installed and verified: **gitleaks 8.30.1** (`gitleaks version` → 0), **Trivy 0.76.2** (`trivy --version` → 0), **Semgrep 1.186.0** (`semgrep --version` → 0). gitleaks + Trivy = portable ZIPs in `%LOCALAPPDATA%\Programs\security-tools`; Semgrep = Python 3.12.10 + `pip install --user semgrep`; all four dirs added to persistent user PATH. Card-scope only — no application code, no project files changed beyond closeout docs. **Pre-check gate E now fully satisfied.** Next card: **WP11-T04**. |
 
 ## DEFERRED ITEMS
 
@@ -153,12 +154,12 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-051 | 2026-11-22 | Owner: GitHub account `arhariz` for frontend + backend repos (different-project context); never touch other project files. WP11-T05 remains GOV-01-blocked on repo URL/default branch; commit identity TBD. |
 | D-052 | 2026-11-23 | Backend repo `https://github.com/arhariz/financial-portal-backend` created (private, `main`) and pushed (`7f3f38f`, `b77fbe8`). `gh` 2.105.0 installed; auth reused from Desktop credential. Secret scanning + branch protection blocked by free plan → Q-009. Frontend repo not created. |
 | D-053 | 2026-11-23 | Owner made repo **PUBLIC**; enabled secret scanning + push protection and branch protection on `main` (1 review, code-owner, no force-push/delete). `enforce_admins=false` after single-owner self-approval deadlock; PR #1 squash-merged. **Q-009 CLOSED**. |
 | D-054 | 2026-11-23 | **WP11-T01 DONE** — disk gate re-run green (C: 3.19 GB > 2 GB), no cache deletion needed; **Q-008 CLOSED**. Next card: **WP11-T03**. |
+| D-055 | 2026-11-23 | **WP11-T03 DONE** — gitleaks 8.30.1, Trivy 0.76.2, Semgrep 1.186.0 installed + on PATH; all version commands exit 0. Gate E satisfied. Next card: **WP11-T04**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-050).
+Archived history → `docs/State_Ledger_Archive.md` (through D-051).
 
 ---
 
