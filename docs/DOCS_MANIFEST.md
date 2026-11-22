@@ -1,6 +1,6 @@
 # docs/DOCS_MANIFEST.md — File map, read order, ownership and conflict rules
 # Authority: Owner / CTO
-# Last Updated: 2026-11-23 (D-057)
+# Last Updated: 2026-11-23 (D-058)
 # Source of truth for: file map, owners, read order, authority, module loading
 # Does NOT contain: executed state, queue, code rules, tables
 # Conflict rule: STATE_LEDGER for executed state; CONSTITUTION for code rules; EXECUTION_LOCKS for business policy.

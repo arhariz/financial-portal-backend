@@ -1,6 +1,6 @@
 # docs/Build_Queue_Detail.md — Task cards for the live BUILD_QUEUE
 # Authority: Owner / CTO
-# Last Updated: 2026-11-23 (D-057)
+# Last Updated: 2026-11-23 (D-058)
 # Source of truth for: granular implementation tasks, dependencies, verification
 # Does NOT contain: executed state (docs/State_Ledger.md), code rules (rules/*.md), business policy (docs/EXECUTION_LOCKS_ACTIVE.md)
 # Conflict rule: STATE_LEDGER wins for current queue position; this file defines HOW each item is split.
@@ -36,9 +36,11 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 
 ## WP2 — Schema + ledger migrations (11 tasks)
 
+> **Progress (2026-11-23, D-058):** WP2-T01 **DONE** — identity columns + `user_profiles` + PHP-backed status enums; `getColumnListing()` verified on dev DB; 24 tests / 160 assertions, PHPStan 0, Pint pass. Next card: **WP2-T02**.
+
 | ID | Task | Scope / files | Inputs | Rules | Verify / Done |
 |---|---|---|---|---|---|
-| WP2-T01 | Identity tables | `users`, `user_profiles`, Spatie role tables | Schema_Registry §2 | DB-01..08 | fresh migrate + `getColumnListing()` |
+| WP2-T01 | Identity tables **(DONE, D-058)** | 2 migrations (`add_identity_columns_to_users_table`, `create_user_profiles_table`), enums `UserStatus`/`KycStatus`, `User` casts + SoftDeletes, `UserFactory` defaults, `tests/Feature/IdentitySchemaTest.php` (6 tests) | Schema_Registry §2, D-058 | DB-01..08, COD-01..04, TST-12 | `getColumnListing()` dev DB ✅; 24 tests / 160 assertions ✅; PHPStan 0 ✅; Pint pass ✅ |
 | WP2-T02 | KYC tables | `kyc_document_types`, `kyc_documents` | Schema §2, D-004 | DB-02/04/08 | CRUD smoke test |
 | WP2-T03 | Wallets + immutable ledger | `wallets`, `wallet_transactions`, append-only models | Schema §2/§3, D-029 | MON-01/02/03, DB-02 | append-only guard test; DECIMAL(18,4) |
 | WP2-T04 | Exchange rates | `exchange_rates` + model | Schema §2 | MON-01, DB-04 | history index verified |
