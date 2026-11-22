@@ -1,0 +1,373 @@
+{
+  "version": 2,
+  "skills": {
+    "break-trace": {
+      "source": "anthropics/financial-services",
+      "commit": "3e32c2287dcb637c184c01cc0ad82d6af7e9bb0f",
+      "sourceType": "github",
+      "skillPath": "plugins/vertical-plugins/fund-admin/skills/break-trace/SKILL.md",
+      "computedHash": "37b660f3490635306980d59a235662452e8728b34a84238a731a1c31a9fbf544",
+      "installMode": "copy"
+    },
+    "cfo-advisor": {
+      "source": "alirezarezvani/claude-skills",
+      "commit": "f8593c4941210a621a6629ce1da9e07897976d5f",
+      "sourceType": "github",
+      "skillPath": "c-level-advisor/skills/cfo-advisor/SKILL.md",
+      "computedHash": "00d3ab20d642e21ba21b07fb23ab34e9455c15681b993c4a0a1d6c74a53cbbbe",
+      "installMode": "copy"
+    },
+    "client-report": {
+      "source": "anthropics/financial-services",
+      "commit": "3e32c2287dcb637c184c01cc0ad82d6af7e9bb0f",
+      "sourceType": "github",
+      "skillPath": "plugins/agent-plugins/meeting-prep-agent/skills/client-report/SKILL.md",
+      "computedHash": "1315651145cd11d447ed29e41ace336ef35eac8a1e3815008858d64cefbf1cad",
+      "installMode": "copy"
+    },
+    "code-review": {
+      "source": "mattpocock/skills",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/code-review/SKILL.md",
+      "computedHash": "ce86b40a3d1648a0018b712f0c70704e6c2316b2a9b9e915ab116916a31273dc",
+      "installMode": "copy"
+    },
+    "code-reviewer": {
+      "source": "waybarrios/opencode-power-pack",
+      "commit": "c3328ad1633c1561026532f29b718a2380bc52ee",
+      "sourceType": "github",
+      "skillPath": "skills/code-reviewer/SKILL.md",
+      "computedHash": "950654f7299539204ca810eb214720403d7eeb91c7b3d0cb6c0b46b95aba6b07",
+      "installMode": "copy"
+    },
+    "dart-generate-test-mocks": {
+      "source": "flutter/skills",
+      "commit": "ff6d472ee66dbed566c4500edee460c94fde0a02",
+      "sourceType": "github",
+      "skillPath": "skills/dart-generate-test-mocks/SKILL.md",
+      "computedHash": "d05e998208c3ce6cb266474d27fc27368428b3d4d633512321f903bfad56f948",
+      "installMode": "copy"
+    },
+    "dart-run-static-analysis": {
+      "source": "flutter/skills",
+      "commit": "ff6d472ee66dbed566c4500edee460c94fde0a02",
+      "sourceType": "github",
+      "skillPath": "skills/dart-run-static-analysis/SKILL.md",
+      "computedHash": "fa93216b2e985fe86cffbc7f9734361205cbe6c7c8d46b21a87beea19bea2066",
+      "installMode": "copy"
+    },
+    "debugging-and-error-recovery": {
+      "source": "addyosmani/agent-skills",
+      "commit": "8c99fa36d90068c82d547f7c12a9d67a3e95f4ee",
+      "sourceType": "github",
+      "skillPath": "skills/debugging-and-error-recovery/SKILL.md",
+      "computedHash": "aa26ffd65f2e2759c66806c4a3111c6fbaad612c5f39799bd3bc6cd942abd0fc",
+      "installMode": "copy"
+    },
+    "effective-dart": {
+      "source": "evanca/flutter-ai-rules",
+      "commit": "ced864ab5189956dbf719a84011c24d860092116",
+      "sourceType": "github",
+      "skillPath": "skills/effective-dart/SKILL.md",
+      "computedHash": "a31039188616270c11bd85e866a3e1dc792ab92ce9f52f3b86393bd5ea6738d1",
+      "installMode": "copy"
+    },
+    "feature-dev": {
+      "source": "waybarrios/opencode-power-pack",
+      "commit": "c3328ad1633c1561026532f29b718a2380bc52ee",
+      "sourceType": "github",
+      "skillPath": "skills/feature-dev/SKILL.md",
+      "computedHash": "362a0138c9fc8117851cab4b133d3de3d4e96293da996d24adc2741cce94d013",
+      "installMode": "copy"
+    },
+    "firebase-app-check": {
+      "source": "evanca/flutter-ai-rules",
+      "commit": "ced864ab5189956dbf719a84011c24d860092116",
+      "sourceType": "github",
+      "skillPath": "skills/firebase-app-check/SKILL.md",
+      "computedHash": "9325c6f4b1c0095539890058e44d5f22255d7e16e77f9fabb05a3e819a8d44d7",
+      "installMode": "copy"
+    },
+    "firebase-messaging": {
+      "source": "evanca/flutter-ai-rules",
+      "commit": "ced864ab5189956dbf719a84011c24d860092116",
+      "sourceType": "github",
+      "skillPath": "skills/firebase-messaging/SKILL.md",
+      "computedHash": "3d5d314b011aba7d3882223b715737997a0b44158b32d7c8071b696d77240523",
+      "installMode": "copy"
+    },
+    "flutter-add-integration-test": {
+      "source": "flutter/skills",
+      "commit": "ff6d472ee66dbed566c4500edee460c94fde0a02",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-add-integration-test/SKILL.md",
+      "computedHash": "ce8c06d4673db956810ffc2380e4c9305e068021eab72c0f3506dacdf0fa4027",
+      "installMode": "copy"
+    },
+    "flutter-add-widget-test": {
+      "source": "flutter/skills",
+      "commit": "ff6d472ee66dbed566c4500edee460c94fde0a02",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-add-widget-test/SKILL.md",
+      "computedHash": "5cfab5fd20d6b84e28e9b9cc278ac0c3fb2c89a7e850f2b900749b14cb367bbf",
+      "installMode": "copy"
+    },
+    "flutter-apply-architecture-best-practices": {
+      "source": "flutter/skills",
+      "commit": "ff6d472ee66dbed566c4500edee460c94fde0a02",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-apply-architecture-best-practices/SKILL.md",
+      "computedHash": "a41b999109cc3c2dc79ddbc05b5fd5f39ed08d5c6c17dab728a6b926d3a504de",
+      "installMode": "copy"
+    },
+    "flutter-best-practices": {
+      "source": "evanca/flutter-ai-rules",
+      "commit": "ced864ab5189956dbf719a84011c24d860092116",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-best-practices/SKILL.md",
+      "computedHash": "9c747b489581b53ad3858c9febb8d7d79cf689beabe73ba2aba0c4871e62d3a4",
+      "installMode": "copy"
+    },
+    "flutter-build-responsive-layout": {
+      "source": "flutter/skills",
+      "commit": "ff6d472ee66dbed566c4500edee460c94fde0a02",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-build-responsive-layout/SKILL.md",
+      "computedHash": "bdb7ab7ca812ee719237a718376a5f2e15b659201ff66818f1012c5d13751487",
+      "installMode": "copy"
+    },
+    "flutter-implement-json-serialization": {
+      "source": "flutter/skills",
+      "commit": "ff6d472ee66dbed566c4500edee460c94fde0a02",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-implement-json-serialization/SKILL.md",
+      "computedHash": "48727033cb05de551ef14264112e36e8aec015b3cf955fa2115cfdac6094fe69",
+      "installMode": "copy"
+    },
+    "flutter-setup-declarative-routing": {
+      "source": "flutter/skills",
+      "commit": "ff6d472ee66dbed566c4500edee460c94fde0a02",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-setup-declarative-routing/SKILL.md",
+      "computedHash": "566264ee0f746a8b4d571a0dec69d3d3f09c246591a3393d1fb67783661465bf",
+      "installMode": "copy"
+    },
+    "flutterfire-configure": {
+      "source": "evanca/flutter-ai-rules",
+      "commit": "ced864ab5189956dbf719a84011c24d860092116",
+      "sourceType": "github",
+      "skillPath": "skills/flutterfire-configure/SKILL.md",
+      "computedHash": "95ea9772388dfa0d7c6e11f016d2cc8935fb906872aef95913c188f8672bbeb8",
+      "installMode": "copy"
+    },
+    "frontend-ui-engineering": {
+      "source": "addyosmani/agent-skills",
+      "commit": "8c99fa36d90068c82d547f7c12a9d67a3e95f4ee",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-ui-engineering/SKILL.md",
+      "computedHash": "1bea3daa371bfb466445f5a33ee063f2aadf27469b2308a340e803398bcb4251",
+      "installMode": "copy"
+    },
+    "gl-recon": {
+      "source": "anthropics/financial-services",
+      "commit": "3e32c2287dcb637c184c01cc0ad82d6af7e9bb0f",
+      "sourceType": "github",
+      "skillPath": "plugins/vertical-plugins/fund-admin/skills/gl-recon/SKILL.md",
+      "computedHash": "a43e3509c14d9e0f3853db28d5aa426234a38107de21313908636f2ad9e1f62a",
+      "installMode": "copy"
+    },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "computedHash": "ab1acb9fbd9eaee03da254abb8a8de228d1e7a07475fe959da4a5eefa34ea4b9",
+      "installMode": "copy"
+    },
+    "insecure-defaults": {
+      "source": "waybarrios/opencode-power-pack",
+      "commit": "c3328ad1633c1561026532f29b718a2380bc52ee",
+      "sourceType": "github",
+      "skillPath": "skills/insecure-defaults/SKILL.md",
+      "computedHash": "bb77a2648b93cb1d531b964ea39fb16d9d38b7d8b6356c55de8ecf1fbf74783b",
+      "installMode": "copy"
+    },
+    "kyc-doc-parse": {
+      "source": "anthropics/financial-services",
+      "commit": "3e32c2287dcb637c184c01cc0ad82d6af7e9bb0f",
+      "sourceType": "github",
+      "skillPath": "plugins/vertical-plugins/operations/skills/kyc-doc-parse/SKILL.md",
+      "computedHash": "c23dd1bbfc37eac033302a40bf5dbec9447cb0761fab8980bbf5f135bd29e928",
+      "installMode": "copy"
+    },
+    "kyc-rules": {
+      "source": "anthropics/financial-services",
+      "commit": "3e32c2287dcb637c184c01cc0ad82d6af7e9bb0f",
+      "sourceType": "github",
+      "skillPath": "plugins/vertical-plugins/operations/skills/kyc-rules/SKILL.md",
+      "computedHash": "30abdc22bebc8421533b001c898b434af7c10d3183a1c20bf40d1a5fa4288905",
+      "installMode": "copy"
+    },
+    "laravel-testing": {
+      "source": "AsyrafHussin/agent-skills",
+      "commit": "1aa0ff717c10309226c9e678f00873976450fd76",
+      "sourceType": "github",
+      "skillPath": "skills/laravel-testing/SKILL.md",
+      "computedHash": "8c5c022c5ebf7f6554a2d12ad4570d1b3fe212736d1903ec491fb8c3967914f5",
+      "installMode": "copy"
+    },
+    "project-docs": {
+      "source": "AsyrafHussin/agent-skills",
+      "commit": "1aa0ff717c10309226c9e678f00873976450fd76",
+      "sourceType": "github",
+      "skillPath": "skills/project-docs/SKILL.md",
+      "computedHash": "da4c3a5273bbda1ee3817d0541b5064e33a7d7374ed68dab0a17b0217de02321",
+      "installMode": "copy"
+    },
+    "react-vite-best-practices": {
+      "source": "AsyrafHussin/agent-skills",
+      "commit": "1aa0ff717c10309226c9e678f00873976450fd76",
+      "sourceType": "github",
+      "skillPath": "skills/react-vite-best-practices/SKILL.md",
+      "computedHash": "db8e3e2224aa28562593fb65b9e588fa71a5568e641958b935006bd288d71f4c",
+      "installMode": "copy"
+    },
+    "receiving-code-review": {
+      "source": "obra/superpowers",
+      "commit": "22f0b463e7a5e579904dd6211a520321035526f7",
+      "sourceType": "github",
+      "skillPath": "skills/receiving-code-review/SKILL.md",
+      "computedHash": "528d336858d6f7d22cfcb887a249409ce682cb7d37a939cb15a82f2576a35876",
+      "installMode": "copy"
+    },
+    "requesting-code-review": {
+      "source": "obra/superpowers",
+      "commit": "22f0b463e7a5e579904dd6211a520321035526f7",
+      "sourceType": "github",
+      "skillPath": "skills/requesting-code-review/SKILL.md",
+      "computedHash": "32bcc25e8c3315d0150f646ee0067c9d4bfbc7719c34012db9c202e17cce8a14",
+      "installMode": "copy"
+    },
+    "riverpod": {
+      "source": "evanca/flutter-ai-rules",
+      "commit": "ced864ab5189956dbf719a84011c24d860092116",
+      "sourceType": "github",
+      "skillPath": "skills/riverpod/SKILL.md",
+      "computedHash": "4bc5a2448de988c0eed6723d54935ffe9182a73754e6c724ced8bb767d7f28da",
+      "installMode": "copy"
+    },
+    "roll-forward": {
+      "source": "anthropics/financial-services",
+      "commit": "3e32c2287dcb637c184c01cc0ad82d6af7e9bb0f",
+      "sourceType": "github",
+      "skillPath": "plugins/vertical-plugins/fund-admin/skills/roll-forward/SKILL.md",
+      "computedHash": "860d7e02ca0f0ac6c938fe67652c49a8076d52d324550a6a7ce857c802e4ff06",
+      "installMode": "copy"
+    },
+    "security-review": {
+      "source": "waybarrios/opencode-power-pack",
+      "commit": "c3328ad1633c1561026532f29b718a2380bc52ee",
+      "sourceType": "github",
+      "skillPath": "skills/security-review/SKILL.md",
+      "computedHash": "a7e9978a954aa26e3b40a330a3b079de36307e387d240a0416bd304cfb50e758",
+      "installMode": "copy"
+    },
+    "security-threat-model": {
+      "source": "waybarrios/opencode-power-pack",
+      "commit": "c3328ad1633c1561026532f29b718a2380bc52ee",
+      "sourceType": "github",
+      "skillPath": "skills/security-threat-model/SKILL.md",
+      "computedHash": "a828f735dd14a508e43b904854f26d3b6ec9681d95803d18ebd74a25ea59e683",
+      "installMode": "copy"
+    },
+    "setup-pre-commit": {
+      "source": "mattpocock/skills",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
+      "sourceType": "github",
+      "skillPath": "skills/misc/setup-pre-commit/SKILL.md",
+      "computedHash": "98523a8db5977c41a095834df8697123bb845ff6ddbb9500733b161f11441a37",
+      "installMode": "copy"
+    },
+    "sharp-edges": {
+      "source": "waybarrios/opencode-power-pack",
+      "commit": "c3328ad1633c1561026532f29b718a2380bc52ee",
+      "sourceType": "github",
+      "skillPath": "skills/sharp-edges/SKILL.md",
+      "computedHash": "e87a63d5f100b41d68a54cc690f7d9647c00126a47d68d173a13ea7b33c180db",
+      "installMode": "copy"
+    },
+    "skill-creator": {
+      "source": "waybarrios/opencode-power-pack",
+      "commit": "c3328ad1633c1561026532f29b718a2380bc52ee",
+      "sourceType": "github",
+      "skillPath": "skills/skill-creator/SKILL.md",
+      "computedHash": "2b72c5c1358c8ff3806c76bb15e0e5109ff1a51f23b4eab16de21e271246e7dc",
+      "installMode": "copy"
+    },
+    "state-management": {
+      "source": "AsyrafHussin/agent-skills",
+      "commit": "1aa0ff717c10309226c9e678f00873976450fd76",
+      "sourceType": "github",
+      "skillPath": "skills/state-management/SKILL.md",
+      "computedHash": "47a7bf248a9b37e5f991604f7f49ddfcafe3d7fc2468e6a9449e3df628a2d175",
+      "installMode": "copy"
+    },
+    "systematic-debugging": {
+      "source": "obra/superpowers",
+      "commit": "22f0b463e7a5e579904dd6211a520321035526f7",
+      "sourceType": "github",
+      "skillPath": "skills/systematic-debugging/SKILL.md",
+      "computedHash": "79ff0583175346e39431b0dc713b223edd1bd7a7ea2b6c8b78b2fb9a3fed6782",
+      "installMode": "copy"
+    },
+    "tailwind-best-practices": {
+      "source": "AsyrafHussin/agent-skills",
+      "commit": "1aa0ff717c10309226c9e678f00873976450fd76",
+      "sourceType": "github",
+      "skillPath": "skills/tailwind-best-practices/SKILL.md",
+      "computedHash": "c303ae9e7a9cb9610e517557a5998db3fe7a44a6e338cadce56a0701503b4a55",
+      "installMode": "copy"
+    },
+    "technical-debt": {
+      "source": "AsyrafHussin/agent-skills",
+      "commit": "1aa0ff717c10309226c9e678f00873976450fd76",
+      "sourceType": "github",
+      "skillPath": "skills/technical-debt/SKILL.md",
+      "computedHash": "d6b4ea1e9637f1b264eac020b10ec7c1e93b606dca97e36d018cb531e1d2f238",
+      "installMode": "copy"
+    },
+    "testing-best-practices": {
+      "source": "AsyrafHussin/agent-skills",
+      "commit": "1aa0ff717c10309226c9e678f00873976450fd76",
+      "sourceType": "github",
+      "skillPath": "skills/testing-best-practices/SKILL.md",
+      "computedHash": "ee6e12a6252187c9b68f3442a3979e98acbaad87f127e8a62ede4df893486550",
+      "installMode": "copy"
+    },
+    "typescript-react-patterns": {
+      "source": "AsyrafHussin/agent-skills",
+      "commit": "1aa0ff717c10309226c9e678f00873976450fd76",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-react-patterns/SKILL.md",
+      "computedHash": "12c8a4339dabf173df6770b4f1c262145e37b5cb914f9602f0ca4b5064aeeae7",
+      "installMode": "copy"
+    },
+    "variance-commentary": {
+      "source": "anthropics/financial-services",
+      "commit": "3e32c2287dcb637c184c01cc0ad82d6af7e9bb0f",
+      "sourceType": "github",
+      "skillPath": "plugins/vertical-plugins/fund-admin/skills/variance-commentary/SKILL.md",
+      "computedHash": "ebc0c4a85897c83737682490b292be76bcd0c02cc69806ea0292f3c8069dee90",
+      "installMode": "copy"
+    },
+    "verification-before-completion": {
+      "source": "obra/superpowers",
+      "commit": "22f0b463e7a5e579904dd6211a520321035526f7",
+      "sourceType": "github",
+      "skillPath": "skills/verification-before-completion/SKILL.md",
+      "computedHash": "09b0e3a4689c1c38a3b8fc6ef57a1d4165aa33c0013d546dbde9dd348941a319",
+      "installMode": "copy"
+    }
+  }
+}
