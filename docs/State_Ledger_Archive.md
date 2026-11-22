@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-055)
+# Last Updated: 2026-11-23 (D-056)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-051)
+## Archived entry log (through D-052)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -47,6 +47,7 @@
 | D-049 | 2026-11-22 | UNIFIED SESSION START added to `docs/Prompt_Library.md` Part 0: find next queue card → ACK → STOP and ask START → 5-point pre-check gate → implement one card. Stale root duplicate removed. |
 | D-050 | 2026-11-22 | WP1-T07 pre-check gate FAILED (no git repo; `C:` 0.24 GB < 2 GB; scanners absent; no Boost). Owner halted the card; **WP11 — Repository & environment setup** (5 cards) queued; stale BUILD_QUEUE cells corrected; manifest card count 78→95. No code written. Next card: **WP11-T01**. |
 | D-051 | 2026-11-22 | Owner: GitHub account `arhariz` for frontend + backend repos (different-project context); never touch other project files. WP11-T05 remains GOV-01-blocked on repo URL/default branch; commit identity TBD. |
+| D-052 | 2026-11-23 | Backend repo `https://github.com/arhariz/financial-portal-backend` created (private, `main`) and pushed (`7f3f38f`, `b77fbe8`). `gh` 2.105.0 installed; auth reused from Desktop credential. Secret scanning + branch protection blocked by free plan → Q-009. Frontend repo not created. |
 
 ## Archived implemented modules
 

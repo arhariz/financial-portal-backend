@@ -1,6 +1,6 @@
 # docs/Build_Queue_Detail.md — Task cards for the live BUILD_QUEUE
 # Authority: Owner / CTO
-# Last Updated: 2026-11-23 (D-055)
+# Last Updated: 2026-11-23 (D-056)
 # Source of truth for: granular implementation tasks, dependencies, verification
 # Does NOT contain: executed state (docs/State_Ledger.md), code rules (rules/*.md), business policy (docs/EXECUTION_LOCKS_ACTIVE.md)
 # Conflict rule: STATE_LEDGER wins for current queue position; this file defines HOW each item is split.
@@ -22,7 +22,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 
 ## WP1 — Laravel 13 bootstrap + Filament 5 skeleton (7 tasks)
 
-> **Progress (2026-11-22, D-050):** WP1-T01…WP1-T06 **DONE** — Laravel 13.43.0 + `/health`; Filament 5.11.4 at `/admin`; Spatie RBAC 30 permissions / 12 roles; PHPStan L6 zero-baseline + Pint PSR-12, **18 tests green**. Next card: **WP1-T07 — BLOCKED by WP11** (pre-check gate failed: no git repo, `C:` 0.24 GB < 2 GB, scanners absent).
+> **Progress (2026-11-22, D-050):** WP1-T01…WP1-T06 **DONE** — Laravel 13.43.0 + `/health`; Filament 5.11.4 at `/admin`; Spatie RBAC 30 permissions / 12 roles; PHPStan L6 zero-baseline + Pint PSR-12, **18 tests green**. Next card: **WP1-T07 — UNBLOCKED** (WP11 complete per D-056).
 
 | ID | Task | Scope / files | Inputs | Rules | Verify / Done |
 |---|---|---|---|---|---|
@@ -174,7 +174,7 @@ Every feature ships a seeder that creates the minimum data needed to exercise it
 
 ## WP11 — Repository & environment setup (5 tasks)
 
-> **Progress (2026-11-23, D-052):** WP11-T02 **DONE** — `git init` on `main`, local author `arhariz <arhariz.com@gmail.com>`, root commit `7f3f38f`; WP11-T05 remote **DONE** — private repo `https://github.com/arhariz/financial-portal-backend`, pushed `7f3f38f` + `b77fbe8` (CODEOWNERS + README). Branch policy **DONE (D-053)** — owner made repo PUBLIC; secret scanning + push protection enabled; branch protection on `main` verified (1 review, code-owner, no force-push/delete; owner bypass enabled due to single-owner self-approval rule). WP11-T01 **DONE (D-054)** — disk gate re-run green: `C:` 3.19 GB free > 2 GB; no cache deletion needed; Q-008 CLOSED. WP11-T03 **DONE (D-055)** — gitleaks 8.30.1 / Trivy 0.76.2 / Semgrep 1.186.0 on user PATH, all version commands exit 0; gate E satisfied. Still pending: T04 Boost. Next card: **WP11-T04**.
+> **Progress (2026-11-23, D-052):** WP11-T02 **DONE** — `git init` on `main`, local author `arhariz <arhariz.com@gmail.com>`, root commit `7f3f38f`; WP11-T05 remote **DONE** — private repo `https://github.com/arhariz/financial-portal-backend`, pushed `7f3f38f` + `b77fbe8` (CODEOWNERS + README). Branch policy **DONE (D-053)** — owner made repo PUBLIC; secret scanning + push protection enabled; branch protection on `main` verified (1 review, code-owner, no force-push/delete; owner bypass enabled due to single-owner self-approval rule). WP11-T01 **DONE (D-054)** — disk gate re-run green: `C:` 3.19 GB free > 2 GB; no cache deletion needed; Q-008 CLOSED. WP11-T03 **DONE (D-055)** — gitleaks 8.30.1 / Trivy 0.76.2 / Semgrep 1.186.0 on user PATH, all version commands exit 0; gate E satisfied. WP11-T04 **DONE (D-056)** — Boost v2.10.4 installed, `boost:install --guidelines` regenerated AGENTS.md/CLAUDE.md and re-read. **WP11 COMPLETE.** Next card: **WP1-T07**.
 
 This package prepares the local toolchain and repository only: no application code, no business policy, no money/KYC/commission path, no schema tables. Owner values (remote URL, default branch, protection rules) are required before WP11-T05 — never invent them (GOV-01).
 
@@ -183,7 +183,7 @@ This package prepares the local toolchain and repository only: no application co
 | WP11-T01 | Restore disk space on `C:` (Q-008) **(DONE, D-054)** | Gate verified green — `C:` 3.19 GB free > 2 GB; no cache deletion required (least-destructive). Q-008 closed. | Q-008, D-046, D-050, D-054 | OPS-01, GOV-09 | `C:` free > 2 GB ✅; pre-check gate C re-run green ✅ (PHP/Composer/Node/MySQL/Redis) |
 | WP11-T02 | Initialize local Git repository **(DONE, D-052)** | `git init -b main`, local author `arhariz <arhariz.com@gmail.com>`, commit `7f3f38f` (650 files, no secrets) | D-050, D-051, D-052 (owner confirmed identity) | COD-01, GOV-01, GOV-09 | `git rev-parse` true; `git status` clean; `git log -1` = `7f3f38f` — verified |
 | WP11-T03 | Install security scanners **(DONE, D-055)** | gitleaks 8.30.1 + Trivy 0.76.2 (portable ZIPs in `%LOCALAPPDATA%\Programs\security-tools`); Semgrep 1.186.0 (Python 3.12.10 + `pip install --user`); all dirs on persistent user PATH | D-032, WP11-T01, D-055 | TST-12 | `gitleaks version` → 8.30.1 ✅; `trivy --version` → 0.76.2 ✅; `semgrep --version` → 1.186.0 ✅ (all exit 0) |
-| WP11-T04 | Install Laravel Boost | `composer require laravel/boost --dev && php artisan boost:install`; re-read `AGENTS.md` | AGENTS.md Laravel Boost guideline, WP11-T01 (disk), D-050 | GOV-07, GOV-09 | `laravel/boost` present in `vendor/`; `AGENTS.md` carries generated project guidelines |
+| WP11-T04 | Install Laravel Boost **(DONE, D-056)** | `laravel/boost` v2.10.4 in `vendor/`; `boost:install --guidelines --no-interaction`; `AGENTS.md`/`CLAUDE.md` regenerated + `boost.json`; AGENTS.md re-read | AGENTS.md guideline, WP11-T01, D-050, D-056 | GOV-07, GOV-09 | `vendor/laravel/boost` ✅; AGENTS.md has `<laravel-boost-guidelines>` ✅; `php artisan --version` = 13.43.0 ✅ |
 | WP11-T05 | Git remote & branch policy **(DONE, D-053)** | Remote `origin` = `https://github.com/arhariz/financial-portal-backend.git` (**public**, `main`), pushed `7f3f38f` + `b77fbe8` + `0d813f9`. Secret scanning + push protection enabled; branch protection verified. Frontend repo not created (separate workspace). | D-051, D-052, D-053 (Q-009 closed) | GOV-01, GOV-09 | `gh repo view` → PUBLIC; `gh api` → scanning enabled + protection rules present — verified |
 
 ---
