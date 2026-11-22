@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-053)
+# Last Updated: 2026-11-23 (D-054)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-049)
+## Archived entry log (through D-050)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -45,6 +45,7 @@
 | D-047 | 2026-11-21 | WP1-T05 DONE: Sanctum v4.5 + API skeleton — `routes/api.php`, explicit `config/cors.php`, `User` gains `HasApiTokens`, `bootstrap/app.php` registers `api` routes + `statefulApi()`; gates green. Next card: **WP1-T06**. |
 | D-048 | 2026-11-21 | WP1-T06 DONE: App layer structure — `app/Actions`, `app/Repositories`, `app/Enums`, `app/Services`, `tests/Unit/*`; autoload verified; gates green. Next card: **WP1-T07**. |
 | D-049 | 2026-11-22 | UNIFIED SESSION START added to `docs/Prompt_Library.md` Part 0: find next queue card → ACK → STOP and ask START → 5-point pre-check gate → implement one card. Stale root duplicate removed. |
+| D-050 | 2026-11-22 | WP1-T07 pre-check gate FAILED (no git repo; `C:` 0.24 GB < 2 GB; scanners absent; no Boost). Owner halted the card; **WP11 — Repository & environment setup** (5 cards) queued; stale BUILD_QUEUE cells corrected; manifest card count 78→95. No code written. Next card: **WP11-T01**. |
 
 ## Archived implemented modules
 
