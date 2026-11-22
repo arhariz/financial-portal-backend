@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-22 (D-051)
+# Last Updated: 2026-11-23 (D-052)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-047)
+## Archived entry log (through D-048)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -43,6 +43,7 @@
 | D-045 | 2026-11-21 | Q-005/Q-006/Q-007 logged (role management, per-user overrides, user profile); WP3-T08…T10 queued blocked; WP3 7 → 10, total 87 → 90. |
 | D-046 | 2026-11-21 | Host `C:` hit 0 bytes free; cleared ~660 MB regenerable cache, reinstalled Pint 1.32.3; gates green again (Pint/PHPStan/PHPUnit 15/15); logged as **Q-008**. |
 | D-047 | 2026-11-21 | WP1-T05 DONE: Sanctum v4.5 + API skeleton — `routes/api.php`, explicit `config/cors.php`, `User` gains `HasApiTokens`, `bootstrap/app.php` registers `api` routes + `statefulApi()`; gates green. Next card: **WP1-T06**. |
+| D-048 | 2026-11-21 | WP1-T06 DONE: App layer structure — `app/Actions`, `app/Repositories`, `app/Enums`, `app/Services`, `tests/Unit/*`; autoload verified; gates green. Next card: **WP1-T07**. |
 
 ## Archived implemented modules
 

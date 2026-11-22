@@ -1,6 +1,6 @@
 # docs/Build_Queue_Detail.md — Task cards for the live BUILD_QUEUE
 # Authority: Owner / CTO
-# Last Updated: 2026-11-22 (D-050)
+# Last Updated: 2026-11-23 (D-052)
 # Source of truth for: granular implementation tasks, dependencies, verification
 # Does NOT contain: executed state (docs/State_Ledger.md), code rules (rules/*.md), business policy (docs/EXECUTION_LOCKS_ACTIVE.md)
 # Conflict rule: STATE_LEDGER wins for current queue position; this file defines HOW each item is split.
@@ -174,17 +174,17 @@ Every feature ships a seeder that creates the minimum data needed to exercise it
 
 ## WP11 — Repository & environment setup (5 tasks)
 
-> **Progress (2026-11-22, D-050):** NEW package queued by owner decision after the WP1-T07 pre-check gate FAILED — no git repo; `C:` disk 0.24 GB < 2 GB (Q-008); gitleaks/Trivy/Semgrep absent; `laravel/boost` not installed. Prerequisite for WP1-T07 and every future app-code card. Next card: **WP11-T01**.
+> **Progress (2026-11-23, D-052):** WP11-T02 **DONE** — `git init` on `main`, local author `arhariz <arhariz.com@gmail.com>`, root commit `7f3f38f`; WP11-T05 remote **DONE** — private repo `https://github.com/arhariz/financial-portal-backend`, pushed `7f3f38f` + `b77fbe8` (CODEOWNERS + README). Branch policy **blocked Q-009** (GitHub Pro/public required for protection + secret scanning). `C:` now 3.28 GB free. Still pending: WP11-T01 (verify), T03 scanners, T04 Boost. Next card: **WP11-T01**.
 
 This package prepares the local toolchain and repository only: no application code, no business policy, no money/KYC/commission path, no schema tables. Owner values (remote URL, default branch, protection rules) are required before WP11-T05 — never invent them (GOV-01).
 
 | ID | Task | Scope / files | Inputs | Rules | Verify / Done |
 |---|---|---|---|---|---|
 | WP11-T01 | Restore disk space on `C:` (Q-008) | Clear regenerable caches only (user temp, npm cache, Composer cache); delete no project or user data | Q-008, D-046, D-050 | OPS-01, GOV-09 | `Get-PSDrive C` free > 2 GB; pre-check gate C re-run green |
-| WP11-T02 | Initialize local Git repository | `git init`, review `.gitignore`/`.gitattributes`, initial commit of current tree | D-050, D-051; commit author identity **to be confirmed** — global `arhariz <arhariz.com@gmail.com>` is a different-project context, do not assume it | COD-01, GOV-01, GOV-09 | `git rev-parse --is-inside-work-tree` true; `git status` clean; `git log -1 --oneline` with owner-confirmed author |
+| WP11-T02 | Initialize local Git repository **(DONE, D-052)** | `git init -b main`, local author `arhariz <arhariz.com@gmail.com>`, commit `7f3f38f` (650 files, no secrets) | D-050, D-051, D-052 (owner confirmed identity) | COD-01, GOV-01, GOV-09 | `git rev-parse` true; `git status` clean; `git log -1` = `7f3f38f` — verified |
 | WP11-T03 | Install security scanners | gitleaks, Trivy, Semgrep installed and on PATH | D-032, WP11-T01 (disk) | TST-12 | `gitleaks version`, `trivy --version`, `semgrep --version` all exit 0 |
 | WP11-T04 | Install Laravel Boost | `composer require laravel/boost --dev && php artisan boost:install`; re-read `AGENTS.md` | AGENTS.md Laravel Boost guideline, WP11-T01 (disk), D-050 | GOV-07, GOV-09 | `laravel/boost` present in `vendor/`; `AGENTS.md` carries generated project guidelines |
-| WP11-T05 | Git remote & branch policy **(blocked: GOV-01 — owner inputs)** | Configure remote URL, default branch, protection/hook policy from values supplied by the owner. GitHub account `arhariz` owns the **frontend + backend** repos (D-051) — **never touch files of any other project**. | Owner decision (exact repo URLs, default branch), WP11-T02, D-051 | GOV-01, GOV-09 | remotes for frontend/backend configured from owner-supplied URLs; branch policy recorded in `docs/State_Ledger.md` |
+| WP11-T05 | Git remote & branch policy **(remote DONE / policy blocked Q-009)** | Remote `origin` = `https://github.com/arhariz/financial-portal-backend.git` (private, `main`), pushed `7f3f38f` + `b77fbe8`. Branch protection + secret scanning need GitHub Pro/public → Q-009. Frontend repo not created (separate workspace). | D-051, D-052; owner decision Q-009 | GOV-01, GOV-09 | `git remote -v` verified; repo private + `main` verified via `gh repo view`; policy pending owner decision |
 
 ---
 
