@@ -174,7 +174,7 @@ Every feature ships a seeder that creates the minimum data needed to exercise it
 
 ## WP11 — Repository & environment setup (5 tasks)
 
-> **Progress (2026-11-23, D-052):** WP11-T02 **DONE** — `git init` on `main`, local author `arhariz <arhariz.com@gmail.com>`, root commit `7f3f38f`; WP11-T05 remote **DONE** — private repo `https://github.com/arhariz/financial-portal-backend`, pushed `7f3f38f` + `b77fbe8` (CODEOWNERS + README). Branch policy **DONE (D-053)** — owner made repo PUBLIC; secret scanning + push protection enabled; branch protection on `main` verified (1 review, code-owner, no force-push/delete, admins enforced). `C:` now 3.28 GB free. Still pending: WP11-T01 (verify), T03 scanners, T04 Boost. Next card: **WP11-T01**.
+> **Progress (2026-11-23, D-052):** WP11-T02 **DONE** — `git init` on `main`, local author `arhariz <arhariz.com@gmail.com>`, root commit `7f3f38f`; WP11-T05 remote **DONE** — private repo `https://github.com/arhariz/financial-portal-backend`, pushed `7f3f38f` + `b77fbe8` (CODEOWNERS + README). Branch policy **DONE (D-053)** — owner made repo PUBLIC; secret scanning + push protection enabled; branch protection on `main` verified (1 review, code-owner, no force-push/delete; owner bypass enabled due to single-owner self-approval rule). `C:` now 3.28 GB free. Still pending: WP11-T01 (verify), T03 scanners, T04 Boost. Next card: **WP11-T01**.
 
 This package prepares the local toolchain and repository only: no application code, no business policy, no money/KYC/commission path, no schema tables. Owner values (remote URL, default branch, protection rules) are required before WP11-T05 — never invent them (GOV-01).
 
