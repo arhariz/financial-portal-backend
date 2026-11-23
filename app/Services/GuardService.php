@@ -21,6 +21,17 @@ final class GuardService
         return $this->isKycApproved($user) && $this->isActive($user);
     }
 
+    /**
+     * Deposits are allowed before KYC approval (plan §2), but a suspended
+     * account is blocked from every money action (SEC-03).
+     */
+    public function ensureCanDeposit(User $user): void
+    {
+        if (! $this->isActive($user)) {
+            throw new AuthorizationException('An active account is required to submit a deposit.');
+        }
+    }
+
     public function ensureCanInvest(User $user): void
     {
         if (! $this->canInvest($user)) {

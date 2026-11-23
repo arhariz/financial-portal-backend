@@ -39,7 +39,7 @@ Canonical registry of database design. This is a **design contract**, not yet-im
 | Table | Key columns | Notes |
 |---|---|---|
 | `exchange_rates` | id, bdt_per_usd DECIMAL(12,4), effective_from, set_by, created_at | History retained. |
-| `manual_deposits` | id, user_id, amount_usd, amount_bdt, exchange_rate_id, payment_method, proof_path, status (`pending`/`approved`/`rejected`), reviewed_by, reviewed_at, rejection_reason, wallet_transaction_id, timestamps | Manual BDT deposit. |
+| `manual_deposits` | id, user_id, amount_usd, amount_bdt, exchange_rate_id, payment_method, proof_path, idempotency_key (nullable, unique with user_id), status (`pending`/`approved`/`rejected`), reviewed_by, reviewed_at, rejection_reason, wallet_transaction_id, timestamps | Manual BDT deposit; submit is idempotent (API-06), approval credits the cash wallet once. |
 | `withdrawal_requests` | id, user_id, source_wallet_type (`cash`/`profit`), amount_usd, payout_method (bank/crypto), payout_details JSON, status (`pending`/`approved`/`rejected`/`paid`), requested_at, approved_by, approved_at, paid_at, rejection_reason, wallet_transaction_id | Admin-configurable payout methods. |
 | `capital_release_requests` | id, user_id, amount_usd, status (`pending`/`approved`/`rejected`/`released`), requested_at, approved_by, approved_at, release_at (+24h), released_at, wallet_transaction_id | Investment→cash release, then separate withdrawal. |
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DepositController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,6 +10,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/register', [RegisterController::class, 'store'])->name('api.v1.register');
     Route::post('/login', [AuthController::class, 'login'])->name('api.v1.login');
     Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])->name('api.v1.logout');
+    Route::middleware('auth:sanctum')->post('/deposits/proof-url', [DepositController::class, 'proofUrl'])->name('api.v1.deposits.proof-url');
+    Route::middleware('auth:sanctum')->post('/deposits', [DepositController::class, 'store'])->name('api.v1.deposits.store');
     Route::get('/health', fn () => response()->json([
         'status' => 'ok',
         'app' => config('app.name'),

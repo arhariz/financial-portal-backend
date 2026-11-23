@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-089)
+# Last Updated: 2026-11-23 (D-090)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,8 +16,8 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-089 — **WP4-T02 DONE**: `ExchangeRateResource` (append-only history, create-only, no edit/delete), `ExchangeRateService` (setRate/current), `ExchangeRatePolicy` (view: exchange_rates.view, manage: exchange_rates.manage), `ExchangeRateTest` 6 tests (173/173, 1517 assertions) red→green: admin list/create, support view-only, investor denied, append-only history, 4dp storage, current() latest effective. Next card: **WP4-T03**. |
-| Test Suite | **173 tests / 1517 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-090 — **WP4-T03 DONE**: manual deposit submit + idempotency + R2 signed proof URL + Filament approve/reject queue; atomic USD credit to cash wallet via `WalletService::deposit`; `ManualDepositTest` 12 tests (185/185, 1564 assertions) red→green. Next card: **WP4-T04**. |
+| Test Suite | **185 tests / 1564 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
 | Active Phase | Auth/RBAC phase — Laravel 13.43.0 + Filament 5 landed; **WP2 COMPLETE (T01–T11 DONE)**; Ledger Health widget verified with data (OPS-11); WP3-T01 DONE (T08–T10 blocked Q-005/6/7) |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
@@ -39,7 +39,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 1 | Laravel 13 bootstrap + Filament 5 skeleton | 7 | None — **ALL DONE** | WP1 COMPLETE (T01–T07 DONE) |
 | 2 | Schema/ledger migrations + guard tests | 11 | None — **ALL DONE** | WP2 COMPLETE (T01–T11 DONE) |
 | 3 | Auth + RBAC | 10 | None — **ALL DONE** | WP3 COMPLETE (T01–T10 DONE) |
-| 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | WP4-T03 (T01–T02 + T09 DONE; T03–T08 remain) |
+| 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | WP4-T04 (T01–T03 + T09 DONE; T04–T08 remain) |
 | 5 | Investment positions + P&L distribution | 7 | WP4 | WP5-T01 |
 | 6 | KYC workflow + approvals | 5 | WP2 | WP6-T01 |
 | 7 | MLM commissions | 10 | WP5, D-030/031 | WP7-T01 |
@@ -48,7 +48,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 10 | Database seeders & demo fixtures | 12 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); T04 wallets/ledger, T05 KYC, **T09–T12 added for missing coverage (D-062)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
-**Total task cards: 99.** Current active card: **WP4-T03** (Manual deposit request flow). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP3 COMPLETE (T01–T10)**, **WP4-T01/T02/T09**, **WP9-T01/T02**, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 99.** Current active card: **WP4-T04** (Withdrawal request flow). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP3 COMPLETE (T01–T10)**, **WP4-T01/T02/T03/T09**, **WP9-T01/T02**, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -158,6 +158,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-087 | WP3-T09 close / Q-006 closed | Owner decision: per-user permission overrides are **additive only**. `UserForm` gains a `permissions` multi-select (Spatie direct `model_has_permissions`); `PermissionPolicy` (gated on `users.manage`); `PermissionOverrideTest` 6 tests (160/160, 1496 assertions) red→green: grant extra permission, override additive, cannot subtract a role-granted permission, support/investor denied. Q-006 CLOSED. Q-007 remains open (blocks WP3-T10). Gates: PHPStan 0, Pint pass, PHPUnit **160/160 (1496 assertions)**. Next card: **WP4-T02**. |
 | D-088 | WP3-T10 close / Q-007 closed / **WP3 COMPLETE** | Owner decision: user_profiles live in their **own Filament resource** (`UserProfileResource`); all fields admin-editable; `id_number` masked in listings (last 4 digits) and audit-logged on change (SEC-06/07); view gated on `users.view`/`kyc.view`, create/update/delete gated on `users.manage`. Delivered `app/Models/UserProfile`, `UserProfileFactory`, `UserProfileResource` + pages + form + table, `UserProfilePolicy`, `UserProfileObserver`, `UserProfileTest` 7 tests (167/167, 1506 assertions). Q-007 CLOSED. WP3 COMPLETE (T01–T10). Gates: PHPStan 0, Pint pass, PHPUnit **167/167 (1506 assertions)**. Next card: **WP4-T02**. |
 | D-089 | WP4-T02 close | `ExchangeRateResource` (append-only history, create-only, no edit/delete), `ExchangeRateService` (setRate/current), `ExchangeRatePolicy` (view: exchange_rates.view, manage: exchange_rates.manage), `ExchangeRateTest` 6 tests (173/173, 1517 assertions) red→green: admin list/create, support view-only, investor denied, append-only history, 4dp storage, current() latest effective. MON-01/DB-04 satisfied. Gates: PHPStan 0, Pint pass, PHPUnit **173/173 (1517 assertions)**. Next card: **WP4-T03**. |
+| D-090 | WP4-T03 close / R2 proof dependency approval | Owner approved adding `league/flysystem-aws-s3-v3` 3.25.1 (AGENTS.md dependency rule) for SEC-06 signed R2 proofs. Delivered `POST /api/v1/deposits` (Idempotency-Key → `manual_deposits.idempotency_key` unique per user, API-06), `POST /api/v1/deposits/proof-url` (short-lived signed PUT URL via `ProofStorageService`), BDT→USD at current admin rate via `bcdiv` 4dp (no floats, no invented rate), suspension gate via `GuardService::ensureCanDeposit` (deposit allowed pre-KYC per plan §2), Filament `ManualDepositResource` queue gated on `deposits.view`/`deposits.approve` with confirm + audit and no edit/delete actions, `ManualDepositService::approve` (lockForUpdate + atomic cash-wallet credit + immutable `deposit` ledger row + `deposit.approved` audit) and `reject` (mandatory reason); additive migration for idempotency key; `r2` disk config with blank `R2_*` env keys (no values invented). `ManualDepositTest` 12 tests red→green (185/185, 1564 assertions); PHPStan L6 0, Pint pass; dev `ledger:reconcile --json` `breakCount: 0`. OPS-11: no widget required — WP4 is not closed; WP4 DONE-widget remains Money Flow / Approvals (WP9-T04). Seeder coverage for money requests remains WP10-T10 per D-062. Next card: **WP4-T04**. |
 
 ## DEFERRED ITEMS
 
@@ -200,17 +201,18 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Reports shell (WP9-T01) | Admin observability | **DONE** | `app/Filament/Pages/Reports.php` + redesigned `reports.blade.php` (hero, icon tabs, widget grid, placeholders, drill-down); `reports.view` gate; `ReportsSectionTest` 7 tests |
 | Ledger Health widget (WP9-T02) | Admin observability | **DONE** | Native Filament `StatsOverviewWidget` + `LedgerWalletsTable` `TableWidget` + service-driven states + drill-down + `LedgerHealthSeeder`; dev data GREEN; `LedgerHealthWidgetTest` 8 tests |
 | Schema phase (WP2 complete) | Schema/ledger | **DONE** | T01–T11; 25 business tables, enums, factories, append-only guards, global `SchemaGuardTest` 6 tests; Ledger Health widget verified with data (OPS-11) |
+| Manual deposit flow (WP4-T03) | Money integrity | **DONE** | `DepositController` submit + signed R2 proof URL, `ManualDepositService` idempotent submit/approve/reject (atomic USD cash credit + immutable ledger), Filament approval queue gated on `deposits.view`/`deposits.approve`, `ManualDepositTest` 12 tests |
 
 ## ENTRY LOG — last 4 detailed entries
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-086 | 2026-11-23 | **WP3-T08 DONE / Q-005 CLOSED** — runtime Filament `RoleResource` (create/edit/delete + permissions multi-select) gated on `roles.manage`; `RolePolicy` (delete blocked when users assigned); `RoleObserver` audit; `Manifest::check()` ignores runtime roles; `RoleResourceTest` 6 tests (154/154, 1483 assertions). Next card: **WP4-T02**. |
 | D-087 | 2026-11-23 | **WP3-T09 DONE / Q-006 CLOSED** — per-user permission overrides (additive only) via `permissions` multi-select on `UserForm`, `PermissionPolicy` (gated on `users.manage`), `PermissionOverrideTest` 6 tests (160/160, 1496 assertions) red→green. Q-006 CLOSED. Q-007 remains open (blocks WP3-T10). Next card: **WP4-T02**. |
 | D-088 | 2026-11-23 | **WP3-T10 DONE / Q-007 CLOSED / WP3 COMPLETE** — own Filament `UserProfileResource` (full_name, date_of_birth, address, city, country, id_number masked + audit-logged), `UserProfilePolicy`, `UserProfileObserver`, `UserProfileTest` 7 tests (167/167, 1506 assertions) red→green. Q-007 CLOSED. WP3 COMPLETE (T01–T10). Next card: **WP4-T02**. |
 | D-089 | 2026-11-23 | **WP4-T02 DONE** — `ExchangeRateResource` (append-only history, create-only, no edit/delete), `ExchangeRateService` (setRate/current), `ExchangeRatePolicy` (view: exchange_rates.view, manage: exchange_rates.manage), `ExchangeRateTest` 6 tests (173/173, 1517 assertions) red→green. MON-01/DB-04 satisfied. Next card: **WP4-T03**. |
+| D-090 | 2026-11-23 | **WP4-T03 DONE** — owner-approved S3 adapter; signed R2 proof URL, idempotent manual-deposit submit at current admin rate, Filament approve/reject queue (`deposits.view`/`deposits.approve`), atomic cash-wallet credit + immutable ledger row + audit, `ManualDepositTest` 12 tests (185/185, 1564 assertions) red→green. Next card: **WP4-T04**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-085).
+Archived history → `docs/State_Ledger_Archive.md` (through D-086).
 
 ---
 

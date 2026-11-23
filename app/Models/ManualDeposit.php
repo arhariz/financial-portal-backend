@@ -9,7 +9,15 @@ use Database\Factories\ManualDepositFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property ManualDepositStatus $status
+ * @property Carbon|null $reviewed_at
+ * @property string $amount_usd
+ * @property string $amount_bdt
+ * @property string $proof_path
+ */
 class ManualDeposit extends Model
 {
     /** @use HasFactory<ManualDepositFactory> */
@@ -25,6 +33,7 @@ class ManualDeposit extends Model
         'exchange_rate_id',
         'payment_method',
         'proof_path',
+        'idempotency_key',
         'status',
         'reviewed_by',
         'reviewed_at',
@@ -41,6 +50,7 @@ class ManualDeposit extends Model
             'amount_usd' => 'decimal:4',
             'amount_bdt' => 'decimal:4',
             'status' => ManualDepositStatus::class,
+            'reviewed_at' => 'datetime',
         ];
     }
 
