@@ -232,7 +232,7 @@ Closeout: fp-task-closeout + final State_Ledger entry with evidence.
 ## WP10 — Database seeders prompt
 
 ```
-TASK CARD: [WP10-T01..WP10-T08]
+TASK CARD: [WP10-T01..WP10-T12]
 After SESSION BOOTSTRAP, implement only this card.
 Rules: TST-13, MON-01..08, DB-01..08, SEC-01/06, FIL-02, OPS-01, GOV-09.
 Every feature seeder creates the minimum data needed to exercise that feature; DatabaseSeeder orchestrates all feature seeders.

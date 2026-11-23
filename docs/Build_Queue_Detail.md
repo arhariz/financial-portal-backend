@@ -1,6 +1,6 @@
 # docs/Build_Queue_Detail.md — Task cards for the live BUILD_QUEUE
 # Authority: Owner / CTO
-# Last Updated: 2026-11-23 (D-061)
+# Last Updated: 2026-11-23 (D-062)
 # Source of truth for: granular implementation tasks, dependencies, verification
 # Does NOT contain: executed state (docs/State_Ledger.md), code rules (rules/*.md), business policy (docs/EXECUTION_LOCKS_ACTIVE.md)
 # Conflict rule: STATE_LEDGER wins for current queue position; this file defines HOW each item is split.
@@ -155,9 +155,9 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 
 ---
 
-## WP10 — Database seeders & demo fixtures (8 tasks)
+## WP10 — Database seeders & demo fixtures (12 tasks)
 
-> **Progress (2026-11-23, D-061):** WP10-T01, WP10-T02 **DONE** — `DatabaseSeeder` + `RolePermissionSeeder` + `UserSeeder` (30 permissions / 12 roles / 13 users, idempotent). **T04 must seed WP2-T03 wallets/ledger and T05 must seed WP2-T02 KYC** — no seeder files were created in the WP2 cards (owner decision D-061; TST-13 sequencing exception). Next card: **WP10-T03** (blocked by WP2-T04/T06).
+> **Progress (2026-11-23, D-062):** WP10-T01, WP10-T02 **DONE** — `DatabaseSeeder` + `RolePermissionSeeder` + `UserSeeder` (30 permissions / 12 roles / 13 users, idempotent). Owner clarified (D-062): **every feature ships a seeder with sample data to verify function**; seeder cards already queued stay in WP10 (not pulled forward), and **missing coverage was added as T09–T12** (user profiles, money requests, agents/referrals, notifications/audit). Next card: **WP10-T03** (blocked by WP2-T04/T06).
 
 Every feature ships a seeder that creates the minimum data needed to exercise it (TST-13). Seeders are local/staging only, idempotent, and always invoked with `--class`.
 
@@ -171,6 +171,10 @@ Every feature ships a seeder that creates the minimum data needed to exercise it
 | WP10-T06 | Investment seeder | `PositionSeeder.php`, `PnlSeeder.php` — positions + distributions | Schema §2, D-009/010 | TST-13, PNL-01..05 | eligible dates correct; items sum to posted amount |
 | WP10-T07 | Commission seeder | `CommissionSeeder.php` — deduction profiles, tier×level rules, commissions | Schema §2, D-030/031 | TST-13, COM-01..08 | matrix complete; pending + vested rows |
 | WP10-T08 | Demo scenario + seed gate | `DemoScenarioSeeder.php`, verification/CI step | plan §6, D-041 | TST-13, OPS-01, GOV-09 | deposit→invest→distribute→withdraw→vest runnable end-to-end |
+| WP10-T09 | User profile seeder | `UserProfileSeeder.php` — one profile per seeded user with sample full_name/address/city/country/dob; dev-only `id_number` | Schema §2 / WP2-T01, D-062 | TST-13, SEC-06/07 | every seeded user has a profile; sensitive fields dev-only |
+| WP10-T10 | Money request seeder | `MoneyRequestSeeder.php` — `manual_deposits`, `withdrawal_requests`, `capital_release_requests` in each status + matching ledger rows | Schema §2 / WP2-T05, D-062 | TST-13, MON-04, WAL-06 | all statuses present; request→ledger links valid |
+| WP10-T11 | Agent & referral seeder | `AgentSeeder.php` — agents for tier 1/2/3 users, unique referral codes, upline/downline rows | Schema §2 / WP2-T08, D-031, D-062 | TST-13, COM-01/08 | 3 tiers seeded; referral codes + downline links present |
+| WP10-T12 | Notification / audit seeder | `NotificationSeeder.php` — templates, notifications, preferences, dashboard_layouts, audit_logs, login_history | Schema §2 / WP2-T10, D-062 | TST-13, SEC-07, FIL-04 | templates per event group; audit rows append-only |
 
 ---
 
