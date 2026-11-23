@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-081)
+# Last Updated: 2026-11-23 (D-082)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,8 +16,8 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-081 — **WP3-T03 DONE**: `POST /api/v1/login` + `POST /api/v1/logout` (cookie + Bearer), `LoginRequest`, `AuthController` (token issue + session regenerate/invalidate, Bearer revoke via `PersonalAccessToken::findToken`); `AuthModesTest` 5 tests red→green. Next card: **WP3-T04**. |
-| Test Suite | **125 tests / 1020 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-082 — **WP3-T04 DONE**: `PermissionMatrixTest` (6 tests, 393 assertions) verifies all 12 roles against the declared permission set, super_admin/admin hold every permission, support view-only, investor/agent tiers have none, unknown abilities denied, deny-by-default. Next card: **WP3-T05**. |
+| Test Suite | **131 tests / 1413 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
 | Active Phase | Auth/RBAC phase — Laravel 13.43.0 + Filament 5 landed; **WP2 COMPLETE (T01–T11 DONE)**; Ledger Health widget verified with data (OPS-11); WP3-T01 DONE (T08–T10 blocked Q-005/6/7) |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
@@ -38,7 +38,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 |---|---|---:|---|---|
 | 1 | Laravel 13 bootstrap + Filament 5 skeleton | 7 | None — **ALL DONE** | WP1 COMPLETE (T01–T07 DONE) |
 | 2 | Schema/ledger migrations + guard tests | 11 | None — **ALL DONE** | WP2 COMPLETE (T01–T11 DONE) |
-| 3 | Auth + RBAC | 10 | None | WP3-T04 (T01–T03 + T07 done; T08–T10 blocked Q-005/6/7) |
+| 3 | Auth + RBAC | 10 | None | WP3-T05 (T01–T04 + T07 done; T08–T10 blocked Q-005/6/7) |
 | 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | WP4-T01 (T09 DONE per D-072; T01–T08 remain) |
 | 5 | Investment positions + P&L distribution | 7 | WP4 | WP5-T01 |
 | 6 | KYC workflow + approvals | 5 | WP2 | WP6-T01 |
@@ -48,7 +48,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 10 | Database seeders & demo fixtures | 12 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); T04 wallets/ledger, T05 KYC, **T09–T12 added for missing coverage (D-062)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
-**Total task cards: 99.** Current active card: **WP3-T04** (Permission matrix + policies). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP4-T09**, **WP9-T01/T02**, WP3-T01/T02/T03/T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 99.** Current active card: **WP3-T05** (KYC + suspension guard service). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP4-T09**, **WP9-T01/T02**, WP3-T01/T02/T03/T04/T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -150,6 +150,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-079 | WP3-T01 close | `User` model already implements `HasRoles`, `HasApiTokens`, `SoftDeletes`, `Notifiable`, `FilamentUser`, enum casts (`status`→`UserStatus`, `kyc_status`→`KycStatus`) and permission-based `canAccessPanel()`. Added `tests/Feature/UserModelTest.php` (6 tests, 15 assertions) red→green: multi-role assignment, role preservation on second assignment, permission aggregation across roles, enum casts, SoftDeletes, permission-based panel access. Card rule code remapped per D-078. Gates: PHPStan 0, Pint pass, PHPUnit **114/114 (985 assertions)**. Next card: **WP3-T02**. |
 | D-080 | WP3-T02 close | `POST /api/v1/register` (public, SEC-01/02, GOV-01): `RegisterRequest` (name/email/password confirmed/optional referral_code exists in agents), `RegistrationService` (DB transaction, default role `investor`, optional referral link at level 1, `referral_code_used`), `RegisterController` returning 201. `RegistrationTest` 6 tests (120/120, 1008 assertions) red→green: no code, valid code, invalid code, duplicate email, missing confirmation, missing fields. No email verification enforced (admin-configurable per plan §2). Next card: **WP3-T03**. |
 | D-081 | WP3-T03 close | `POST /api/v1/login` + `POST /api/v1/logout` (cookie + Bearer), `LoginRequest`, `AuthController` (token issue + session regenerate/invalidate, Bearer revoke via `PersonalAccessToken::findToken`); `AuthModesTest` 5 tests (125/125, 1020 assertions) red→green covering Bearer login, invalid creds, token revocation, cookie session login, cookie logout. No email verification enforced (admin-configurable per plan §2). Gates: PHPStan 0, Pint pass, PHPUnit **125/125 (1020 assertions)**. Next card: **WP3-T04**. |
+| D-082 | WP3-T04 close | `PermissionMatrixTest` (6 tests, 393 assertions) red→green: super_admin/admin hold every permission; each seeded role's `can()` matches its declared set exactly; support view-only (no manage perms); investor/agent tiers have none; unknown abilities denied for every role; 12 roles present. UserPolicy (users.view/users.manage) is the reference pattern; remaining model policies (FIL-01) ship alongside their Filament resources in WP4–WP7. Gates: PHPStan 0, Pint pass, PHPUnit **131/131 (1413 assertions)**. Next card: **WP3-T05**. |
 
 ## DEFERRED ITEMS
 
@@ -177,6 +178,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Database seeders (WP10-T01/T02) | Seed data | **DONE** | `DatabaseSeeder` → `RolePermissionSeeder` + `UserSeeder`; 30 permissions / 12 roles / 13 users / 13 assignments; idempotent; dev-only password `Password@123` |
 | User management (WP3-T07) | Admin panel | **DONE** | `app/Filament/Resources/Users/*` + `app/Policies/UserPolicy.php`; list/create/edit gated by `users.view` / `users.manage`; non-admin → 403 |
 | User model (WP3-T01) | Auth/RBAC | **DONE** | `app/Models/User.php` — HasRoles/SoftDeletes/HasApiTokens/FilamentUser, enum casts, permission-based `canAccessPanel()`; `UserModelTest` 6 tests (multi-role, enum, soft delete, aggregation) |
+| Permission matrix (WP3-T04) | Auth/RBAC | **DONE** | `config/role_matrix.php` (30 perms / 12 roles) verified by `PermissionMatrixTest` (6 tests, 393 assertions); deny-by-default, support view-only, investor/agent tiers none |
 | Auth (WP3-T03) | Auth/RBAC | **DONE** | `POST /api/v1/login` + `POST /api/v1/logout` (cookie + Bearer), `LoginRequest`, `AuthController`, `AuthModesTest` 5 tests |
 | Registration (WP3-T02) | Auth/RBAC | **DONE** | `POST /api/v1/register` + `RegisterRequest` + `RegistrationService` (DB transaction, investor role, optional referral link level 1) + `RegisterController`; `RegistrationTest` 6 tests |
 | Commission schema (WP2-T09) | Schema/ledger | **DONE** | `deduction_profiles`/`commission_rules`/`commissions`; D-030 defaults seeded in migration; enums + models/factories; append-only `Commission`; `CommissionSchemaTest` 7 tests |
@@ -192,8 +194,9 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 |---|---|---|
 | D-077 | 2026-11-23 | **Reports UI redesign** — hero banner, interactive icon tabs, widget grid, honest placeholders, polished drill-down; 108 tests/970 assertions, PHPStan 0, Pint pass. |
 | D-079 | 2026-11-23 | **WP3-T01 DONE** — `User` model verified with multi-role, enum casts, SoftDeletes, permission-based panel access; `UserModelTest` (6 tests, 15 assertions) red→green; card rule code remapped AUTH-01 → SEC-01/FIL-02/COD-02/03 (D-078). Next card: **WP3-T02**. |
+| D-082 | 2026-11-23 | **WP3-T04 DONE** — `PermissionMatrixTest` (6 tests, 393 assertions) verifies all 12 roles; super_admin/admin all permissions; support view-only; investor/agent tiers none; unknown abilities denied; deny-by-default. Next card: **WP3-T05**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-076).
+Archived history → `docs/State_Ledger_Archive.md` (through D-077).
 
 ---
 
