@@ -1,6 +1,6 @@
 # docs/DOCS_MANIFEST.md — File map, read order, ownership and conflict rules
 # Authority: Owner / CTO
-# Last Updated: 2026-11-23 (D-061)
+# Last Updated: 2026-11-23 (D-062)
 # Source of truth for: file map, owners, read order, authority, module loading
 # Does NOT contain: executed state, queue, code rules, tables
 # Conflict rule: STATE_LEDGER for executed state; CONSTITUTION for code rules; EXECUTION_LOCKS for business policy.
@@ -39,7 +39,7 @@
 | File | Purpose |
 |---|---|
 | `docs/State_Ledger_Archive.md` | Rotated detailed entries and completed module details |
-| `docs/Build_Queue_Detail.md` | 95 single-commit task cards — load **one card only** (OPS-10) |
+| `docs/Build_Queue_Detail.md` | 99 single-commit task cards — load **one card only** (OPS-10) |
 | `docs/Admin_Observability_Spec.md` | 12 module health widgets, 8 Report tabs, final sign-off checklist |
 | `skills/` directories | Custom + external AI skills (`docs/Skills_Registry.md`) |
 
