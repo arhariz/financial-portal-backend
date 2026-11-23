@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property WalletType $type
+ * @property string $balance
  */
 class Wallet extends Model
 {

@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-084)
+# Last Updated: 2026-11-23 (D-085)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-079)
+## Archived entry log (through D-082)
 
 | Entry | Date | Detail |
 |---|---|---|
