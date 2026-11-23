@@ -59,6 +59,7 @@
 | D-061 | 2026-11-23 | (Superseded) documented "no new seeders now" — owner corrected this in D-062. |
 | D-062 | 2026-11-23 | Owner correction: seeder data mandatory for every feature; queued seeder cards stay in WP10, missing coverage added as **WP10-T09…T12**; WP10 8→12, total 95→99. D-061 superseded. |
 | D-063 | 2026-11-23 | **WP2-T04 DONE** — `exchange_rates` table + model/factory + guard tests; `decimal(12,4)` + 3 indexes verified on dev MySQL; 41 tests/246 assertions, PHPStan 0, Pint pass. Next card: **WP2-T05**. |
+| D-064 | 2026-11-23 | Owner confirmed **profit-wallet-first loss absorption** (profit 100 / loss 110 → wallet 0, capital −10); five defaults accepted; D-010 loss part superseded; PNL-06/MON-06/Schema §3 #4/plan §4 + prompts/skills amended. **Q-010 CLOSED.** |
 
 ## Archived implemented modules
 
