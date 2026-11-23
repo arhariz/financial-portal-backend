@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-072)
+# Last Updated: 2026-11-23 (D-073)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-067)
+## Archived entry log (through D-068)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -63,6 +63,7 @@
 | D-065 | 2026-11-23 | **WP2-T05 DONE** — manual deposits + withdrawal/capital-release request tables, status enums, models/factories, guard tests; `decimal(18,4)` + indexes verified; 47 tests/318 assertions, PHPStan 0, Pint pass. Next card: **WP2-T06**. |
 | D-066 | 2026-11-23 | **WP2-T06 DONE** — `symbols`/`positions` tables + enums + models/factories + guard tests; `decimal(18,4)` + DATE eligibility column/index verified; 53 tests/359 assertions, PHPStan 0, Pint pass. Next card: **WP2-T07**. |
 | D-067 | 2026-11-23 | **WP2-T07 DONE** — `pnl_distributions`/`pnl_distribution_items` + status enum + models/factories + guard tests; signed `decimal(18,4)`/`decimal(10,6)` + sum-to-posted verified; 59 tests/398 assertions, PHPStan 0, Pint pass. Next card: **WP2-T08**. |
+| D-068 | 2026-11-23 | **WP2-T08 DONE** — `agents`/`referrals` tables + D-031 tier-label config + models/factories + guard tests; integer tier + `decimal(18,4)` verified; 65 tests/432 assertions, PHPStan 0, Pint pass. Next card: **WP2-T09**. |
 
 ## Archived implemented modules
 

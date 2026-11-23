@@ -144,7 +144,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 
 | ID | Task | Scope / files | Inputs | Rules | Verify / Done |
 |---|---|---|---|---|---|
-| WP9-T01 | Reports page group + Overview shell | `app/Filament/Pages/Reports/*`, panel provider | Admin_Observability_Spec §Reports | REP-09, FIL-04 | 8 tabs render; role-gated |
+| WP9-T01 | Reports page group + Overview shell **(DONE, D-073)** | `app/Filament/Pages/Reports.php`, `resources/views/filament/pages/reports.blade.php`, `AdminPanelProvider`, `tests/Feature/ReportsSectionTest.php` (5 tests) | Admin_Observability_Spec §Reports | REP-09, FIL-04 | 8 tabs render ✅; super_admin/support 200, investor denied ✅; group + URL ✅; suite 92/92 (616), PHPStan 0, Pint pass ✅ |
 | WP9-T02 | Ledger Reconciliation + Wallet widget | `app/Filament/Widgets/LedgerHealth.php` | Schema §3, WP4-T09 | MON-05, REP-10 | green with zero breaks; drill-down works |
 | WP9-T03 | Queue Health + P&L Distribution widgets | `QueueHealth.php`, `PnlStatus.php` | WP5-T05, QUE rules | QUE-03, PNL-04, REP-10 | zero failed jobs; latest date shown |
 | WP9-T04 | Money Flow + Approval widgets | `MoneyFlow.php`, `ApprovalQueues.php` | WP4, REP-01 | WAL-03/06, REP-10 | pending counts + aging correct |
