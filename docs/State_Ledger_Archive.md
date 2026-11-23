@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-099)
+# Last Updated: 2026-11-23 (D-101)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-095)
+## Archived entry log (through D-097)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -87,6 +87,8 @@
 | D-093 | 2026-11-23 | **WP4-T06 DONE / GOV-02 enum fix** — idempotent internal transfers with locked direction whitelist, Asia/Dhaka T+2 position creation, typed immutable ledger rows; `PositionSource` gained `commission` for WAL-05; `InternalTransferTest` 19 tests (232/232, 1725 assertions) red→green. Next card: **WP4-T07**. |
 | D-094 | 2026-11-23 | **Q-011 CLOSED / GOV-01 resolved** — owner decided the agent-credit role bonus is an explicit USD amount supplied per purchase by an admin with `agent_credit.manage`; no tenant-wide rate or invented default; COM-05 separation preserved. **Mechanism superseded by D-096.** |
 | D-095 | 2026-11-23 | **WP4-T07 DONE** — admin-only agent credit purchase at current rate → cash face value + admin-supplied commission bonus (two immutable rows, no upline commission); `AgentCreditTest` 13 tests (245/245, 1770 assertions) red→green. Next card: **WP4-T08**. |
+| D-096 | 2026-11-23 | **Role-bonus rule amendment** — owner clarified role bonus and MLM commission are different systems: admin-managed per-tier bonus rate (% of face value, DECIMAL 10,6) vs tier×level MLM commission (WP7). D-094 per-purchase input removed; no rule → bonus 0; `AgentCreditTest` 17 tests (249/249, 1779 assertions) red→green. |
+| D-097 | 2026-11-23 | **WP4-T08 DONE / WP4 tasks complete** — agent→investor credit transfer with cross-user atomic ledger rows + audit; `AgentCreditTransferTest` 10 tests (259/259, 1816 assertions) red→green. OPS-11 widget WP9-T04 pending. |
 
 ## Archived implemented modules
 

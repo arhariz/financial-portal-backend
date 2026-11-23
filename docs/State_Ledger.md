@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-099)
+# Last Updated: 2026-11-23 (D-101)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,8 +16,8 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-099 — **WP9-T04 DONE / WP4 COMPLETE**: Money Flow + Approval Queues widgets built from live ledger/request data, registered in Filament dashboard + Reports Overview/Money Flow tabs, `MoneyFlowWidgetTest` 7 tests (266/266, 1841 assertions) red→green; dev `state: green` verified (AUM 100.0000, breakCount 0). OPS-11 satisfied → WP4 closed. Next card: **WP9-T03**. |
-| Test Suite | **266 tests / 1841 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-101 — **WP9-T03 DONE**: Queue Health (live jobs/failed_jobs, green/amber/red) + P&L Distribution (latest real trade date, honest empty state pending WP5-T05) widgets, `QueueHealthWidgetTest` 7 tests (273/273, 1861 assertions) red→green; dev queue `green`, P&L `amber` with "requires WP5-T05". Next card: **WP9-T05**. |
+| Test Suite | **273 tests / 1861 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
 | Active Phase | Money core complete — Laravel 13.43.0 + Filament 5 landed; **WP2 + WP3 + WP4 COMPLETE**; Ledger Health and Money Flow/Approval widgets verified with data (OPS-11); WP9 observability in progress |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
@@ -44,11 +44,11 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 6 | KYC workflow + approvals | 5 | WP2 | WP6-T01 |
 | 7 | MLM commissions | 10 | WP5, D-030/031 | WP7-T01 |
 | 8 | React web portal + Flutter mobile v1 | 15 | API contracts | WP8-T01 |
-| 9 | Admin observability + Report section | 8 | Widgets from WP1–WP8 | WP9-T03 (Queue Health + P&L widgets; T01/T02/T04 DONE, T03/T05–T08 remain) |
+| 9 | Admin observability + Report section | 8 | Widgets from WP1–WP8 | WP9-T05 (KYC + Security/Audit widgets; T01/T02/T03/T04 DONE, T05–T08 remain) |
 | 10 | Database seeders & demo fixtures | 12 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); T04 wallets/ledger, T05 KYC, **T09–T12 added for missing coverage (D-062)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
-**Total task cards: 99.** Current active card: **WP9-T03** (Queue Health + P&L Distribution widgets). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP3 COMPLETE (T01–T10)**, **WP4 COMPLETE (T01–T09)**, **WP9-T01/T02/T04**, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 99.** Current active card: **WP9-T05** (KYC + Security/Audit widgets). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP3 COMPLETE (T01–T10)**, **WP4 COMPLETE (T01–T09)**, **WP9-T01/T02/T03/T04**, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -169,6 +169,8 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-097 | WP4-T08 close | Agent credit transfer to investor: `POST /api/v1/agent-credit-transfers` (agent-only, KYC/active gate, idempotency via new `agent_credit_transfers` table), `AgentCreditTransferService` with cross-user `WalletService::transfer` (agent cash → investor cash, two immutable ledger rows, no fee), audit `agent_credit.transferred`, Filament `/admin/agent-credit-transfers` read-only gated on `agent_credit.view`. No MLM commission or role bonus created (COM-05/D-096). Fixed a real bug: `WalletService::transfer` rejected same-type wallets even for different users. `AgentCreditTransferTest` 10 tests red→green (259/259, 1816 assertions); PHPStan L6 0, Pint pass; dev `ledger:reconcile --json` `breakCount: 0`. **WP4 tasks all DONE; module not closed — OPS-11 widget WP9-T04 pending.** |
 | D-098 | Re-sequence / OPS-11 | Owner directed WP9-T04 (Money Flow + Approval widgets) be built and verified with data **before WP4 is formally closed**, following the D-071 precedent. Next card: **WP9-T04**. |
 | D-099 | WP9-T04 close / **WP4 COMPLETE** | `MoneyFlow` + `ApprovalQueues` native Filament `StatsOverviewWidget`s driven by `MoneyFlowService`: AUM = sum of maintained wallet balances; 30d deposits/withdrawals and net flow from immutable ledger rows (integer-scaled 4dp, no floats); negative-flow days and reconciliation breaks; queue counts with aging (green ≤24h, amber 24–48h, red >48h per `Admin_Observability_Spec.md:36/37`). Registered on the dashboard and in Reports Overview + Money Flow tabs with drill-down URLs to the three approval resources; gated on `reports.view`; owner labels CFO/Admin and Credit Manager. `MoneyFlowWidgetTest` 7 tests red→green (266/266, 1841 assertions); PHPStan L6 0, Pint pass; **dev verification** `summary()` → `aum 100.0000, netFlow 100.0000, breakCount 0, state green` and `queues()` → all green. OPS-11 satisfied → **WP4 formally closed**. Final 12-widget sign-off remains WP9-T08/`fp-admin-report-health`. Next card: **WP9-T03**. |
+| D-100 | GOV-04 / WP9-T03 re-sequence | Owner resolved the conflict between the live queue (WP9-T03 active) and the card prerequisite (WP5-T05 not DONE): WP9-T03 is approved ahead of WP5-T05. `QueueHealth` is fully data-driven now; `PnlStatus` must show an **honest empty state** ("no distributions posted yet — requires WP5-T05") per REP-08, with no fabricated latest date. Final P&L-health data is completed when WP5-T05 lands. |
+| D-101 | WP9-T03 close | `QueueHealth` + `PnlStatus` native Filament `StatsOverviewWidget`s driven by `QueueHealthService`/`PnlStatusService`: pending jobs, oldest age and failed jobs from `jobs`/`failed_jobs` with spec thresholds (green <5m, amber 5–30m, red failure or >30m); P&L latest `pnl_distributions.trade_date`, today's distributed count, active symbols, unresolved reversals. Empty table reports the **honest REP-08 state** (AMBER, "No distributions posted yet — requires WP5-T05") with no fabricated date, per D-100. Registered on the dashboard and Reports Overview + Operations/Investment tabs, `reports.view` gate, P&L Operator owner. `QueueHealthWidgetTest` 7 tests red→green (273/273, 1861 assertions); PHPStan L6 0, Pint pass; dev verification queue `green`, P&L `amber` with the honest message. Next card: **WP9-T05**. |
 
 ## DEFERRED ITEMS
 
@@ -220,17 +222,18 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Agent credit transfer (WP4-T08) | Money integrity | **DONE** | `AgentCreditTransferController` + idempotent service, cross-user atomic cash transfer with two immutable ledger rows, no commission/bonus payout, Filament `/admin/agent-credit-transfers`, `AgentCreditTransferTest` 10 tests |
 | Money Flow + Approval widgets (WP9-T04) | Admin observability | **DONE** | `MoneyFlow` + `ApprovalQueues` Stat widgets from `MoneyFlowService` live data, dashboard/Reports tabs, drill-down, `reports.view` gate, `MoneyFlowWidgetTest` 7 tests; OPS-11 satisfied for WP4 |
 | Wallet engine (WP4 complete) | Money integrity | **DONE** | T01–T09: wallet service + exchange rates, manual deposits, withdrawals, 24h capital release, internal transfers, agent credit purchase/tier bonus/transfer, reconciliation; all health data verified |
+| Queue Health + P&L Status (WP9-T03) | Admin observability | **DONE** | Live jobs/failed_jobs thresholds and P&L distribution status with honest empty state (D-100/REP-08), dashboard + Reports tabs, `QueueHealthWidgetTest` 7 tests |
 
 ## ENTRY LOG — last 4 detailed entries
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-096 | 2026-11-23 | **Role-bonus rule amendment** — owner clarified role bonus and MLM commission are different systems: admin-managed per-tier bonus rate (% of face value, DECIMAL 10,6) vs tier×level MLM commission (WP7). D-094 per-purchase input removed; no rule → bonus 0; `AgentCreditTest` 17 tests (249/249, 1779 assertions) red→green. |
-| D-097 | 2026-11-23 | **WP4-T08 DONE / WP4 tasks complete** — agent→investor credit transfer with cross-user atomic ledger rows + audit; `AgentCreditTransferTest` 10 tests (259/259, 1816 assertions) red→green. OPS-11 widget WP9-T04 pending. |
 | D-098 | 2026-11-23 | **Re-sequence** — owner directed WP9-T04 Money Flow + Approval widgets be built and verified before WP4 is formally closed (D-071 precedent). |
 | D-099 | 2026-11-23 | **WP9-T04 DONE / WP4 COMPLETE** — Money Flow + Approval Queues widgets from live ledger/request data, dev `state: green`; `MoneyFlowWidgetTest` 7 tests (266/266, 1841 assertions) red→green. OPS-11 satisfied. Next card: **WP9-T03**. |
+| D-100 | 2026-11-23 | **GOV-04 resolution / re-sequence** — owner approved WP9-T03 ahead of WP5-T05 with a REP-08 honest empty state for P&L data. |
+| D-101 | 2026-11-23 | **WP9-T03 DONE** — Queue Health + P&L Status widgets; `QueueHealthWidgetTest` 7 tests (273/273, 1861 assertions) red→green, dev queue green / P&L amber honest. Next card: **WP9-T05**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-095).
+Archived history → `docs/State_Ledger_Archive.md` (through D-097).
 
 ---
 

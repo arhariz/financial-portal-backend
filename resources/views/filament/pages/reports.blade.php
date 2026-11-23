@@ -55,9 +55,15 @@
                     @livewire(\App\Filament\Widgets\LedgerWalletsTable::class)
                     @livewire(\App\Filament\Widgets\MoneyFlow::class)
                     @livewire(\App\Filament\Widgets\ApprovalQueues::class)
+                    @livewire(\App\Filament\Widgets\QueueHealth::class)
+                    @livewire(\App\Filament\Widgets\PnlStatus::class)
                 </div>
             @elseif ($this->activeTab === 'ledger_wallets')
                 @livewire(\App\Filament\Widgets\LedgerWalletsTable::class)
+            @elseif ($this->activeTab === 'investment_pnl')
+                @livewire(\App\Filament\Widgets\PnlStatus::class)
+            @elseif ($this->activeTab === 'operations')
+                @livewire(\App\Filament\Widgets\QueueHealth::class)
             @elseif ($this->activeTab === 'money_flow')
                 <div class="grid gap-4">
                     @livewire(\App\Filament\Widgets\MoneyFlow::class)

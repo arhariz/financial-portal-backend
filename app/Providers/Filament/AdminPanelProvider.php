@@ -9,6 +9,8 @@ use App\Filament\Widgets\ApprovalQueues;
 use App\Filament\Widgets\LedgerHealth;
 use App\Filament\Widgets\LedgerWalletsTable;
 use App\Filament\Widgets\MoneyFlow;
+use App\Filament\Widgets\PnlStatus;
+use App\Filament\Widgets\QueueHealth;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -50,6 +52,8 @@ class AdminPanelProvider extends PanelProvider
                 LedgerWalletsTable::class,
                 MoneyFlow::class,
                 ApprovalQueues::class,
+                QueueHealth::class,
+                PnlStatus::class,
                 AccountWidget::class,
                 FilamentInfoWidget::class,
             ])
