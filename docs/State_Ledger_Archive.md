@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-077)
+# Last Updated: 2026-11-23 (D-079)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-073)
+## Archived entry log (through D-074)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -68,6 +68,7 @@
 | D-070 | 2026-11-23 | **WP2-T10 DONE** — 6 notification/dashboard/audit tables + 3 enums + `config/notification_events.php` + models/factories + append-only `AuditLog`; JSON columns + all indexes verified on dev MySQL; 81 tests/585 assertions, PHPStan 0, Pint pass. Next card: **WP2-T11**. |
 | D-072 | 2026-11-23 | **WP4-T09 DONE** — `ledger:reconcile` command + integer-scaled service; break detection, JSON output, 6 tests; dev DB zero breaks; 87 tests/599 assertions, PHPStan 0, Pint pass. Next card: **WP9-T01**. |
 | D-073 | 2026-11-23 | **WP9-T01 DONE** — Filament Reports page + 8 role-gated tabs + Overview shell; admin/support 200, investor denied; 92 tests/616 assertions, PHPStan 0, Pint pass. Next card: **WP9-T02**. |
+| D-074 | 2026-11-23 | **WP9-T02 DONE** — data-driven `LedgerHealth` widget (GREEN/AMBER/RED, drill-down, owner/timestamp) + `LedgerHealthSeeder`; dev DB `breakCount: 0`, widget `green`; 99 tests/632 assertions, PHPStan 0, Pint pass. WP2 widget dependency satisfied. Next card: **WP2-T11**. |
 
 ## Archived implemented modules
 

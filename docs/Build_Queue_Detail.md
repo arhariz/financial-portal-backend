@@ -56,7 +56,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 
 | ID | Task | Scope / files | Inputs | Rules | Verify / Done |
 |---|---|---|---|---|---|
-| WP3-T01 | User model + roles/status | `app/Models/User.php`, casts, traits | plan §1/§2 | AUTH-01, COD-02/03 | multi-role test |
+| WP3-T01 | User model + roles/status **(DONE, D-079)** | `app/Models/User.php`, casts, traits + `tests/Feature/UserModelTest.php` (6 tests) | plan §1/§2 | SEC-01, FIL-02, COD-02/03 | multi-role + enum + soft-delete + permission-based panel access ✅; 6 new tests (15 assertions), suite 114/114 (985), PHPStan 0, Pint pass ✅ |
 | WP3-T02 | Registration + referral code | `RegisterController`, FormRequest, service | plan §2 | SEC-01/02, GOV-01 | optional code links downline |
 | WP3-T03 | Login/logout (cookie + Bearer) | `AuthController`, Sanctum config | D-022 | SEC-04/05 | both auth modes tested |
 | WP3-T04 | Permission matrix + policies | `app/Policies/*`, `config/role_matrix.php` | plan §1 | FIL-02, SEC-01 | matrix test for all roles |

@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-077)
+# Last Updated: 2026-11-23 (D-079)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,10 +16,10 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-077 — **Reports UI redesign (WP9-T01 follow-up)**: owner chose to keep Filament Reports but make it attractive. Added hero banner, icon tab bar with interactive switching, KPI widget grid, honest scheduled-tab placeholders, and a polished read-only ledger drill-down panel. No data fabrication (REP-08). Next card: **WP3-T01**. |
-| Test Suite | **108 tests / 970 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-079 — **WP3-T01 DONE**: `User` model verified with multi-role, enum casts, SoftDeletes, permission-based panel access; `UserModelTest` (6 tests, 15 assertions) red→green. Card rule code remapped AUTH-01 → SEC-01/FIL-02/COD-02/03 (D-078). Next card: **WP3-T02**. |
+| Test Suite | **114 tests / 985 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
-| Active Phase | Auth/RBAC phase — Laravel 13.43.0 + Filament 5 landed; **WP2 COMPLETE (T01–T11 DONE)**; Ledger Health widget verified with data (OPS-11); WP3 next (T08–T10 blocked Q-005/6/7) |
+| Active Phase | Auth/RBAC phase — Laravel 13.43.0 + Filament 5 landed; **WP2 COMPLETE (T01–T11 DONE)**; Ledger Health widget verified with data (OPS-11); WP3-T01 DONE (T08–T10 blocked Q-005/6/7) |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
 | Plan version | 1.4 (locked) |
 | Files | `docs/plan.md`, `docs/project_Context.md`, `docs/Schema_Registry.md`, `docs/Constitution.md`, `docs/DOCS_MANIFEST.md`, `docs/EXECUTION_LOCKS_ACTIVE.md`, `docs/Feature_Flags_Registry.md`, `docs/Build_Queue_Detail.md`, `docs/Admin_Observability_Spec.md`, `docs/State_Ledger.md`, `docs/State_Ledger_Archive.md`, `docs/Prompt_Library.md`, `docs/Skills_Registry.md`, `rules/` (9), 12 custom skills, Laravel 13.43.0 skeleton (app/config/database/routes/resources/tests), 13 docs relocated to `docs/` |
@@ -38,7 +38,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 |---|---|---:|---|---|
 | 1 | Laravel 13 bootstrap + Filament 5 skeleton | 7 | None — **ALL DONE** | WP1 COMPLETE (T01–T07 DONE) |
 | 2 | Schema/ledger migrations + guard tests | 11 | None — **ALL DONE** | WP2 COMPLETE (T01–T11 DONE) |
-| 3 | Auth + RBAC | 10 | None | WP3-T01 (T07 done; T08–T10 blocked Q-005/6/7) |
+| 3 | Auth + RBAC | 10 | None | WP3-T02 (T01 + T07 done; T08–T10 blocked Q-005/6/7) |
 | 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | WP4-T01 (T09 DONE per D-072; T01–T08 remain) |
 | 5 | Investment positions + P&L distribution | 7 | WP4 | WP5-T01 |
 | 6 | KYC workflow + approvals | 5 | WP2 | WP6-T01 |
@@ -48,7 +48,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 10 | Database seeders & demo fixtures | 12 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); T04 wallets/ledger, T05 KYC, **T09–T12 added for missing coverage (D-062)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
-**Total task cards: 99.** Current active card: **WP3-T01** (User model + roles/status). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP4-T09**, **WP9-T01/T02**, WP3-T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 99.** Current active card: **WP3-T02** (Registration + referral code). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP4-T09**, **WP9-T01/T02**, WP3-T01/T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -146,6 +146,8 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-075 | WP2-T11 close / **WP2 COMPLETE** | Global `tests/Unit/SchemaGuardTest.php` (6 tests, 320 assertions): every registered business table exists, zero float/double/real columns, money columns decimal-typed and decimal-cast on models, all 70+ FK columns indexed, PHP-backed enums on status/type columns, append-only guards on `WalletTransaction`/`Commission`/`AuditLog`. The suite found a real **DB-04 gap** — `wallet_transactions.created_by` had no index — fixed with additive migration `2026_11_23_160000_add_missing_foreign_key_index_to_wallet_transactions_table` (GOV-02: schema fixed, not the rule). **OPS-11 satisfied for WP2**: Ledger Health widget present, visible in Filament (dashboard + Reports Overview tab), drillable to wallet ledger rows, and verified with real data (`breakCount: 0`, state `green`). Final 12-widget `fp-admin-report-health` sign-off remains end-of-project (REP-11). Gates: PHPStan 0, Pint pass, PHPUnit **105/105 (952 assertions)**. Next card: **WP3-T01**. |
 | D-076 | Widget UI correction (WP9-T02 follow-up) | Owner feedback: the widget rendered as plain text/table and the UI was not acceptable. Rebuilt with native Filament 5 components: `LedgerHealth` now extends `StatsOverviewWidget` (four stat cards — Health with success/warning/danger color + icon, Wallets checked, Breaks, Checked at with Asia/Dhaka + owner), and a new `LedgerWalletsTable` extends `TableWidget` (badges for type/status, balance/expected/difference columns, wallet-id URL drill-down). Both registered on the dashboard and embedded in the Reports Overview tab; the hand-rolled `ledger-health.blade.php` was removed. Data layer (`LedgerReconciliationService`, seeder, thresholds) unchanged. `LedgerHealthWidgetTest` updated to 8 tests / 24 assertions including native table rendering + drill-down link. Dev verification: widget `state()` still `green` from seeded data. Gates: PHPStan 0, Pint pass, PHPUnit **106/106 (960 assertions)**. |
 | D-077 | Reports UI redesign (WP9-T01 follow-up) | Owner feedback that the Reports section looked unattractive; owner chose **polish Filament Reports** over a React report (no change to locked D-034/D-021). `Reports` page now has: gradient hero banner with "Admin observability / Reports & module health" and a LIVE DATA pill; horizontal icon tab bar with active state and `setTab()` switching (unknown keys ignored, `?tab=` deep-link supported); Overview tab renders the native Ledger Health stat cards + wallet table widget; other tabs show an honest "Scheduled with its work package" placeholder with no invented figures (REP-08); wallet drill-down is a bordered panel with Filament badges for direction and a read-only badge. `ReportsSectionTest` extended to 7 tests / 27 assertions (hero, placeholder, tab switching). Gates: PHPStan 0, Pint pass, PHPUnit **108/108 (970 assertions)**. |
+| D-078 | WP3-T01 card correction (GOV-02) | The card cited undefined rule code `AUTH-01` (no module defines it). Remapped the WP3-T01 "Rules" column to existing locked codes `SEC-01, FIL-02, COD-02/03`, which already cover deny-by-default `can()` checks and the permission matrix. No rule body, count or schema change; `Admin_Observability_Spec.md:13` still references `AUTH-01` as a cross-reference only and is left as-is (cosmetic). |
+| D-079 | WP3-T01 close | `User` model already implements `HasRoles`, `HasApiTokens`, `SoftDeletes`, `Notifiable`, `FilamentUser`, enum casts (`status`→`UserStatus`, `kyc_status`→`KycStatus`) and permission-based `canAccessPanel()`. Added `tests/Feature/UserModelTest.php` (6 tests, 15 assertions) red→green: multi-role assignment, role preservation on second assignment, permission aggregation across roles, enum casts, SoftDeletes, permission-based panel access. Card rule code remapped per D-078. Gates: PHPStan 0, Pint pass, PHPUnit **114/114 (985 assertions)**. Next card: **WP3-T02**. |
 
 ## DEFERRED ITEMS
 
@@ -172,6 +174,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Quality gates (WP1-T04) | Static analysis + tests | **DONE** | `phpstan.neon` L6 + Larastan (zero baseline); `pint.json` PSR-12; 11 tests / 106 assertions; 7 initial PHPStan errors fixed at source |
 | Database seeders (WP10-T01/T02) | Seed data | **DONE** | `DatabaseSeeder` → `RolePermissionSeeder` + `UserSeeder`; 30 permissions / 12 roles / 13 users / 13 assignments; idempotent; dev-only password `Password@123` |
 | User management (WP3-T07) | Admin panel | **DONE** | `app/Filament/Resources/Users/*` + `app/Policies/UserPolicy.php`; list/create/edit gated by `users.view` / `users.manage`; non-admin → 403 |
+| User model (WP3-T01) | Auth/RBAC | **DONE** | `app/Models/User.php` — HasRoles/SoftDeletes/HasApiTokens/FilamentUser, enum casts, permission-based `canAccessPanel()`; `UserModelTest` 6 tests (multi-role, enum, soft delete, aggregation) |
 | Commission schema (WP2-T09) | Schema/ledger | **DONE** | `deduction_profiles`/`commission_rules`/`commissions`; D-030 defaults seeded in migration; enums + models/factories; append-only `Commission`; `CommissionSchemaTest` 7 tests |
 | Notification/audit schema (WP2-T10) | Schema/ledger | **DONE** | 6 tables (notification templates/notifications/preferences, dashboard layouts, audit log, login history); 3 enums + locked event config; models/factories; append-only `AuditLog`; `NotificationAuditSchemaTest` 9 tests |
 | Ledger reconciliation (WP4-T09) | Money integrity | **DONE** | `php artisan ledger:reconcile` + `LedgerReconciliationService`; integer-scaled 4dp, `--json`, non-zero on break; `LedgerReconcileCommandTest` 6 tests |
@@ -183,12 +186,12 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-074 | 2026-11-23 | **WP9-T02 DONE** — data-driven `LedgerHealth` widget (GREEN/AMBER/RED, drill-down, owner/timestamp) + `LedgerHealthSeeder`; dev DB `breakCount: 0`, widget `green`; 99 tests/632 assertions, PHPStan 0, Pint pass. WP2 widget dependency satisfied. Next card: **WP2-T11**. |
 | D-075 | 2026-11-23 | **WP2-T11 DONE / WP2 COMPLETE** — global `SchemaGuardTest` (6 tests, 320 assertions); found + fixed missing `wallet_transactions.created_by` index (DB-04); OPS-11 satisfied via verified Ledger Health widget; 105 tests/952 assertions, PHPStan 0, Pint pass. Next card: **WP3-T01**. |
 | D-076 | 2026-11-23 | **Widget UI correction** — native Filament `StatsOverviewWidget` + `TableWidget` replaced text Blade; data layer unchanged; dev widget GREEN; 106 tests/960 assertions, PHPStan 0, Pint pass. |
 | D-077 | 2026-11-23 | **Reports UI redesign** — hero banner, interactive icon tabs, widget grid, honest placeholders, polished drill-down; 108 tests/970 assertions, PHPStan 0, Pint pass. |
+| D-079 | 2026-11-23 | **WP3-T01 DONE** — `User` model verified with multi-role, enum casts, SoftDeletes, permission-based panel access; `UserModelTest` (6 tests, 15 assertions) red→green; card rule code remapped AUTH-01 → SEC-01/FIL-02/COD-02/03 (D-078). Next card: **WP3-T02**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-073).
+Archived history → `docs/State_Ledger_Archive.md` (through D-074).
 
 ---
 
