@@ -19,8 +19,9 @@
             @endforeach
         </div>
 
-        <div role="tabpanel" class="rounded border p-4">
+        <div role="tabpanel" class="grid gap-4">
             @livewire(\App\Filament\Widgets\LedgerHealth::class)
+            @livewire(\App\Filament\Widgets\LedgerWalletsTable::class)
         </div>
 
         @php($drilldown = $this->getDrilldownTransactions())

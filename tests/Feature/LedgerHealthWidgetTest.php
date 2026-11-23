@@ -7,6 +7,7 @@ namespace Tests\Feature;
 use App\Enums\TransactionDirection;
 use App\Enums\WalletType;
 use App\Filament\Widgets\LedgerHealth;
+use App\Filament\Widgets\LedgerWalletsTable;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
@@ -42,8 +43,11 @@ class LedgerHealthWidgetTest extends TestCase
 
         $widget = Livewire::test(LedgerHealth::class);
 
-        $widget->assertSee('GREEN')->assertSee('Wallets checked: 1')->assertSee('Breaks: 0');
-        $widget->assertSee('Finance Manager');
+        $widget->assertSee('GREEN')
+            ->assertSee('Health')
+            ->assertSee('Wallets checked')
+            ->assertSee('Breaks')
+            ->assertSee('Finance Manager');
     }
 
     public function test_amber_for_a_small_break_in_the_investment_aggregate(): void
@@ -105,9 +109,11 @@ class LedgerHealthWidgetTest extends TestCase
 
         $this->actingAs(User::where('email', 'support@forexbd.test')->firstOrFail());
         $this->assertTrue(LedgerHealth::canView());
+        $this->assertTrue(LedgerWalletsTable::canView());
 
         $this->actingAs(User::where('email', 'investor@forexbd.test')->firstOrFail());
         $this->assertFalse(LedgerHealth::canView());
+        $this->assertFalse(LedgerWalletsTable::canView());
     }
 
     public function test_drill_down_shows_the_wallets_ledger_rows(): void
@@ -127,6 +133,26 @@ class LedgerHealthWidgetTest extends TestCase
             ->assertOk()
             ->assertSee('Ledger rows for wallet '.$wallet->id)
             ->assertSee('adjustment');
+    }
+
+    public function test_native_wallet_table_widget_renders_rows_and_drill_down_link(): void
+    {
+        $this->authenticateAsAdmin();
+
+        $wallet = Wallet::factory()->create(['balance' => '10.0000']);
+        WalletTransaction::factory()->create([
+            'wallet_id' => $wallet->id,
+            'direction' => TransactionDirection::Credit,
+            'amount' => '10.0000',
+            'balance_after' => '10.0000',
+        ]);
+
+        Livewire::test(LedgerWalletsTable::class)
+            ->assertSee('Wallet reconciliation')
+            ->assertSee('Balance (USD)')
+            ->assertSee((string) $wallet->id)
+            ->assertSee('10.0000')
+            ->assertSee('wallet='.$wallet->id, false);
     }
 
     public function test_sample_data_seeder_produces_a_reconciled_ledger(): void

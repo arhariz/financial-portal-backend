@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Filament\Widgets;
 
 use App\Services\LedgerReconciliationService;
-use Filament\Widgets\Widget;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
-class LedgerHealth extends Widget
+class LedgerHealth extends BaseWidget
 {
-    protected string $view = 'filament.widgets.ledger-health';
+    protected ?string $heading = 'Ledger Health';
 
-    protected int | string | array $columnSpan = 'full';
+    protected ?string $description = 'Live wallet reconciliation · Owner: Finance Manager';
 
     public static function canView(): bool
     {
@@ -66,5 +67,41 @@ class LedgerHealth extends Widget
     public function owner(): string
     {
         return 'Finance Manager';
+    }
+
+    /**
+     * @return array<Stat>
+     */
+    protected function getStats(): array
+    {
+        $result = $this->result();
+        $state = $this->state();
+        $color = match ($state) {
+            'green' => 'success',
+            'amber' => 'warning',
+            default => 'danger',
+        };
+        $icon = match ($state) {
+            'green' => 'heroicon-o-check-circle',
+            'amber' => 'heroicon-o-exclamation-triangle',
+            default => 'heroicon-o-x-circle',
+        };
+
+        return [
+            Stat::make('Health', strtoupper($state))
+                ->description('Ledger reconciliation state')
+                ->color($color)
+                ->icon($icon),
+            Stat::make('Wallets checked', (string) count($result['wallets']))
+                ->description('Balance vs credits − debits')
+                ->icon('heroicon-o-wallet'),
+            Stat::make('Breaks', (string) $result['breakCount'])
+                ->description($result['breakCount'] === 0 ? 'All wallets reconcile' : 'Review wallet rows below')
+                ->color($result['breakCount'] === 0 ? 'success' : 'danger')
+                ->icon('heroicon-o-scale'),
+            Stat::make('Checked at', $result['checkedAt'])
+                ->description('Asia/Dhaka · '.$this->owner())
+                ->icon('heroicon-o-clock'),
+        ];
     }
 }

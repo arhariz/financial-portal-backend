@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-075)
+# Last Updated: 2026-11-23 (D-076)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,8 +16,8 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-075 — **WP2-T11 DONE / WP2 COMPLETE**: global `SchemaGuardTest` (6 tests, 320 assertions) — zero float columns, all FK indexes, decimal money casts, enum-backed statuses, append-only guards; found + fixed a real DB-04 gap (`wallet_transactions.created_by` index). Ledger Health widget verified with data → OPS-11 satisfied. Next card: **WP3-T01**. |
-| Test Suite | **105 tests / 952 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-076 — **Widget UI correction (WP9-T02 follow-up)**: replaced the hand-rolled text/table Blade with native Filament `StatsOverviewWidget` (health/ wallets/breaks/checked-at stat cards with colors + icons) and `TableWidget` (wallet rows, badges, drill-down URL). Data layer unchanged; dev widget still GREEN from seeded ledger. Next card: **WP3-T01**. |
+| Test Suite | **106 tests / 960 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
 | Active Phase | Auth/RBAC phase — Laravel 13.43.0 + Filament 5 landed; **WP2 COMPLETE (T01–T11 DONE)**; Ledger Health widget verified with data (OPS-11); WP3 next (T08–T10 blocked Q-005/6/7) |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
@@ -144,6 +144,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-073 | WP9-T01 close | Filament **Reports** page (`app/Filament/Pages/Reports.php` + `resources/views/filament/pages/reports.blade.php`), navigation group **Reports**, registered in `AdminPanelProvider`. Eight tabs transcribed from `Admin_Observability_Spec.md` (Overview, Ledger & Wallets, Investment & P&L, Agents & Commissions, KYC & Security, Money Flow, Operations, Exports). Access uses `can('reports.view')` (FIL-02/REP-07): super_admin + support 200, investor denied; Support remains view-only (`users.manage` false). `ReportsSectionTest` (5 tests, 17 assertions) red→green. Filament 5 property types (`string|BackedEnum|null`, `string|UnitEnum|null`) matched at source. Gates: PHPStan 0, Pint pass, PHPUnit **92/92 (616 assertions)**. Next card: **WP9-T02**. |
 | D-074 | WP9-T02 close | `App\Filament\Widgets\LedgerHealth` on the admin dashboard and Reports Overview tab, driven by `LedgerReconciliationService` — no fabricated numbers (REP-08). States per `Admin_Observability_Spec.md:33`: green = all reconcile; amber = break under 1% of balance in the investment aggregate; red = any unreconciled money wallet (cash/profit/commission, WAL-01) or break ≥ 1% (integer-scaled comparison, no floats). Shows metric, `Asia/Dhaka` timestamp, owner Finance Manager, and per-wallet drill-down to `/admin/reports?tab=ledger_wallets&wallet=<id>` with that wallet's immutable ledger rows. Visible to `reports.view` (Support view-only). `LedgerHealthSeeder` ships minimal reconciled sample data (TST-13/D-071) and is orchestrated by `DatabaseSeeder`; WP10-T04 remains the comprehensive wallet fixture. `LedgerHealthWidgetTest` (7 tests, 19 assertions) red→green; dev DB seeded → `ledger:reconcile --json` `breakCount: 0` and widget `state()` = `green`. Gates: PHPStan 0, Pint pass, PHPUnit **99/99 (632 assertions)**. Next card: **WP2-T11**. |
 | D-075 | WP2-T11 close / **WP2 COMPLETE** | Global `tests/Unit/SchemaGuardTest.php` (6 tests, 320 assertions): every registered business table exists, zero float/double/real columns, money columns decimal-typed and decimal-cast on models, all 70+ FK columns indexed, PHP-backed enums on status/type columns, append-only guards on `WalletTransaction`/`Commission`/`AuditLog`. The suite found a real **DB-04 gap** — `wallet_transactions.created_by` had no index — fixed with additive migration `2026_11_23_160000_add_missing_foreign_key_index_to_wallet_transactions_table` (GOV-02: schema fixed, not the rule). **OPS-11 satisfied for WP2**: Ledger Health widget present, visible in Filament (dashboard + Reports Overview tab), drillable to wallet ledger rows, and verified with real data (`breakCount: 0`, state `green`). Final 12-widget `fp-admin-report-health` sign-off remains end-of-project (REP-11). Gates: PHPStan 0, Pint pass, PHPUnit **105/105 (952 assertions)**. Next card: **WP3-T01**. |
+| D-076 | Widget UI correction (WP9-T02 follow-up) | Owner feedback: the widget rendered as plain text/table and the UI was not acceptable. Rebuilt with native Filament 5 components: `LedgerHealth` now extends `StatsOverviewWidget` (four stat cards — Health with success/warning/danger color + icon, Wallets checked, Breaks, Checked at with Asia/Dhaka + owner), and a new `LedgerWalletsTable` extends `TableWidget` (badges for type/status, balance/expected/difference columns, wallet-id URL drill-down). Both registered on the dashboard and embedded in the Reports Overview tab; the hand-rolled `ledger-health.blade.php` was removed. Data layer (`LedgerReconciliationService`, seeder, thresholds) unchanged. `LedgerHealthWidgetTest` updated to 8 tests / 24 assertions including native table rendering + drill-down link. Dev verification: widget `state()` still `green` from seeded data. Gates: PHPStan 0, Pint pass, PHPUnit **106/106 (960 assertions)**. |
 
 ## DEFERRED ITEMS
 
@@ -174,19 +175,19 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Notification/audit schema (WP2-T10) | Schema/ledger | **DONE** | 6 tables (notification templates/notifications/preferences, dashboard layouts, audit log, login history); 3 enums + locked event config; models/factories; append-only `AuditLog`; `NotificationAuditSchemaTest` 9 tests |
 | Ledger reconciliation (WP4-T09) | Money integrity | **DONE** | `php artisan ledger:reconcile` + `LedgerReconciliationService`; integer-scaled 4dp, `--json`, non-zero on break; `LedgerReconcileCommandTest` 6 tests |
 | Reports shell (WP9-T01) | Admin observability | **DONE** | `app/Filament/Pages/Reports.php` + `reports.blade.php`; 8 tabs, `reports.view` gate, group Reports; `ReportsSectionTest` 5 tests |
-| Ledger Health widget (WP9-T02) | Admin observability | **DONE** | `LedgerHealth` widget + service-driven states + drill-down + `LedgerHealthSeeder`; dev data GREEN; `LedgerHealthWidgetTest` 7 tests |
+| Ledger Health widget (WP9-T02) | Admin observability | **DONE** | Native Filament `StatsOverviewWidget` + `LedgerWalletsTable` `TableWidget` + service-driven states + drill-down + `LedgerHealthSeeder`; dev data GREEN; `LedgerHealthWidgetTest` 8 tests |
 | Schema phase (WP2 complete) | Schema/ledger | **DONE** | T01–T11; 25 business tables, enums, factories, append-only guards, global `SchemaGuardTest` 6 tests; Ledger Health widget verified with data (OPS-11) |
 
 ## ENTRY LOG — last 4 detailed entries
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-072 | 2026-11-23 | **WP4-T09 DONE** — `ledger:reconcile` command + integer-scaled service; break detection, JSON output, 6 tests; dev DB zero breaks; 87 tests/599 assertions, PHPStan 0, Pint pass. Next card: **WP9-T01**. |
 | D-073 | 2026-11-23 | **WP9-T01 DONE** — Filament Reports page + 8 role-gated tabs + Overview shell; admin/support 200, investor denied; 92 tests/616 assertions, PHPStan 0, Pint pass. Next card: **WP9-T02**. |
 | D-074 | 2026-11-23 | **WP9-T02 DONE** — data-driven `LedgerHealth` widget (GREEN/AMBER/RED, drill-down, owner/timestamp) + `LedgerHealthSeeder`; dev DB `breakCount: 0`, widget `green`; 99 tests/632 assertions, PHPStan 0, Pint pass. WP2 widget dependency satisfied. Next card: **WP2-T11**. |
 | D-075 | 2026-11-23 | **WP2-T11 DONE / WP2 COMPLETE** — global `SchemaGuardTest` (6 tests, 320 assertions); found + fixed missing `wallet_transactions.created_by` index (DB-04); OPS-11 satisfied via verified Ledger Health widget; 105 tests/952 assertions, PHPStan 0, Pint pass. Next card: **WP3-T01**. |
+| D-076 | 2026-11-23 | **Widget UI correction** — native Filament `StatsOverviewWidget` + `TableWidget` replaced text Blade; data layer unchanged; dev widget GREEN; 106 tests/960 assertions, PHPStan 0, Pint pass. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-070).
+Archived history → `docs/State_Ledger_Archive.md` (through D-072).
 
 ---
 
