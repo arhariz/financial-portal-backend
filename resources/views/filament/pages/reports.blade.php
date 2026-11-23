@@ -53,9 +53,16 @@
                 <div class="grid gap-4">
                     @livewire(\App\Filament\Widgets\LedgerHealth::class)
                     @livewire(\App\Filament\Widgets\LedgerWalletsTable::class)
+                    @livewire(\App\Filament\Widgets\MoneyFlow::class)
+                    @livewire(\App\Filament\Widgets\ApprovalQueues::class)
                 </div>
             @elseif ($this->activeTab === 'ledger_wallets')
                 @livewire(\App\Filament\Widgets\LedgerWalletsTable::class)
+            @elseif ($this->activeTab === 'money_flow')
+                <div class="grid gap-4">
+                    @livewire(\App\Filament\Widgets\MoneyFlow::class)
+                    @livewire(\App\Filament\Widgets\ApprovalQueues::class)
+                </div>
             @else
                 <div class="rounded-2xl border border-gray-200 bg-white px-6 py-14 text-center shadow-sm">
                     <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-700">

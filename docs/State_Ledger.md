@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-098)
+# Last Updated: 2026-11-23 (D-099)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,10 +16,10 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-098 — **WP9-T04 pulled forward**: Money Flow + Approval widgets to be built/verified before WP4 is formally closed (OPS-11, D-071 precedent). WP4-T08 is DONE (D-097); all 9 WP4 tasks complete. Next card: **WP9-T04**. |
-| Test Suite | **259 tests / 1816 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-099 — **WP9-T04 DONE / WP4 COMPLETE**: Money Flow + Approval Queues widgets built from live ledger/request data, registered in Filament dashboard + Reports Overview/Money Flow tabs, `MoneyFlowWidgetTest` 7 tests (266/266, 1841 assertions) red→green; dev `state: green` verified (AUM 100.0000, breakCount 0). OPS-11 satisfied → WP4 closed. Next card: **WP9-T03**. |
+| Test Suite | **266 tests / 1841 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
-| Active Phase | Auth/RBAC phase — Laravel 13.43.0 + Filament 5 landed; **WP2 COMPLETE (T01–T11 DONE)**; Ledger Health widget verified with data (OPS-11); WP3-T01 DONE (T08–T10 blocked Q-005/6/7) |
+| Active Phase | Money core complete — Laravel 13.43.0 + Filament 5 landed; **WP2 + WP3 + WP4 COMPLETE**; Ledger Health and Money Flow/Approval widgets verified with data (OPS-11); WP9 observability in progress |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
 | Plan version | 1.4 (locked) |
 | Files | `docs/plan.md`, `docs/project_Context.md`, `docs/Schema_Registry.md`, `docs/Constitution.md`, `docs/DOCS_MANIFEST.md`, `docs/EXECUTION_LOCKS_ACTIVE.md`, `docs/Feature_Flags_Registry.md`, `docs/Build_Queue_Detail.md`, `docs/Admin_Observability_Spec.md`, `docs/State_Ledger.md`, `docs/State_Ledger_Archive.md`, `docs/Prompt_Library.md`, `docs/Skills_Registry.md`, `rules/` (9), 12 custom skills, Laravel 13.43.0 skeleton (app/config/database/routes/resources/tests), 13 docs relocated to `docs/` |
@@ -39,16 +39,16 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 1 | Laravel 13 bootstrap + Filament 5 skeleton | 7 | None — **ALL DONE** | WP1 COMPLETE (T01–T07 DONE) |
 | 2 | Schema/ledger migrations + guard tests | 11 | None — **ALL DONE** | WP2 COMPLETE (T01–T11 DONE) |
 | 3 | Auth + RBAC | 10 | None — **ALL DONE** | WP3 COMPLETE (T01–T10 DONE) |
-| 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | ALL 9 TASKS DONE (T01–T09); **OPS-11 widget WP9-T04 pending** — WP4 not closed yet |
+| 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | **WP4 COMPLETE (T01–T09 DONE)** — OPS-11 widget verified (Money Flow + Approvals, D-099) |
 | 5 | Investment positions + P&L distribution | 7 | WP4 | WP5-T01 |
 | 6 | KYC workflow + approvals | 5 | WP2 | WP6-T01 |
 | 7 | MLM commissions | 10 | WP5, D-030/031 | WP7-T01 |
 | 8 | React web portal + Flutter mobile v1 | 15 | API contracts | WP8-T01 |
-| 9 | Admin observability + Report section | 8 | Widgets from WP1–WP8 | WP9-T03 (Queue Health + P&L widgets; T04–T08 remain) |
+| 9 | Admin observability + Report section | 8 | Widgets from WP1–WP8 | WP9-T03 (Queue Health + P&L widgets; T01/T02/T04 DONE, T03/T05–T08 remain) |
 | 10 | Database seeders & demo fixtures | 12 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); T04 wallets/ledger, T05 KYC, **T09–T12 added for missing coverage (D-062)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
-**Total task cards: 99.** Current active card: **WP9-T04** (Money Flow + Approval widgets, re-sequenced D-098). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP3 COMPLETE (T01–T10)**, **WP4-T01…T09 (all tasks; module closure pending WP9-T04)**, **WP9-T01/T02**, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 99.** Current active card: **WP9-T03** (Queue Health + P&L Distribution widgets). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP3 COMPLETE (T01–T10)**, **WP4 COMPLETE (T01–T09)**, **WP9-T01/T02/T04**, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -168,6 +168,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-096 | Role bonus rule (supersedes D-094 mechanism) / Q-011 | Owner correction: the role bonus must come from an **admin-managed system, not a per-purchase typed amount**. Locked design: (a) one bonus rule **per agent tier** (1/2/3, D-031 labels), admin-editable at runtime via a Filament settings resource gated on `settings.manage`; (b) rate stored as `DECIMAL(10,6)` **fraction of USD face value** (e.g. 0.050000 = 5%); no value seeded — an unset/inactive tier means **no bonus rule**; (c) with no rule the purchase still succeeds and credits **face value only, bonus 0** (no invented default); (d) MLM commission stays entirely separate — tier × level `commission_rules` (D-013/COM-04) drives upline payouts in WP7; the bonus credits only the purchasing agent's commission wallet and never creates a `commissions` row. D-094's per-purchase `bonus_amount_usd` input is removed. Amendment is one commit under WP4-T07 with updated tests/docs. |
 | D-097 | WP4-T08 close | Agent credit transfer to investor: `POST /api/v1/agent-credit-transfers` (agent-only, KYC/active gate, idempotency via new `agent_credit_transfers` table), `AgentCreditTransferService` with cross-user `WalletService::transfer` (agent cash → investor cash, two immutable ledger rows, no fee), audit `agent_credit.transferred`, Filament `/admin/agent-credit-transfers` read-only gated on `agent_credit.view`. No MLM commission or role bonus created (COM-05/D-096). Fixed a real bug: `WalletService::transfer` rejected same-type wallets even for different users. `AgentCreditTransferTest` 10 tests red→green (259/259, 1816 assertions); PHPStan L6 0, Pint pass; dev `ledger:reconcile --json` `breakCount: 0`. **WP4 tasks all DONE; module not closed — OPS-11 widget WP9-T04 pending.** |
 | D-098 | Re-sequence / OPS-11 | Owner directed WP9-T04 (Money Flow + Approval widgets) be built and verified with data **before WP4 is formally closed**, following the D-071 precedent. Next card: **WP9-T04**. |
+| D-099 | WP9-T04 close / **WP4 COMPLETE** | `MoneyFlow` + `ApprovalQueues` native Filament `StatsOverviewWidget`s driven by `MoneyFlowService`: AUM = sum of maintained wallet balances; 30d deposits/withdrawals and net flow from immutable ledger rows (integer-scaled 4dp, no floats); negative-flow days and reconciliation breaks; queue counts with aging (green ≤24h, amber 24–48h, red >48h per `Admin_Observability_Spec.md:36/37`). Registered on the dashboard and in Reports Overview + Money Flow tabs with drill-down URLs to the three approval resources; gated on `reports.view`; owner labels CFO/Admin and Credit Manager. `MoneyFlowWidgetTest` 7 tests red→green (266/266, 1841 assertions); PHPStan L6 0, Pint pass; **dev verification** `summary()` → `aum 100.0000, netFlow 100.0000, breakCount 0, state green` and `queues()` → all green. OPS-11 satisfied → **WP4 formally closed**. Final 12-widget sign-off remains WP9-T08/`fp-admin-report-health`. Next card: **WP9-T03**. |
 
 ## DEFERRED ITEMS
 
@@ -217,17 +218,19 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Agent credit purchase (WP4-T07) | Money integrity | **DONE** | Admin-only `AgentCreditController` + `AgentCreditService` (BDT at current rate → cash face value + **tier-configured** commission bonus per D-096, immutable rows, no MLM payout), Filament `/admin/agent-credits` read-only + `/admin/agent-credit-bonus-rules` admin settings, `AgentCreditTest` 17 tests |
 | Agent credit bonus rules (D-096) | Config | **DONE** | Per-tier admin-managed `agent_credit_bonus_rules` (rate DECIMAL(10,6), active flag) gated on `settings.manage`; no default rate seeded; exercises tier/inactive/precision cases |
 | Agent credit transfer (WP4-T08) | Money integrity | **DONE** | `AgentCreditTransferController` + idempotent service, cross-user atomic cash transfer with two immutable ledger rows, no commission/bonus payout, Filament `/admin/agent-credit-transfers`, `AgentCreditTransferTest` 10 tests |
+| Money Flow + Approval widgets (WP9-T04) | Admin observability | **DONE** | `MoneyFlow` + `ApprovalQueues` Stat widgets from `MoneyFlowService` live data, dashboard/Reports tabs, drill-down, `reports.view` gate, `MoneyFlowWidgetTest` 7 tests; OPS-11 satisfied for WP4 |
+| Wallet engine (WP4 complete) | Money integrity | **DONE** | T01–T09: wallet service + exchange rates, manual deposits, withdrawals, 24h capital release, internal transfers, agent credit purchase/tier bonus/transfer, reconciliation; all health data verified |
 
 ## ENTRY LOG — last 4 detailed entries
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-095 | 2026-11-23 | **WP4-T07 DONE** — admin-only agent credit purchase at current rate → cash face value + admin-supplied commission bonus (two immutable rows, no upline commission); `AgentCreditTest` 13 tests (245/245, 1770 assertions) red→green. Next card: **WP4-T08**. |
 | D-096 | 2026-11-23 | **Role-bonus rule amendment** — owner clarified role bonus and MLM commission are different systems: admin-managed per-tier bonus rate (% of face value, DECIMAL 10,6) vs tier×level MLM commission (WP7). D-094 per-purchase input removed; no rule → bonus 0; `AgentCreditTest` 17 tests (249/249, 1779 assertions) red→green. |
 | D-097 | 2026-11-23 | **WP4-T08 DONE / WP4 tasks complete** — agent→investor credit transfer with cross-user atomic ledger rows + audit; `AgentCreditTransferTest` 10 tests (259/259, 1816 assertions) red→green. OPS-11 widget WP9-T04 pending. |
 | D-098 | 2026-11-23 | **Re-sequence** — owner directed WP9-T04 Money Flow + Approval widgets be built and verified before WP4 is formally closed (D-071 precedent). |
+| D-099 | 2026-11-23 | **WP9-T04 DONE / WP4 COMPLETE** — Money Flow + Approval Queues widgets from live ledger/request data, dev `state: green`; `MoneyFlowWidgetTest` 7 tests (266/266, 1841 assertions) red→green. OPS-11 satisfied. Next card: **WP9-T03**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-094).
+Archived history → `docs/State_Ledger_Archive.md` (through D-095).
 
 ---
 

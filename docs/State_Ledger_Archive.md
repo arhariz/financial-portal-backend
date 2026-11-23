@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-098)
+# Last Updated: 2026-11-23 (D-099)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-094)
+## Archived entry log (through D-095)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -86,6 +86,7 @@
 | D-092 | 2026-11-23 | **WP4-T05 DONE / GOV-02 correction** — capital release request → 24h approval → named-queue job → atomic investment→cash transfer (two immutable ledger rows); `release_at` nullable until approval; `CapitalReleaseTest` 14 tests (213/213, 1665 assertions) red→green. Next card: **WP4-T06**. |
 | D-093 | 2026-11-23 | **WP4-T06 DONE / GOV-02 enum fix** — idempotent internal transfers with locked direction whitelist, Asia/Dhaka T+2 position creation, typed immutable ledger rows; `PositionSource` gained `commission` for WAL-05; `InternalTransferTest` 19 tests (232/232, 1725 assertions) red→green. Next card: **WP4-T07**. |
 | D-094 | 2026-11-23 | **Q-011 CLOSED / GOV-01 resolved** — owner decided the agent-credit role bonus is an explicit USD amount supplied per purchase by an admin with `agent_credit.manage`; no tenant-wide rate or invented default; COM-05 separation preserved. **Mechanism superseded by D-096.** |
+| D-095 | 2026-11-23 | **WP4-T07 DONE** — admin-only agent credit purchase at current rate → cash face value + admin-supplied commission bonus (two immutable rows, no upline commission); `AgentCreditTest` 13 tests (245/245, 1770 assertions) red→green. Next card: **WP4-T08**. |
 
 ## Archived implemented modules
 

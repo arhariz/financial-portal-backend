@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Reports;
+use App\Filament\Widgets\ApprovalQueues;
 use App\Filament\Widgets\LedgerHealth;
 use App\Filament\Widgets\LedgerWalletsTable;
+use App\Filament\Widgets\MoneyFlow;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -46,6 +48,8 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 LedgerHealth::class,
                 LedgerWalletsTable::class,
+                MoneyFlow::class,
+                ApprovalQueues::class,
                 AccountWidget::class,
                 FilamentInfoWidget::class,
             ])
