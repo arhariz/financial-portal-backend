@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-070)
+# Last Updated: 2026-11-23 (D-072)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,8 +16,8 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-070 — **WP2-T10 DONE**: 6 tables (`notification_templates`, `notifications`, `notification_preferences`, `dashboard_layouts`, `audit_logs`, `login_history`), 3 enums + `config/notification_events.php`, models/factories, append-only `AuditLog`, `NotificationAuditSchemaTest` (9 tests); JSON columns + all indexes verified on dev MySQL. Next card: **WP2-T11**. |
-| Test Suite | **81 tests / 585 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-072 — **WP4-T09 DONE (re-sequenced per D-071)**: `php artisan ledger:reconcile` + `LedgerReconciliationService` (integer-scaled 4dp, zero breaks on dev DB), `LedgerReconcileCommandTest` (6 tests); WP2 stays open until the Ledger widget is verified with data. Next card: **WP9-T01**. |
+| Test Suite | **87 tests / 599 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
 | Active Phase | Schema phase in progress — Laravel 13.43.0 + Filament 5 + RBAC landed; WP2 schema T01–T10 DONE (T11 remains) |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
@@ -39,16 +39,16 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 1 | Laravel 13 bootstrap + Filament 5 skeleton | 7 | None — **ALL DONE** | WP1 COMPLETE (T01–T07 DONE) |
 | 2 | Schema/ledger migrations + guard tests | 11 | None (D-029) | WP2-T11 (T01–T10 DONE) |
 | 3 | Auth + RBAC | 10 | None | WP3-T01 (T07 done; T08–T10 blocked Q-005/6/7) |
-| 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | WP4-T01 |
+| 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | WP4-T01 (T09 DONE per D-072; T01–T08 remain) |
 | 5 | Investment positions + P&L distribution | 7 | WP4 | WP5-T01 |
 | 6 | KYC workflow + approvals | 5 | WP2 | WP6-T01 |
 | 7 | MLM commissions | 10 | WP5, D-030/031 | WP7-T01 |
 | 8 | React web portal + Flutter mobile v1 | 15 | API contracts | WP8-T01 |
-| 9 | Admin observability + Report section | 8 | Widgets from WP1–WP8 | WP9-T01 |
+| 9 | Admin observability + Report section | 8 | Widgets from WP1–WP8 | WP9-T01 (Reports shell; T02 widget follows per D-071) |
 | 10 | Database seeders & demo fixtures | 12 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); T04 wallets/ledger, T05 KYC, **T09–T12 added for missing coverage (D-062)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
-**Total task cards: 99.** Current active card: **WP2-T11** (schema guard suite). **WP1 (T01–T07)**, **WP2-T01/T02/T03/T04/T05/T06/T07/T08/T09/T10**, WP3-T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 99.** Current active card: **WP9-T01** (Reports page group + Overview shell; WP2-T11 deferred until the Ledger widget is verified with data per D-071). **WP1 (T01–T07)**, **WP2-T01/T02/T03/T04/T05/T06/T07/T08/T09/T10**, **WP4-T09**, WP3-T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -139,6 +139,8 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-068 | WP2-T08 close | Two additive migrations: `agents` (unique `user_id` + `referral_code`, integer `tier` 1/2/3 per COM-08, nullable RESTRICT self-FK `upline_agent_id`, status via existing `UserStatus`, `total_sales DECIMAL(18,4)`, `active_referrals_count`, `created_at` only) and `referrals` (agent + user RESTRICT FKs, `level`, `created_at` only). New `config/agent_tiers.php` holds D-031 display labels **Seed / Growth / Master Investor** as config, not code (COM-08); no default tier invented. Models + factories; `AgentSchemaTest` (6 tests, 34 assertions) covers columns, integer tier, decimal round-trip, config labels, account-status enum, all FK/filter indexes and unique referral code. MySQL `decimal(18,4)` + indexes verified. Agent seeder remains WP10-T11 per D-062. Gates: PHPStan 0, Pint pass, PHPUnit **65/65 (432 assertions)**. Next card: **WP2-T09**. DONE widget: Ledger Reconciliation (WP9-T02), required only when WP2 is marked DONE. |
 | D-069 | WP2-T09 close | Three additive migrations: `deduction_profiles` (unique `name`, `rules` JSON, nullable NULL-on-delete `created_by`, timestamps), `commission_rules` (event `investment`/`profit_distribution`/`credit_purchase`, integer `agent_tier`/`level`, `rate DECIMAL(10,6)`, `enabled`, `holding_period_hours`, NULL-on-delete `deduction_profile_id`, timestamps, indexes) and `commissions` (agent/rule/source-user RESTRICT FKs, polymorphic source reference, `base_amount`/`amount DECIMAL(18,4)`, status pending/vested/cancelled/reversed, nullable `vest_at` + NULL-on-delete `wallet_transaction_id`, timestamps, indexes). `config/deduction_types.php` + `DeductionType` enum hold the D-030/COM-07 locked defaults; the three profiles are seeded **in the migration** via idempotent `insertOrIgnore` (unique name) — no new type invented (GOV-01); commission sample-data seeder stays WP10 per D-062. Enums `CommissionEvent`/`CommissionStatus`/`DeductionType`; models + factories; `Commission` blocks update/delete (MON-03). `CommissionSchemaTest` (7 tests, 63 assertions) red→green: columns, 6dp/4dp round-trip, enums, seeded defaults (incl. admin_adjustment `requires_note`), indexes, append-only guards. MySQL `information_schema` confirms `decimal(10,6)`, `decimal(18,4)`, all indexes and exactly 3 seeded profiles. Gates: PHPStan 0, Pint pass, PHPUnit **72/72 (495 assertions)**. Next card: **WP2-T10**. DONE widget: Ledger Reconciliation (WP9-T02), required only when WP2 is marked DONE. |
 | D-070 | WP2-T10 close | Six additive migrations: `notification_templates` (unique `key`, channel, subject, body, variables JSON, enabled), `notifications` (user RESTRICT FK, template_key, channel, payload JSON, status queued/sent/failed, sent_at, created_at only), `notification_preferences` (user RESTRICT FK, channel, event, enabled, unique user+channel+event), `dashboard_layouts` (role RESTRICT FK, nullable user/updated_by, widgets JSON, timestamps — per-role default + per-user override per FIL-04), `audit_logs` (nullable actor, actor_role, action, polymorphic subject, ip, user_agent, changes JSON, created_at only — append-only per SEC-07), `login_history` (user RESTRICT FK, ip, user_agent, device, logged_in_at, logged_out_at). `config/notification_events.php` transcribes the five plan §7/D-016 event groups with `security_alert` mandatory; enums `NotificationChannel`/`NotificationStatus`/`NotificationEvent` (machine keys derived from the locked group names — no new business default invented). Models + factories; `AuditLog` blocks update/delete. `NotificationAuditSchemaTest` (9 tests, 90 assertions) red→green: columns, locked channel/status/event values, mandatory security alerts, all FK/status/date indexes, JSON casts with no float columns, role-default vs user-override layouts, append-only update/delete. Dev MySQL `information_schema` confirms JSON columns, no float/decimal money columns and all indexes. Notification/audit sample-data seeder stays WP10-T12 per D-062. Gates: PHPStan 0, Pint pass, PHPUnit **81/81 (585 assertions)**. Next card: **WP2-T11**. DONE widget: Ledger Reconciliation (WP9-T02), required only when WP2 is marked DONE. |
+| D-071 | Owner directive / OPS-11 / gate B | Owner (CTO) directed that **WP2 must not be closed until the Ledger Reconciliation widget exists and is verified with data**. Approved re-sequence ahead of WP2-T11: **WP4-T09** (`php artisan ledger:reconcile`) → **WP9-T01** (Reports page group + Overview shell) → **WP9-T02** (`LedgerHealth` widget, real ledger data + drill-down) → then **WP2-T11** closes WP2. Widget states are locked by `Admin_Observability_Spec.md:33` (green = all wallets reconcile, amber = break < 1% of balance, red = any unreconciled money wallet). One card = one commit; every card re-runs the Step 4 gate and ACK. |
+| D-072 | WP4-T09 close | `php artisan ledger:reconcile` + `App\Services\LedgerReconciliationService` — credits minus debits vs maintained balance (MON-05, Schema §3 #2), integer-scaled at 4dp with no binary floats, `Asia/Dhaka` `checkedAt` timestamp, table + `--json` output, exit FAILURE on any break. `LedgerReconcileCommandTest` (6 tests, 14 assertions) red→green covers zero breaks, break detection, debits, 4dp precision, JSON shape, empty wallet set. Class-level `@property` enum declarations added to `Wallet`/`WalletTransaction` to fix Larastan type inference at source (no suppressions). Dev DB: `ledger:reconcile --json` → `breakCount: 0`. Gates: PHPStan 0, Pint pass, PHPUnit **87/87 (599 assertions)**. Next card: **WP9-T01**. |
 
 ## DEFERRED ITEMS
 
@@ -167,17 +169,18 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | User management (WP3-T07) | Admin panel | **DONE** | `app/Filament/Resources/Users/*` + `app/Policies/UserPolicy.php`; list/create/edit gated by `users.view` / `users.manage`; non-admin → 403 |
 | Commission schema (WP2-T09) | Schema/ledger | **DONE** | `deduction_profiles`/`commission_rules`/`commissions`; D-030 defaults seeded in migration; enums + models/factories; append-only `Commission`; `CommissionSchemaTest` 7 tests |
 | Notification/audit schema (WP2-T10) | Schema/ledger | **DONE** | 6 tables (notification templates/notifications/preferences, dashboard layouts, audit log, login history); 3 enums + locked event config; models/factories; append-only `AuditLog`; `NotificationAuditSchemaTest` 9 tests |
+| Ledger reconciliation (WP4-T09) | Money integrity | **DONE** | `php artisan ledger:reconcile` + `LedgerReconciliationService`; integer-scaled 4dp, `--json`, non-zero on break; `LedgerReconcileCommandTest` 6 tests |
 
 ## ENTRY LOG — last 4 detailed entries
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-067 | 2026-11-23 | **WP2-T07 DONE** — `pnl_distributions`/`pnl_distribution_items` + status enum + models/factories + guard tests; signed `decimal(18,4)`/`decimal(10,6)` + sum-to-posted verified; 59 tests/398 assertions, PHPStan 0, Pint pass. Next card: **WP2-T08**. |
 | D-068 | 2026-11-23 | **WP2-T08 DONE** — `agents`/`referrals` tables + D-031 tier-label config + models/factories + guard tests; integer tier + `decimal(18,4)` verified; 65 tests/432 assertions, PHPStan 0, Pint pass. Next card: **WP2-T09**. |
 | D-069 | 2026-11-23 | **WP2-T09 DONE** — `deduction_profiles`/`commission_rules`/`commissions` + D-030 defaults seeded (3 profiles) + 3 enums + models/factories + append-only guard; `decimal(18,4)`/`decimal(10,6)` + indexes + seeds verified on dev MySQL; 72 tests/495 assertions, PHPStan 0, Pint pass. Next card: **WP2-T10**. |
 | D-070 | 2026-11-23 | **WP2-T10 DONE** — 6 notification/dashboard/audit tables + 3 enums + `config/notification_events.php` + models/factories + append-only `AuditLog`; JSON columns + all indexes verified on dev MySQL; 81 tests/585 assertions, PHPStan 0, Pint pass. Next card: **WP2-T11**. |
+| D-072 | 2026-11-23 | **WP4-T09 DONE** — `ledger:reconcile` command + integer-scaled service; break detection, JSON output, 6 tests; dev DB zero breaks; 87 tests/599 assertions, PHPStan 0, Pint pass. Next card: **WP9-T01**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-066).
+Archived history → `docs/State_Ledger_Archive.md` (through D-067).
 
 ---
 

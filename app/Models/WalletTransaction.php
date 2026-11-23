@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use LogicException;
 
+/**
+ * @property TransactionDirection $direction
+ */
 class WalletTransaction extends Model
 {
     /** @use HasFactory<\Database\Factories\WalletTransactionFactory> */

@@ -79,7 +79,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 | WP4-T06 | Internal transfer service | cash/profit/commission/invest transfers | D-005/008 | WAL-02..05 | new position on invest transfer |
 | WP4-T07 | Agent credit purchase + role bonus | purchase service, bonus to commission wallet | D-008 | COM-05, MON-02 | face value + bonus ledger rows |
 | WP4-T08 | Agent credit transfer to investor | in-app transfer + ledger | D-008 | COM-05, MON-04 | investor credited, audited |
-| WP4-T09 | Reconciliation command/report | `php artisan ledger:reconcile` | Schema §3 | MON-05, TST-04 | credits−debits=balance for all wallets |
+| WP4-T09 | Reconciliation command/report **(DONE, D-072; pulled forward per D-071)** | `php artisan ledger:reconcile` + `app/Services/LedgerReconciliationService.php` + `tests/Feature/LedgerReconcileCommandTest.php` (6 tests) | Schema §3 | MON-05, TST-04 | integer-scaled 4dp, no float drift ✅; break detection + non-zero exit ✅; `--json` shape ✅; dev DB `breakCount: 0` ✅; suite 87/87 (599), PHPStan 0, Pint pass ✅ |
 
 ## WP5 — Investment & P&L (7 tasks)
 

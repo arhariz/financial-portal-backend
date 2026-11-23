@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property WalletType $type
+ */
 class Wallet extends Model
 {
     /** @use HasFactory<\Database\Factories\WalletFactory> */
