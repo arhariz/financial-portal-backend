@@ -54,6 +54,7 @@
 | D-056 | 2026-11-23 | **WP11-T04 DONE** — Boost v2.10.4 + `boost:install --guidelines`; AGENTS.md/CLAUDE.md regenerated and re-read. **WP11 COMPLETE**. Next card: **WP1-T07** (CI workflow). |
 | D-057 | 2026-11-23 | **WP1-T07 DONE** — `.github/workflows/ci.yml` added (test + PHPStan L6 + Pint); YAML valid; all three commands exit 0 locally (18 tests / 120 assertions, 0 PHPStan errors). **WP1 COMPLETE**. Next card: **WP2-T01**. |
 | D-058 | 2026-11-23 | **WP2-T01 DONE** — identity migrations + enums + user_profiles; `getColumnListing()` verified; 24 tests/160 assertions, PHPStan 0, Pint pass. Next card: **WP2-T02**. |
+| D-059 | 2026-11-23 | **WP2-T02 DONE** — KYC tables + enums + CRUD/review smoke tests; explicit FK indexes added after test gap; 29 tests/197 assertions, PHPStan 0, Pint pass. Next card: **WP2-T03**. |
 
 ## Archived implemented modules
 

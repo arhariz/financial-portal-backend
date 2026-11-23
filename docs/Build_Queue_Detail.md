@@ -36,14 +36,14 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 
 ## WP2 — Schema + ledger migrations (11 tasks)
 
-> **Progress (2026-11-23, D-060):** WP2-T01/T02/T03 **DONE** — identity + KYC + wallet/ledger schema with enums, factories and guard tests. `getColumnListing()` + MySQL `information_schema` verified on dev DB; append-only ledger guards active; 35 tests / 228 assertions, PHPStan 0, Pint pass. Next card: **WP2-T04** (exchange rates).
+> **Progress (2026-11-23, D-063):** WP2-T01/T02/T03/T04 **DONE** — identity + KYC + wallet/ledger + exchange-rate schema with enums, factories and guard tests. `getColumnListing()` + MySQL `information_schema` verified on dev DB; append-only ledger guards active; `exchange_rates` `decimal(12,4)` + history/FK indexes verified; 41 tests / 246 assertions, PHPStan 0, Pint pass. Next card: **WP2-T05** (money request tables).
 
 | ID | Task | Scope / files | Inputs | Rules | Verify / Done |
 |---|---|---|---|---|---|
 | WP2-T01 | Identity tables **(DONE, D-058)** | 2 migrations (`add_identity_columns_to_users_table`, `create_user_profiles_table`), enums `UserStatus`/`KycStatus`, `User` casts + SoftDeletes, `UserFactory` defaults, `tests/Feature/IdentitySchemaTest.php` (6 tests) | Schema_Registry §2, D-058 | DB-01..08, COD-01..04, TST-12 | `getColumnListing()` dev DB ✅; 24 tests / 160 assertions ✅; PHPStan 0 ✅; Pint pass ✅ |
 | WP2-T02 | KYC tables **(DONE, D-059)** | 2 migrations (`create_kyc_document_types_table`, `create_kyc_documents_table`), enums `KycUserType`/`KycDocumentStatus`, `tests/Feature/KycTablesTest.php` (5 tests) | Schema §2, D-004, D-059 | DB-02/04/08, COD-01..04, TST-12 | `getColumnListing()` dev DB ✅; CRUD + review-flow smoke tests ✅; FK/status indexes ✅; 29 tests/197 assertions, PHPStan 0, Pint pass ✅ |
 | WP2-T03 | Wallets + immutable ledger **(DONE, D-060)** | 2 migrations, enums `WalletType`/`TransactionDirection`/`WalletTransactionType`, models `Wallet`/`WalletTransaction` (+factories, append-only guards), `tests/Feature/WalletLedgerTest.php` (6 tests) | Schema §2/§3, D-029, D-060 | MON-01/02/03, WAL-01..06, DB-02/04, TST-04 | append-only guards throw ✅; MySQL `decimal(18,4)` ✅; reconciliation ✅; 35 tests/228 assertions, PHPStan 0, Pint pass ✅ |
-| WP2-T04 | Exchange rates | `exchange_rates` + model | Schema §2 | MON-01, DB-04 | history index verified |
+| WP2-T04 | Exchange rates **(DONE, D-063)** | `exchange_rates` + model + factory + `tests/Feature/ExchangeRateSchemaTest.php` (6 tests) | Schema §2, D-063 | MON-01, DB-04 | `decimal(12,4)` ✅; 3 indexes on dev MySQL ✅; 41 tests/246 assertions ✅; PHPStan 0 ✅; Pint pass ✅ |
 | WP2-T05 | Money request tables | `manual_deposits`, `withdrawal_requests`, `capital_release_requests` | Schema §2 | DB-01/04/08 | status enums validated |
 | WP2-T06 | Investment tables | `symbols`, `positions` | Schema §2, D-009/029 | PNL-01/02, DB-01 | eligibility date column + index |
 | WP2-T07 | Distribution tables | `pnl_distributions`, `pnl_distribution_items` | Schema §2, D-010/029 | PNL-04/05, MON-08 | sum-to-posted constraint test |

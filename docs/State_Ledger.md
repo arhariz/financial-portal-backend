@@ -16,10 +16,10 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-062 — Owner correction: **every feature ships seeder sample data to verify function**; queued seeder cards stay in WP10 (not pulled forward), missing coverage added as **WP10-T09…T12** (profiles, money requests, agents/referrals, notifications/audit). D-061 superseded. Next card: **WP2-T04**. |
-| Test Suite | **18 tests / 120 assertions passing** (Unit 4, Feature 14) — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-063 — **WP2-T04 DONE**: `exchange_rates` table + `ExchangeRate` model/factory + guard tests; `decimal(12,4)` and history/FK indexes verified on dev MySQL. Next card: **WP2-T05**. |
+| Test Suite | **41 tests / 246 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
-| Active Phase | Foundation phase in progress — Laravel 13.43.0 installed; no application code yet |
+| Active Phase | Schema phase in progress — Laravel 13.43.0 + Filament 5 + RBAC landed; WP2 schema T01–T04 DONE (T05–T11 remain) |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
 | Plan version | 1.4 (locked) |
 | Files | `docs/plan.md`, `docs/project_Context.md`, `docs/Schema_Registry.md`, `docs/Constitution.md`, `docs/DOCS_MANIFEST.md`, `docs/EXECUTION_LOCKS_ACTIVE.md`, `docs/Feature_Flags_Registry.md`, `docs/Build_Queue_Detail.md`, `docs/Admin_Observability_Spec.md`, `docs/State_Ledger.md`, `docs/State_Ledger_Archive.md`, `docs/Prompt_Library.md`, `docs/Skills_Registry.md`, `rules/` (9), 12 custom skills, Laravel 13.43.0 skeleton (app/config/database/routes/resources/tests), 13 docs relocated to `docs/` |
@@ -37,7 +37,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | # | Work package | Tasks | Blocked by | Next task |
 |---|---|---:|---|---|
 | 1 | Laravel 13 bootstrap + Filament 5 skeleton | 7 | None — **ALL DONE** | WP1 COMPLETE (T01–T07 DONE) |
-| 2 | Schema/ledger migrations + guard tests | 11 | None (D-029) | WP2-T04 (T01, T02, T03 DONE) |
+| 2 | Schema/ledger migrations + guard tests | 11 | None (D-029) | WP2-T05 (T01–T04 DONE) |
 | 3 | Auth + RBAC | 10 | None | WP3-T01 (T07 done; T08–T10 blocked Q-005/6/7) |
 | 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | WP4-T01 |
 | 5 | Investment positions + P&L distribution | 7 | WP4 | WP5-T01 |
@@ -48,7 +48,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 10 | Database seeders & demo fixtures | 12 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); T04 wallets/ledger, T05 KYC, **T09–T12 added for missing coverage (D-062)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
-**Total task cards: 99.** Current active card: **WP2-T04** (exchange rates). **WP1 (T01–T07)**, **WP2-T01/T02/T03**, WP3-T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 99.** Current active card: **WP2-T05** (money request tables). **WP1 (T01–T07)**, **WP2-T01/T02/T03/T04**, WP3-T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -130,6 +130,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-060 | WP2-T03 close | Wallet + ledger schema added: `create_wallets_table` (unique user_id+type, `balance DECIMAL(18,4)`, indexes) and `create_wallet_transactions_table` (uuid unique, direction/amount/balance_after DECIMAL(18,4), type, polymorphic reference, counterparty/created_by FKs, created_at only — no `updated_at`). Enums `WalletType`, `TransactionDirection`, `WalletTransactionType` (12 types per Schema §2/§3). `Wallet` + `WalletTransaction` models with factories; `WalletTransaction` blocks `performUpdate()`/`performDeleteOnModel()` with `LogicException` (MON-03). `WalletLedgerTest` (6 tests) covers columns, DECIMAL 4dp round-trip (SQLite reports `numeric`, so declared type verified on dev MySQL instead), unique wallet per user, immutability guards, credits−debits=balance reconciliation, enum values. Fixed PHPStan generics at source (relation docblocks) — no suppression. Gates: tests 35/35 (228 assertions), PHPStan 0, Pint pass. Dev DB migrated; `information_schema` confirms `decimal(18,4)`. Next card: **WP2-T04**. |
 | D-061 | Seeder sequencing | Owner decision: **do not create feature seeders now**; follow the build queue. The WP2 cards shipped schema + factories + guard tests only. Seeders for `wallets`/`wallet_transactions` remain **WP10-T04**, KYC seeders remain **WP10-T05**; `DatabaseSeeder` continues orchestrating only `RolePermissionSeeder` + `UserSeeder` until WP10 lands. TST-13 ("every feature ships a seeder") and the Boost AGENTS.md "factories and seeders for new models" guideline are recorded as a **deliberate sequencing exception**, not a waiver — WP10 must add idempotent, `--class`-invoked seeders for the new tables and verify on a fresh test DB. No seeder files created in this session. **SUPERSEDED by D-062** — owner clarified seeders are mandatory per feature; see D-062. |
 | D-062 | Seeder policy (corrects D-061) | Owner correction: **every feature must ship a seeder with sample data so its function can be checked** (TST-13 intent). Seeder tasks **already in the build queue stay in WP10 — do not pull them forward**; any feature without seeder coverage must be **added to the build queue**. Audit result: existing WP10 T01–T08 cover RBAC/users, market, wallets, KYC, investments/P&L, commissions and demo; missing coverage added as **WP10-T09** (`UserProfileSeeder`), **WP10-T10** (`MoneyRequestSeeder`), **WP10-T11** (`AgentSeeder` + referrals), **WP10-T12** (`NotificationSeeder` — templates/notifications/preferences/dashboard_layouts/audit_logs/login_history). WP10 **8 → 12** tasks; total cards **95 → 99**. Active card unchanged (**WP2-T04**). |
+| D-063 | WP2-T04 close | `exchange_rates` table + `ExchangeRate` model/factory + `tests/Feature/ExchangeRateSchemaTest.php` (6 tests): `bdt_per_usd DECIMAL(12,4)`, `effective_from DATE`, `set_by` RESTRICT FK to users, `created_at` only, explicit indexes on effective_from/set_by/created_at (DB-04). Red→green TDD (TST-01); dev MySQL `information_schema` + `SHOW INDEX` verified. Seeder coverage remains WP10 per D-062 (not pulled forward). Gates: PHPStan 0, Pint pass, PHPUnit **41/41 (246 assertions)**. Next card: **WP2-T05**. DONE widget dependency: Ledger Reconciliation (WP9-T02), required only when WP2 is marked DONE. |
 
 ## DEFERRED ITEMS
 
@@ -161,12 +162,12 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-059 | 2026-11-23 | **WP2-T02 DONE** — KYC tables + enums + CRUD/review smoke tests; explicit FK indexes added after test gap; 29 tests/197 assertions, PHPStan 0, Pint pass. Next card: **WP2-T03**. |
 | D-060 | 2026-11-23 | **WP2-T03 DONE** — wallets + append-only ledger + enums + guarded models; MySQL `decimal(18,4)` verified; 35 tests/228 assertions, PHPStan 0, Pint pass. Next card: **WP2-T04**. |
 | D-061 | 2026-11-23 | (Superseded) documented "no new seeders now" — owner corrected this in D-062. |
 | D-062 | 2026-11-23 | Owner correction: seeder data mandatory for every feature; queued seeder cards stay in WP10, missing coverage added as **WP10-T09…T12**; WP10 8→12, total 95→99. D-061 superseded. |
+| D-063 | 2026-11-23 | **WP2-T04 DONE** — `exchange_rates` table + model/factory + guard tests; `decimal(12,4)` + 3 indexes verified on dev MySQL; 41 tests/246 assertions, PHPStan 0, Pint pass. Next card: **WP2-T05**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-058).
+Archived history → `docs/State_Ledger_Archive.md` (through D-059).
 
 ---
 
