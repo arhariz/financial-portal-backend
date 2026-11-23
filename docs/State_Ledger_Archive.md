@@ -58,6 +58,7 @@
 | D-060 | 2026-11-23 | **WP2-T03 DONE** — wallets + append-only ledger + enums + guarded models; MySQL `decimal(18,4)` verified; 35 tests/228 assertions, PHPStan 0, Pint pass. Next card: **WP2-T04**. |
 | D-061 | 2026-11-23 | (Superseded) documented "no new seeders now" — owner corrected this in D-062. |
 | D-062 | 2026-11-23 | Owner correction: seeder data mandatory for every feature; queued seeder cards stay in WP10, missing coverage added as **WP10-T09…T12**; WP10 8→12, total 95→99. D-061 superseded. |
+| D-063 | 2026-11-23 | **WP2-T04 DONE** — `exchange_rates` table + model/factory + guard tests; `decimal(12,4)` + 3 indexes verified on dev MySQL; 41 tests/246 assertions, PHPStan 0, Pint pass. Next card: **WP2-T05**. |
 
 ## Archived implemented modules
 

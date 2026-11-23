@@ -36,7 +36,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 
 ## WP2 — Schema + ledger migrations (11 tasks)
 
-> **Progress (2026-11-23, D-066):** WP2-T01…T06 **DONE** — identity + KYC + wallet/ledger + exchange-rate + money-request + investment schema with enums, factories and guard tests. `getColumnListing()` + MySQL `information_schema` verified on dev DB; append-only ledger guards active; 53 tests / 359 assertions, PHPStan 0, Pint pass. Next card: **WP2-T07** (distribution tables — D-064 loss split applies).
+> **Progress (2026-11-23, D-067):** WP2-T01…T07 **DONE** — identity + KYC + wallet/ledger + exchange-rate + money-request + investment + distribution schema with enums, factories and guard tests. `getColumnListing()` + MySQL `information_schema` verified on dev DB; append-only ledger guards active; 59 tests / 398 assertions, PHPStan 0, Pint pass. Next card: **WP2-T08** (agent tables).
 
 | ID | Task | Scope / files | Inputs | Rules | Verify / Done |
 |---|---|---|---|---|---|
@@ -46,7 +46,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 | WP2-T04 | Exchange rates **(DONE, D-063)** | `exchange_rates` + model + factory + `tests/Feature/ExchangeRateSchemaTest.php` (6 tests) | Schema §2, D-063 | MON-01, DB-04 | `decimal(12,4)` ✅; 3 indexes on dev MySQL ✅; 41 tests/246 assertions ✅; PHPStan 0 ✅; Pint pass ✅ |
 | WP2-T05 | Money request tables **(DONE, D-065)** | 3 migrations; enums `ManualDepositStatus`/`WithdrawalStatus`/`CapitalReleaseStatus`/`WithdrawalSourceWalletType`; models + factories; `tests/Feature/MoneyRequestSchemaTest.php` (6 tests) | Schema §2, D-065 | DB-01/04/08 | status enums ✅; `decimal(18,4)` + FK/status/date indexes on dev MySQL ✅; 47 tests/318 assertions ✅; PHPStan 0 ✅; Pint pass ✅ |
 | WP2-T06 | Investment tables **(DONE, D-066)** | 2 migrations; enums `SymbolCategory`/`SymbolStatus`/`PositionStatus`/`PositionSource`; models + factories; `tests/Feature/InvestmentSchemaTest.php` (6 tests) | Schema §2, D-009/029, D-066 | PNL-01/02, DB-01 | `eligible_date DATE` + index ✅; `decimal(18,4)` on dev MySQL ✅; 53 tests/359 assertions ✅; PHPStan 0 ✅; Pint pass ✅ |
-| WP2-T07 | Distribution tables | `pnl_distributions`, `pnl_distribution_items` | Schema §2, D-010/029, D-064 | PNL-04/05, MON-08 | sum-to-posted across profit-wallet debit + capital reduction (D-064) |
+| WP2-T07 | Distribution tables **(DONE, D-067)** | 2 migrations; enum `PnlDistributionStatus`; models + factories; `tests/Feature/DistributionSchemaTest.php` (6 tests) | Schema §2, D-010/029, D-064, D-067 | PNL-04/05, MON-08 | signed `decimal(18,4)` + `decimal(10,6)` ✅; sum-to-posted (integer-scaled) ✅; all FK/date indexes on dev MySQL ✅; 59 tests/398 assertions ✅; PHPStan 0 ✅; Pint pass ✅ |
 | WP2-T08 | Agent tables | `agents`, `referrals` | Schema §2, D-031 | COM-01/08 | tier integer + display label config |
 | WP2-T09 | Commission tables | `deduction_profiles`, `commission_rules`, `commissions` | Schema §2, D-030 | COM-02..07 | default deduction types seeded |
 | WP2-T10 | Notification/dashboard/audit tables | `notification_templates`, `notifications`, `notification_preferences`, `dashboard_layouts`, `audit_logs`, `login_history` | Schema §2 | SEC-07, FIL-04 | audit append-only test |
