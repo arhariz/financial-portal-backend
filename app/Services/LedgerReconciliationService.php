@@ -25,11 +25,11 @@ class LedgerReconciliationService
         $breakCount = 0;
 
         foreach (Wallet::query()->with('transactions')->orderBy('id')->get() as $wallet) {
-            $balanceUnits = $this->toMinorUnits((string) $wallet->balance);
+            $balanceUnits = self::toMinorUnits((string) $wallet->balance);
             $expectedUnits = 0;
 
             foreach ($wallet->transactions as $transaction) {
-                $amountUnits = $this->toMinorUnits((string) $transaction->amount);
+                $amountUnits = self::toMinorUnits((string) $transaction->amount);
                 $expectedUnits += $transaction->direction === TransactionDirection::Credit
                     ? $amountUnits
                     : -$amountUnits;
@@ -46,9 +46,9 @@ class LedgerReconciliationService
                 'id' => $wallet->id,
                 'userId' => $wallet->user_id,
                 'type' => $wallet->type->value,
-                'balance' => $this->fromMinorUnits($balanceUnits),
-                'expected' => $this->fromMinorUnits($expectedUnits),
-                'difference' => $this->fromMinorUnits($differenceUnits),
+                'balance' => self::fromMinorUnits($balanceUnits),
+                'expected' => self::fromMinorUnits($expectedUnits),
+                'difference' => self::fromMinorUnits($differenceUnits),
                 'inBreak' => $inBreak,
             ];
         }
@@ -60,7 +60,7 @@ class LedgerReconciliationService
         ];
     }
 
-    private function toMinorUnits(string $amount): int
+    public static function toMinorUnits(string $amount): int
     {
         $negative = str_starts_with($amount, '-');
         $digits = ltrim($amount, '+-');
@@ -72,7 +72,7 @@ class LedgerReconciliationService
         return $negative ? -$units : $units;
     }
 
-    private function fromMinorUnits(int $units): string
+    public static function fromMinorUnits(int $units): string
     {
         $sign = $units < 0 ? '-' : '';
         $absolute = abs($units);

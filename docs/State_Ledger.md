@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-073)
+# Last Updated: 2026-11-23 (D-074)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,8 +16,8 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-073 — **WP9-T01 DONE**: Filament `Reports` page + 8 role-gated tabs + `reports.blade.php` shell, registered on the admin panel; `ReportsSectionTest` (5 tests) verifies admin/support 200, investor denial, all 8 tabs, group/URL. Next card: **WP9-T02** (Ledger widget with data). |
-| Test Suite | **92 tests / 616 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-074 — **WP9-T02 DONE**: `LedgerHealth` widget driven by `LedgerReconciliationService`, GREEN/AMBER/RED per spec, timestamp + owner + wallet drill-down; `LedgerHealthSeeder` + dev data verified (`breakCount: 0`, widget state `green`). WP2 widget dependency satisfied. Next card: **WP2-T11**. |
+| Test Suite | **99 tests / 632 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
 | Active Phase | Schema phase in progress — Laravel 13.43.0 + Filament 5 + RBAC landed; WP2 schema T01–T10 DONE (T11 remains) |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
@@ -44,11 +44,11 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 6 | KYC workflow + approvals | 5 | WP2 | WP6-T01 |
 | 7 | MLM commissions | 10 | WP5, D-030/031 | WP7-T01 |
 | 8 | React web portal + Flutter mobile v1 | 15 | API contracts | WP8-T01 |
-| 9 | Admin observability + Report section | 8 | Widgets from WP1–WP8 | WP9-T02 (Ledger Health widget; T03–T08 remain) |
+| 9 | Admin observability + Report section | 8 | Widgets from WP1–WP8 | WP9-T03 (Queue Health + P&L widgets; T04–T08 remain) |
 | 10 | Database seeders & demo fixtures | 12 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); T04 wallets/ledger, T05 KYC, **T09–T12 added for missing coverage (D-062)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
-**Total task cards: 99.** Current active card: **WP9-T02** (Ledger Reconciliation widget with data; WP2-T11 deferred until verified per D-071). **WP1 (T01–T07)**, **WP2-T01/T02/T03/T04/T05/T06/T07/T08/T09/T10**, **WP4-T09**, **WP9-T01**, WP3-T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 99.** Current active card: **WP2-T11** (schema guard suite — final WP2 card; Ledger widget dependency now satisfied per D-074). **WP1 (T01–T07)**, **WP2-T01/T02/T03/T04/T05/T06/T07/T08/T09/T10**, **WP4-T09**, **WP9-T01/T02**, WP3-T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -142,6 +142,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-071 | Owner directive / OPS-11 / gate B | Owner (CTO) directed that **WP2 must not be closed until the Ledger Reconciliation widget exists and is verified with data**. Approved re-sequence ahead of WP2-T11: **WP4-T09** (`php artisan ledger:reconcile`) → **WP9-T01** (Reports page group + Overview shell) → **WP9-T02** (`LedgerHealth` widget, real ledger data + drill-down) → then **WP2-T11** closes WP2. Widget states are locked by `Admin_Observability_Spec.md:33` (green = all wallets reconcile, amber = break < 1% of balance, red = any unreconciled money wallet). One card = one commit; every card re-runs the Step 4 gate and ACK. |
 | D-072 | WP4-T09 close | `php artisan ledger:reconcile` + `App\Services\LedgerReconciliationService` — credits minus debits vs maintained balance (MON-05, Schema §3 #2), integer-scaled at 4dp with no binary floats, `Asia/Dhaka` `checkedAt` timestamp, table + `--json` output, exit FAILURE on any break. `LedgerReconcileCommandTest` (6 tests, 14 assertions) red→green covers zero breaks, break detection, debits, 4dp precision, JSON shape, empty wallet set. Class-level `@property` enum declarations added to `Wallet`/`WalletTransaction` to fix Larastan type inference at source (no suppressions). Dev DB: `ledger:reconcile --json` → `breakCount: 0`. Gates: PHPStan 0, Pint pass, PHPUnit **87/87 (599 assertions)**. Next card: **WP9-T01**. |
 | D-073 | WP9-T01 close | Filament **Reports** page (`app/Filament/Pages/Reports.php` + `resources/views/filament/pages/reports.blade.php`), navigation group **Reports**, registered in `AdminPanelProvider`. Eight tabs transcribed from `Admin_Observability_Spec.md` (Overview, Ledger & Wallets, Investment & P&L, Agents & Commissions, KYC & Security, Money Flow, Operations, Exports). Access uses `can('reports.view')` (FIL-02/REP-07): super_admin + support 200, investor denied; Support remains view-only (`users.manage` false). `ReportsSectionTest` (5 tests, 17 assertions) red→green. Filament 5 property types (`string|BackedEnum|null`, `string|UnitEnum|null`) matched at source. Gates: PHPStan 0, Pint pass, PHPUnit **92/92 (616 assertions)**. Next card: **WP9-T02**. |
+| D-074 | WP9-T02 close | `App\Filament\Widgets\LedgerHealth` on the admin dashboard and Reports Overview tab, driven by `LedgerReconciliationService` — no fabricated numbers (REP-08). States per `Admin_Observability_Spec.md:33`: green = all reconcile; amber = break under 1% of balance in the investment aggregate; red = any unreconciled money wallet (cash/profit/commission, WAL-01) or break ≥ 1% (integer-scaled comparison, no floats). Shows metric, `Asia/Dhaka` timestamp, owner Finance Manager, and per-wallet drill-down to `/admin/reports?tab=ledger_wallets&wallet=<id>` with that wallet's immutable ledger rows. Visible to `reports.view` (Support view-only). `LedgerHealthSeeder` ships minimal reconciled sample data (TST-13/D-071) and is orchestrated by `DatabaseSeeder`; WP10-T04 remains the comprehensive wallet fixture. `LedgerHealthWidgetTest` (7 tests, 19 assertions) red→green; dev DB seeded → `ledger:reconcile --json` `breakCount: 0` and widget `state()` = `green`. Gates: PHPStan 0, Pint pass, PHPUnit **99/99 (632 assertions)**. Next card: **WP2-T11**. |
 
 ## DEFERRED ITEMS
 
@@ -172,17 +173,18 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Notification/audit schema (WP2-T10) | Schema/ledger | **DONE** | 6 tables (notification templates/notifications/preferences, dashboard layouts, audit log, login history); 3 enums + locked event config; models/factories; append-only `AuditLog`; `NotificationAuditSchemaTest` 9 tests |
 | Ledger reconciliation (WP4-T09) | Money integrity | **DONE** | `php artisan ledger:reconcile` + `LedgerReconciliationService`; integer-scaled 4dp, `--json`, non-zero on break; `LedgerReconcileCommandTest` 6 tests |
 | Reports shell (WP9-T01) | Admin observability | **DONE** | `app/Filament/Pages/Reports.php` + `reports.blade.php`; 8 tabs, `reports.view` gate, group Reports; `ReportsSectionTest` 5 tests |
+| Ledger Health widget (WP9-T02) | Admin observability | **DONE** | `LedgerHealth` widget + service-driven states + drill-down + `LedgerHealthSeeder`; dev data GREEN; `LedgerHealthWidgetTest` 7 tests |
 
 ## ENTRY LOG — last 4 detailed entries
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-069 | 2026-11-23 | **WP2-T09 DONE** — `deduction_profiles`/`commission_rules`/`commissions` + D-030 defaults seeded (3 profiles) + 3 enums + models/factories + append-only guard; `decimal(18,4)`/`decimal(10,6)` + indexes + seeds verified on dev MySQL; 72 tests/495 assertions, PHPStan 0, Pint pass. Next card: **WP2-T10**. |
 | D-070 | 2026-11-23 | **WP2-T10 DONE** — 6 notification/dashboard/audit tables + 3 enums + `config/notification_events.php` + models/factories + append-only `AuditLog`; JSON columns + all indexes verified on dev MySQL; 81 tests/585 assertions, PHPStan 0, Pint pass. Next card: **WP2-T11**. |
 | D-072 | 2026-11-23 | **WP4-T09 DONE** — `ledger:reconcile` command + integer-scaled service; break detection, JSON output, 6 tests; dev DB zero breaks; 87 tests/599 assertions, PHPStan 0, Pint pass. Next card: **WP9-T01**. |
 | D-073 | 2026-11-23 | **WP9-T01 DONE** — Filament Reports page + 8 role-gated tabs + Overview shell; admin/support 200, investor denied; 92 tests/616 assertions, PHPStan 0, Pint pass. Next card: **WP9-T02**. |
+| D-074 | 2026-11-23 | **WP9-T02 DONE** — data-driven `LedgerHealth` widget (GREEN/AMBER/RED, drill-down, owner/timestamp) + `LedgerHealthSeeder`; dev DB `breakCount: 0`, widget `green`; 99 tests/632 assertions, PHPStan 0, Pint pass. WP2 widget dependency satisfied. Next card: **WP2-T11**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-068).
+Archived history → `docs/State_Ledger_Archive.md` (through D-069).
 
 ---
 

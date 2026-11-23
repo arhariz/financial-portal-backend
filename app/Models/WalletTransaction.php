@@ -14,6 +14,9 @@ use LogicException;
 
 /**
  * @property TransactionDirection $direction
+ * @property WalletTransactionType $type
+ * @property string $amount
+ * @property string $balance_after
  */
 class WalletTransaction extends Model
 {
