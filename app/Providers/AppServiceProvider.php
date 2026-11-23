@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Models\UserProfile;
 use App\Observers\RoleObserver;
 use App\Observers\UserProfileObserver;
+use App\Policies\ExchangeRatePolicy;
 use App\Policies\PermissionPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserProfilePolicy;
@@ -33,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Permission::class, PermissionPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(UserProfile::class, UserProfilePolicy::class);
+        Gate::policy(\App\Models\ExchangeRate::class, ExchangeRatePolicy::class);
         Role::observe(RoleObserver::class);
         UserProfile::observe(UserProfileObserver::class);
     }

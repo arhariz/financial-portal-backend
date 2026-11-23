@@ -72,7 +72,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 | ID | Task | Scope / files | Inputs | Rules | Verify / Done |
 |---|---|---|---|---|---|
 | WP4-T01 | WalletService deposit posting **(DONE, D-085)** | `app/Services/WalletService.php` + `tests/Feature/WalletServiceTest.php` (5 tests) | Schema §3, D-005 | MON-02/04/05, WAL-01 | credit + ledger row + balance ✅; idempotent wallet ✅; 4dp precision ✅; accumulation ✅; non-positive rejection ✅; reconciliation holds ✅; 5 tests (18 assertions), suite 148/148 (1476), PHPStan 0, Pint pass ✅ |
-| WP4-T02 | Exchange rate admin CRUD + history | `ExchangeRateResource`, service | D-005 | MON-01, DB-04 | rate change history test |
+| WP4-T02 | Exchange rate admin CRUD + history **(DONE, D-089)** | `app/Services/ExchangeRateService.php`, `app/Filament/Resources/ExchangeRates/*`, `app/Policies/ExchangeRatePolicy.php`, `tests/Feature/ExchangeRateTest.php` (6 tests) | D-005 | MON-01, DB-04 | append-only history ✅; admin list/create 200 ✅; support view-only ✅; investor denied ✅; 4dp storage ✅; current() latest effective ✅; 6 tests (11 assertions), suite 173/173 (1517), PHPStan 0, Pint pass ✅ |
 | WP4-T03 | Manual deposit request flow | user submit + admin approve/reject, R2 proof | D-006 | MON-04, SEC-06 | approval credits USD |
 | WP4-T04 | Withdrawal request flow | request, approve, paid | D-007 | WAL-03/05, MON-04 | profit withdrawable |
 | WP4-T05 | Capital release + 24h job | request, approval, queued release | D-007, TME-04 | QUE-01..05, WAL-06 | 24h gate test |

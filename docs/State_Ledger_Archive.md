@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-088)
+# Last Updated: 2026-11-23 (D-089)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-084)
+## Archived entry log (through D-085)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -76,6 +76,7 @@
 | D-082 | 2026-11-23 | **WP3-T04 DONE** — `PermissionMatrixTest` (6 tests, 393 assertions) verifies all 12 roles; super_admin/admin all permissions; support view-only; investor/agent tiers none; unknown abilities denied; deny-by-default. Next card: **WP3-T05**. |
 | D-083 | 2026-11-23 | **WP3-T05 DONE** — `GuardService` (canInvest/canWithdraw/ensure*) + `EnsureMoneyActionAllowed` middleware + `money.action` alias; KYC-approved + active required; pending/rejected/none KYC and suspended all block; `GuardServiceTest` 6 tests. Next card: **WP3-T06**. |
 | D-084 | 2026-11-23 | **WP3-T06 DONE** — `AuditService` + `LoginHistoryService` + 3 auto-discovered listeners; `AuditLogTest` 6 tests (append-only, JSON round-trip, actor/ip/ua). Next card: **WP3-T07**. |
+| D-085 | 2026-11-23 | **WP4-T01 DONE** — `WalletService::deposit()` + `walletFor()` (DB transaction + lockForUpdate, integer-scaled 4dp, idempotent wallet creation, non-positive rejection); `WalletServiceTest` 5 tests (148/148, 1476 assertions) red→green; reconciliation holds after deposits. Next card: **WP4-T02**. |
 
 ## Archived implemented modules
 
