@@ -127,6 +127,8 @@ final class WalletService
         ?string $referenceType = null,
         ?int $referenceId = null,
         ?User $actor = null,
+        ?WalletTransactionType $debitType = null,
+        ?WalletTransactionType $creditType = null,
     ): WalletTransaction {
         if ($this->toMinorUnits($amount) <= 0) {
             throw new InvalidArgumentException('Transfer amount must be greater than zero.');
@@ -136,7 +138,7 @@ final class WalletService
             throw new InvalidArgumentException('Source and destination wallets must differ.');
         }
 
-        return DB::transaction(function () use ($user, $from, $to, $amount, $transactionType, $referenceType, $referenceId, $actor): WalletTransaction {
+        return DB::transaction(function () use ($user, $from, $to, $amount, $transactionType, $referenceType, $referenceId, $actor, $debitType, $creditType): WalletTransaction {
             $source = Wallet::where('user_id', $user->id)->where('type', $from)->firstOrFail();
             $destination = Wallet::firstOrCreate(
                 ['user_id' => $user->id, 'type' => $to],
@@ -166,7 +168,7 @@ final class WalletService
                 'direction' => TransactionDirection::Debit,
                 'amount' => $amount,
                 'balance_after' => $sourceBalance,
-                'type' => $transactionType,
+                'type' => $debitType ?? $transactionType,
                 'reference_type' => $referenceType,
                 'reference_id' => $referenceId,
                 'counterparty_wallet_id' => $lockedDestination->id,
@@ -179,7 +181,7 @@ final class WalletService
                 'direction' => TransactionDirection::Credit,
                 'amount' => $amount,
                 'balance_after' => $destinationBalance,
-                'type' => $transactionType,
+                'type' => $creditType ?? $transactionType,
                 'reference_type' => $referenceType,
                 'reference_id' => $referenceId,
                 'counterparty_wallet_id' => $lockedSource->id,

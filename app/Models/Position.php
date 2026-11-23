@@ -10,7 +10,16 @@ use Database\Factories\PositionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property string $capital
+ * @property string $original_amount
+ * @property Carbon $investment_date
+ * @property Carbon $eligible_date
+ * @property PositionStatus $status
+ * @property PositionSource $source
+ */
 class Position extends Model
 {
     /** @use HasFactory<PositionFactory> */
@@ -38,6 +47,8 @@ class Position extends Model
         return [
             'capital' => 'decimal:4',
             'original_amount' => 'decimal:4',
+            'investment_date' => 'date',
+            'eligible_date' => 'date',
             'status' => PositionStatus::class,
             'source' => PositionSource::class,
         ];

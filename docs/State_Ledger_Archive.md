@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-092)
+# Last Updated: 2026-11-23 (D-093)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-088)
+## Archived entry log (through D-089)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -80,6 +80,7 @@
 | D-086 | 2026-11-23 | **WP3-T08 DONE / Q-005 CLOSED** — runtime Filament `RoleResource` (create/edit/delete + permissions multi-select) gated on `roles.manage`; `RolePolicy` (delete blocked when users assigned); `RoleObserver` audit; `Manifest::check()` ignores runtime roles; `RoleResourceTest` 6 tests (154/154, 1483 assertions). Next card: **WP4-T02**. |
 | D-087 | 2026-11-23 | **WP3-T09 DONE / Q-006 CLOSED** — per-user permission overrides (additive only) via `permissions` multi-select on `UserForm`, `PermissionPolicy` (gated on `users.manage`), `PermissionOverrideTest` 6 tests (160/160, 1496 assertions) red→green. Q-006 CLOSED. Q-007 remains open (blocks WP3-T10). Next card: **WP4-T02**. |
 | D-088 | 2026-11-23 | **WP3-T10 DONE / Q-007 CLOSED / WP3 COMPLETE** — own Filament `UserProfileResource` (full_name, date_of_birth, address, city, country, id_number masked + audit-logged), `UserProfilePolicy`, `UserProfileObserver`, `UserProfileTest` 7 tests (167/167, 1506 assertions) red→green. Q-007 CLOSED. WP3 COMPLETE (T01–T10). Next card: **WP4-T02**. |
+| D-089 | 2026-11-23 | **WP4-T02 DONE** — `ExchangeRateResource` (append-only history, create-only, no edit/delete), `ExchangeRateService` (setRate/current), `ExchangeRatePolicy` (view: exchange_rates.view, manage: exchange_rates.manage), `ExchangeRateTest` 6 tests (173/173, 1517 assertions) red→green. MON-01/DB-04 satisfied. Next card: **WP4-T03**. |
 
 ## Archived implemented modules
 

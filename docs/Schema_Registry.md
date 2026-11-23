@@ -34,6 +34,7 @@ Canonical registry of database design. This is a **design contract**, not yet-im
 |---|---|---|
 | `wallets` | id, user_id, type (`cash`/`investment`/`profit`/`commission`), currency (`USD`), balance DECIMAL(18,4), timestamps | Unique (user_id, type). Balance updated only via ledger transaction. |
 | `wallet_transactions` | id, uuid, wallet_id, direction (`debit`/`credit`), amount DECIMAL(18,4), balance_after DECIMAL(18,4), type (deposit, withdrawal, transfer_in, transfer_out, invest, profit_distribution, loss_adjustment, commission, role_bonus, capital_release, reversal, adjustment), reference_type, reference_id, counterparty_wallet_id, created_by, created_at | **Immutable append-only ledger.** |
+| `internal_transfers` | id, user_id, from_wallet_type, to_wallet_type, amount_usd DECIMAL(18,4), symbol_id (nullable), position_id (nullable), idempotency_key (nullable, unique with user_id), created_at | Idempotent user transfer request; references the two immutable ledger rows and any new position. |
 
 ### Money operations
 | Table | Key columns | Notes |
@@ -47,7 +48,7 @@ Canonical registry of database design. This is a **design contract**, not yet-im
 | Table | Key columns | Notes |
 |---|---|---|
 | `symbols` | id, code (unique), name, category (`metal`/`crypto`/`energy`/`forex`), status (`active`/`paused`), min_investment, created_by, timestamps | Admin CRUD. |
-| `positions` | id, user_id, symbol_id, capital DECIMAL(18,4), original_amount DECIMAL(18,4), investment_date DATE, eligible_date DATE, status (`active`/`closed`), source (`cash`/`profit`), timestamps | eligible_date computed by T+2 / weekend rule. |
+| `positions` | id, user_id, symbol_id, capital DECIMAL(18,4), original_amount DECIMAL(18,4), investment_date DATE, eligible_date DATE, status (`active`/`closed`), source (`cash`/`profit`/`commission`), timestamps | eligible_date computed by T+2 / weekend rule; `commission` source added for WAL-05 (D-093). |
 | `pnl_distributions` | id, symbol_id, trade_date DATE, profit_loss DECIMAL(18,4) (signed), entry_by, status (`draft`/`distributed`/`reversed`), distributed_at, reversal_of_id, timestamps | One per symbol + trade date. |
 | `pnl_distribution_items` | id, distribution_id, position_id, user_id, share_ratio DECIMAL(10,6), amount DECIMAL(18,4), wallet_transaction_id, created_at | Correction = new distribution with reversal_of_id, not deletion. |
 

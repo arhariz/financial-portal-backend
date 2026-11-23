@@ -58,7 +58,9 @@ class InvestmentSchemaTest extends TestCase
         $this->assertSame(['metal', 'crypto', 'energy', 'forex'], array_column(SymbolCategory::cases(), 'value'));
         $this->assertSame(['active', 'paused'], array_column(SymbolStatus::cases(), 'value'));
         $this->assertSame(['active', 'closed'], array_column(PositionStatus::cases(), 'value'));
-        $this->assertSame(['cash', 'profit'], array_column(PositionSource::cases(), 'value'));
+        // WAL-05 allows commission → investment, so the position must record
+        // that origin too (GOV-02 correction logged in D-093).
+        $this->assertSame(['cash', 'profit', 'commission'], array_column(PositionSource::cases(), 'value'));
     }
 
     public function test_eligibility_date_is_a_date_column_and_is_indexed(): void

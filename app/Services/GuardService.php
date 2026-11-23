@@ -32,6 +32,17 @@ final class GuardService
         }
     }
 
+    /**
+     * Internal wallet transfers are money actions: KYC approval and an
+     * active account are required (SEC-02/03).
+     */
+    public function ensureCanTransfer(User $user): void
+    {
+        if (! $this->canInvest($user)) {
+            throw new AuthorizationException('KYC approval and an active account are required for transfers.');
+        }
+    }
+
     public function ensureCanInvest(User $user): void
     {
         if (! $this->canInvest($user)) {
