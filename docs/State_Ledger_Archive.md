@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-086)
+# Last Updated: 2026-11-23 (D-087)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-082)
+## Archived entry log (through D-083)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -74,6 +74,7 @@
 | D-077 | 2026-11-23 | **Reports UI redesign** — hero banner, interactive icon tabs, widget grid, honest placeholders, polished drill-down; 108 tests/970 assertions, PHPStan 0, Pint pass. |
 | D-079 | 2026-11-23 | **WP3-T01 DONE** — `User` model verified with multi-role, enum casts, SoftDeletes, permission-based panel access; `UserModelTest` (6 tests, 15 assertions) red→green; card rule code remapped AUTH-01 → SEC-01/FIL-02/COD-02/03 (D-078). Next card: **WP3-T02**. |
 | D-082 | 2026-11-23 | **WP3-T04 DONE** — `PermissionMatrixTest` (6 tests, 393 assertions) verifies all 12 roles; super_admin/admin all permissions; support view-only; investor/agent tiers none; unknown abilities denied; deny-by-default. Next card: **WP3-T05**. |
+| D-083 | 2026-11-23 | **WP3-T05 DONE** — `GuardService` (canInvest/canWithdraw/ensure*) + `EnsureMoneyActionAllowed` middleware + `money.action` alias; KYC-approved + active required; pending/rejected/none KYC and suspended all block; `GuardServiceTest` 6 tests. Next card: **WP3-T06**. |
 
 ## Archived implemented modules
 

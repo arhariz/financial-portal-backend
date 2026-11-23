@@ -35,6 +35,13 @@ class UserForm
                     ->preload()
                     ->searchable()
                     ->placeholder('No roles assigned'),
+                Select::make('permissions')
+                    ->relationship('permissions', 'name')
+                    ->multiple()
+                    ->preload()
+                    ->searchable()
+                    ->placeholder('No per-user overrides')
+                    ->helperText('Additive only: grants extra permissions on top of role grants. Cannot remove a role-granted permission.'),
             ]);
     }
 }
