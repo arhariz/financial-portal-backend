@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-060)
+# Last Updated: 2026-11-23 (D-061)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,7 +16,7 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-060 — **WP2-T03 DONE**: `wallets` + append-only `wallet_transactions`, 3 enums, guarded models; MySQL confirms `decimal(18,4)`; 35 tests / 228 assertions, PHPStan 0, Pint pass. Next card: **WP2-T04** (exchange rates). |
+| Last Entry | D-061 — Owner decision: **no new seeders now**; wallet/KYC seeders stay in WP10-T04/T05 per build queue. Factories + guard tests already shipped. TST-13 timing exception recorded. Next card: **WP2-T04** (exchange rates). |
 | Test Suite | **18 tests / 120 assertions passing** (Unit 4, Feature 14) — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
 | Active Phase | Foundation phase in progress — Laravel 13.43.0 installed; no application code yet |
@@ -45,7 +45,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 7 | MLM commissions | 10 | WP5, D-030/031 | WP7-T01 |
 | 8 | React web portal + Flutter mobile v1 | 15 | API contracts | WP8-T01 |
 | 9 | Admin observability + Report section | 8 | Widgets from WP1–WP8 | WP9-T01 |
-| 10 | Database seeders & demo fixtures | 8 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done) |
+| 10 | Database seeders & demo fixtures | 8 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); **T04 must cover WP2-T03 wallets/ledger, T05 WP2-T02 KYC (D-061)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
 **Total task cards: 95.** Current active card: **WP2-T04** (exchange rates). **WP1 (T01–T07)**, **WP2-T01/T02/T03**, WP3-T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
@@ -128,6 +128,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-058 | WP2-T01 close | Identity schema added: `add_identity_columns_to_users_table` (phone, status, phone_verified_at, kyc_status, referral_code_used, two_factor_secret, created_by FK, softDeletes; status/kyc_status indexed) + `create_user_profiles_table` (FK `user_id` unique RESTRICT, KYC fields, created_at index). PHP-backed enums `UserStatus` (active/suspended) and `KycStatus` (none/pending/approved/rejected) per DB-08; `User` model uses SoftDeletes + enum casts; `UserFactory` supplies enum defaults. `IdentitySchemaTest` (6 tests) verifies columns, Spatie tables, enum cases, indexes, casts. Fixed PHPStan source error (FK `after()` chaining) — no suppression. `getColumnListing()` confirmed on dev DB after additive `php artisan migrate`. Gates: tests 24/24 (160 assertions), PHPStan 0, Pint pass. Next card: **WP2-T02**. |
 | D-059 | WP2-T02 close | KYC schema added: `create_kyc_document_types_table` (user_type/name/is_required/sort_order/active, indexes) + `create_kyc_documents_table` (user_id + type_id RESTRICT FKs, file_path, status, reviewed_by NULL-on-delete, reviewed_at, rejection_reason, created_at index). PHP-backed enums `KycUserType` (investor/agent) and `KycDocumentStatus` (pending/approved/rejected) per DB-08. `KycTablesTest` (5 tests) covers column listing, enum values, type CRUD via deactivation (DB-07), full pending→approved→rejected review flow, and FK/status indexes. Index test exposed a real DB-04 gap (SQLite does not auto-index FK columns) — fixed at source with explicit `$table->index()` calls. `getColumnListing()` confirmed on dev DB after additive migrate. Gates: tests 29/29 (197 assertions), PHPStan 0, Pint pass. Next card: **WP2-T03**. |
 | D-060 | WP2-T03 close | Wallet + ledger schema added: `create_wallets_table` (unique user_id+type, `balance DECIMAL(18,4)`, indexes) and `create_wallet_transactions_table` (uuid unique, direction/amount/balance_after DECIMAL(18,4), type, polymorphic reference, counterparty/created_by FKs, created_at only — no `updated_at`). Enums `WalletType`, `TransactionDirection`, `WalletTransactionType` (12 types per Schema §2/§3). `Wallet` + `WalletTransaction` models with factories; `WalletTransaction` blocks `performUpdate()`/`performDeleteOnModel()` with `LogicException` (MON-03). `WalletLedgerTest` (6 tests) covers columns, DECIMAL 4dp round-trip (SQLite reports `numeric`, so declared type verified on dev MySQL instead), unique wallet per user, immutability guards, credits−debits=balance reconciliation, enum values. Fixed PHPStan generics at source (relation docblocks) — no suppression. Gates: tests 35/35 (228 assertions), PHPStan 0, Pint pass. Dev DB migrated; `information_schema` confirms `decimal(18,4)`. Next card: **WP2-T04**. |
+| D-061 | Seeder sequencing | Owner decision: **do not create feature seeders now**; follow the build queue. The WP2 cards shipped schema + factories + guard tests only. Seeders for `wallets`/`wallet_transactions` remain **WP10-T04**, KYC seeders remain **WP10-T05**; `DatabaseSeeder` continues orchestrating only `RolePermissionSeeder` + `UserSeeder` until WP10 lands. TST-13 ("every feature ships a seeder") and the Boost AGENTS.md "factories and seeders for new models" guideline are recorded as a **deliberate sequencing exception**, not a waiver — WP10 must add idempotent, `--class`-invoked seeders for the new tables and verify on a fresh test DB. No seeder files created in this session. |
 
 ## DEFERRED ITEMS
 
@@ -159,12 +160,12 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-057 | 2026-11-23 | **WP1-T07 DONE** — `.github/workflows/ci.yml` added (test + PHPStan L6 + Pint); YAML valid; all three commands exit 0 locally (18 tests / 120 assertions, 0 PHPStan errors). **WP1 COMPLETE**. Next card: **WP2-T01**. |
 | D-058 | 2026-11-23 | **WP2-T01 DONE** — identity migrations + enums + user_profiles; `getColumnListing()` verified; 24 tests/160 assertions, PHPStan 0, Pint pass. Next card: **WP2-T02**. |
 | D-059 | 2026-11-23 | **WP2-T02 DONE** — KYC tables + enums + CRUD/review smoke tests; explicit FK indexes added after test gap; 29 tests/197 assertions, PHPStan 0, Pint pass. Next card: **WP2-T03**. |
 | D-060 | 2026-11-23 | **WP2-T03 DONE** — wallets + append-only ledger + enums + guarded models; MySQL `decimal(18,4)` verified; 35 tests/228 assertions, PHPStan 0, Pint pass. Next card: **WP2-T04**. |
+| D-061 | 2026-11-23 | Owner: **no new seeders now** — wallet/KYC seeders stay in WP10-T04/T05 (D-061). TST-13 timing exception recorded. Next card: **WP2-T04**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-056).
+Archived history → `docs/State_Ledger_Archive.md` (through D-057).
 
 ---
 
