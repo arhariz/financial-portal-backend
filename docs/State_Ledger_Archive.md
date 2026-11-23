@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-074)
+# Last Updated: 2026-11-23 (D-075)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-069)
+## Archived entry log (through D-070)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -65,6 +65,7 @@
 | D-067 | 2026-11-23 | **WP2-T07 DONE** — `pnl_distributions`/`pnl_distribution_items` + status enum + models/factories + guard tests; signed `decimal(18,4)`/`decimal(10,6)` + sum-to-posted verified; 59 tests/398 assertions, PHPStan 0, Pint pass. Next card: **WP2-T08**. |
 | D-068 | 2026-11-23 | **WP2-T08 DONE** — `agents`/`referrals` tables + D-031 tier-label config + models/factories + guard tests; integer tier + `decimal(18,4)` verified; 65 tests/432 assertions, PHPStan 0, Pint pass. Next card: **WP2-T09**. |
 | D-069 | 2026-11-23 | **WP2-T09 DONE** — `deduction_profiles`/`commission_rules`/`commissions` + D-030 defaults seeded (3 profiles) + 3 enums + models/factories + append-only guard; `decimal(18,4)`/`decimal(10,6)` + indexes + seeds verified on dev MySQL; 72 tests/495 assertions, PHPStan 0, Pint pass. Next card: **WP2-T10**. |
+| D-070 | 2026-11-23 | **WP2-T10 DONE** — 6 notification/dashboard/audit tables + 3 enums + `config/notification_events.php` + models/factories + append-only `AuditLog`; JSON columns + all indexes verified on dev MySQL; 81 tests/585 assertions, PHPStan 0, Pint pass. Next card: **WP2-T11**. |
 
 ## Archived implemented modules
 
