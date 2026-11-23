@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\LoginRequest;
+use Illuminate\Auth\Events\Logout as LogoutEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,10 +30,18 @@ class AuthController extends \Illuminate\Routing\Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $plainTextToken = $request->bearerToken();
+        $user = $request->user();
 
-        if ($plainTextToken !== null) {
-            \Laravel\Sanctum\PersonalAccessToken::findToken($plainTextToken)?->delete();
+        if ($user !== null) {
+            $plainTextToken = $request->bearerToken();
+
+            if ($plainTextToken !== null) {
+                \Laravel\Sanctum\PersonalAccessToken::findToken($plainTextToken)?->delete();
+            }
+
+            if (! Auth::guard('web')->check()) {
+                event(new LogoutEvent('sanctum', $user));
+            }
         }
 
         Auth::guard('web')->logout();

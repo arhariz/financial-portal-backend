@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-083)
+# Last Updated: 2026-11-23 (D-084)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-077)
+## Archived entry log (through D-079)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -72,6 +72,7 @@
 | D-075 | 2026-11-23 | **WP2-T11 DONE / WP2 COMPLETE** — global `SchemaGuardTest` (6 tests, 320 assertions); found + fixed missing `wallet_transactions.created_by` index (DB-04); OPS-11 satisfied via verified Ledger Health widget; 105 tests/952 assertions, PHPStan 0, Pint pass. Next card: **WP3-T01**. |
 | D-076 | 2026-11-23 | **Widget UI correction** — native Filament `StatsOverviewWidget` + `TableWidget` replaced text Blade; data layer unchanged; dev widget GREEN; 106 tests/960 assertions, PHPStan 0, Pint pass. |
 | D-077 | 2026-11-23 | **Reports UI redesign** — hero banner, interactive icon tabs, widget grid, honest placeholders, polished drill-down; 108 tests/970 assertions, PHPStan 0, Pint pass. |
+| D-079 | 2026-11-23 | **WP3-T01 DONE** — `User` model verified with multi-role, enum casts, SoftDeletes, permission-based panel access; `UserModelTest` (6 tests, 15 assertions) red→green; card rule code remapped AUTH-01 → SEC-01/FIL-02/COD-02/03 (D-078). Next card: **WP3-T02**. |
 
 ## Archived implemented modules
 
