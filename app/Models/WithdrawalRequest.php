@@ -10,7 +10,16 @@ use Database\Factories\WithdrawalRequestFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property WithdrawalStatus $status
+ * @property WithdrawalSourceWalletType $source_wallet_type
+ * @property string $amount_usd
+ * @property Carbon|null $requested_at
+ * @property Carbon|null $approved_at
+ * @property Carbon|null $paid_at
+ */
 class WithdrawalRequest extends Model
 {
     /** @use HasFactory<WithdrawalRequestFactory> */
@@ -29,6 +38,7 @@ class WithdrawalRequest extends Model
         'amount_usd',
         'payout_method',
         'payout_details',
+        'idempotency_key',
         'status',
         'approved_by',
         'approved_at',
@@ -47,6 +57,9 @@ class WithdrawalRequest extends Model
             'amount_usd' => 'decimal:4',
             'payout_details' => 'array',
             'status' => WithdrawalStatus::class,
+            'requested_at' => 'datetime',
+            'approved_at' => 'datetime',
+            'paid_at' => 'datetime',
         ];
     }
 

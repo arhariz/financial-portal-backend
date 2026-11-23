@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-090)
+# Last Updated: 2026-11-23 (D-091)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-086)
+## Archived entry log (through D-087)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -78,6 +78,7 @@
 | D-084 | 2026-11-23 | **WP3-T06 DONE** — `AuditService` + `LoginHistoryService` + 3 auto-discovered listeners; `AuditLogTest` 6 tests (append-only, JSON round-trip, actor/ip/ua). Next card: **WP3-T07**. |
 | D-085 | 2026-11-23 | **WP4-T01 DONE** — `WalletService::deposit()` + `walletFor()` (DB transaction + lockForUpdate, integer-scaled 4dp, idempotent wallet creation, non-positive rejection); `WalletServiceTest` 5 tests (148/148, 1476 assertions) red→green; reconciliation holds after deposits. Next card: **WP4-T02**. |
 | D-086 | 2026-11-23 | **WP3-T08 DONE / Q-005 CLOSED** — runtime Filament `RoleResource` (create/edit/delete + permissions multi-select) gated on `roles.manage`; `RolePolicy` (delete blocked when users assigned); `RoleObserver` audit; `Manifest::check()` ignores runtime roles; `RoleResourceTest` 6 tests (154/154, 1483 assertions). Next card: **WP4-T02**. |
+| D-087 | 2026-11-23 | **WP3-T09 DONE / Q-006 CLOSED** — per-user permission overrides (additive only) via `permissions` multi-select on `UserForm`, `PermissionPolicy` (gated on `users.manage`), `PermissionOverrideTest` 6 tests (160/160, 1496 assertions) red→green. Q-006 CLOSED. Q-007 remains open (blocks WP3-T10). Next card: **WP4-T02**. |
 
 ## Archived implemented modules
 
