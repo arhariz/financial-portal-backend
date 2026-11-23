@@ -31,7 +31,6 @@ final class AgentCreditController extends Controller
             $result = $this->credits->purchase($admin, [
                 'agent' => User::findOrFail((int) $validated['agent_id']),
                 'amount_bdt' => (string) $validated['amount_bdt'],
-                'bonus_amount_usd' => (string) $validated['bonus_amount_usd'],
             ], $request->header('Idempotency-Key'));
         } catch (RuntimeException $exception) {
             return response()->json([

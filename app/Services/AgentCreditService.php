@@ -8,6 +8,7 @@ use App\Enums\UserStatus;
 use App\Enums\WalletTransactionType;
 use App\Enums\WalletType;
 use App\Models\Agent;
+use App\Models\AgentCreditBonusRule;
 use App\Models\AgentCreditPurchase;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -17,8 +18,8 @@ use Illuminate\Validation\ValidationException;
 use RuntimeException;
 
 /**
- * Agent credit purchase (D-008, D-094, COM-05): BDT at the current admin
- * rate → USD face value to cash + admin-supplied USD role bonus to the
+ * Agent credit purchase (D-008, D-096, COM-05): BDT at the current admin
+ * rate → USD face value to cash + an admin-configured tier bonus to the
  * commission wallet. The bonus is never an MLM commission and no upline
  * row is created.
  */
@@ -33,7 +34,7 @@ final class AgentCreditService
     }
 
     /**
-     * @param array{agent: User, amount_bdt: string, bonus_amount_usd: string} $data
+     * @param array{agent: User, amount_bdt: string} $data
      *
      * @return array{purchase: AgentCreditPurchase, created: bool}
      */
@@ -44,12 +45,12 @@ final class AgentCreditService
         }
 
         $agent = $data['agent'];
-        $isAgent = Agent::query()
+        $agentRecord = Agent::query()
             ->where('user_id', $agent->id)
             ->where('status', UserStatus::Active)
-            ->exists();
+            ->first();
 
-        if (! $isAgent) {
+        if ($agentRecord === null) {
             throw ValidationException::withMessages(['agent_id' => ['The selected user is not an active agent.']]);
         }
 
@@ -76,13 +77,22 @@ final class AgentCreditService
             throw ValidationException::withMessages(['amount_bdt' => ['The credit amount is too small at the current rate.']]);
         }
 
+        $bonusRule = AgentCreditBonusRule::query()
+            ->where('tier', $agentRecord->tier)
+            ->where('active', true)
+            ->first();
+
+        $bonus = $bonusRule === null ? '0.0000' : bcmul($amountUsd, (string) $bonusRule->rate, 4);
+
         /** @var array{purchase: AgentCreditPurchase, created: bool} $result */
         $result = DB::transaction(fn (): array => $this->postPurchase(
             $admin,
             $agent,
+            $agentRecord->tier,
+            $bonusRule?->id,
             $data['amount_bdt'],
             $amountUsd,
-            $data['bonus_amount_usd'],
+            $bonus,
             $rate->id,
             $idempotencyKey,
         ));
@@ -104,6 +114,8 @@ final class AgentCreditService
     private function postPurchase(
         User $admin,
         User $agent,
+        int $agentTier,
+        ?int $bonusRuleId,
         string $amountBdt,
         string $amountUsd,
         string $bonus,
@@ -116,6 +128,8 @@ final class AgentCreditService
                 'amount_bdt' => $amountBdt,
                 'amount_usd' => $amountUsd,
                 'bonus_amount_usd' => $bonus,
+                'bonus_rule_id' => $bonusRuleId,
+                'agent_tier' => $agentTier,
                 'exchange_rate_id' => $rateId,
                 'idempotency_key' => $idempotencyKey,
                 'created_by' => $admin->id,
@@ -153,6 +167,8 @@ final class AgentCreditService
             'amount_bdt' => $amountBdt,
             'amount_usd' => $amountUsd,
             'bonus_amount_usd' => $bonus,
+            'agent_tier' => $agentTier,
+            'bonus_rule_id' => $bonusRuleId,
             'agent_id' => $agent->id,
         ]);
 

@@ -21,7 +21,6 @@ class StoreAgentCreditRequest extends FormRequest
         return [
             'agent_id' => ['required', 'integer', 'exists:users,id'],
             'amount_bdt' => ['required', 'string', 'regex:/^\d{1,14}\.\d{4}$/', 'gt:0'],
-            'bonus_amount_usd' => ['required', 'string', 'regex:/^\d{1,14}\.\d{4}$/'],
         ];
     }
 }

@@ -23,6 +23,8 @@ class AgentCreditPurchaseResource extends JsonResource
             'amount_bdt' => $this->amount_bdt,
             'amount_usd' => $this->amount_usd,
             'bonus_amount_usd' => $this->bonus_amount_usd,
+            'agent_tier' => $this->agent_tier,
+            'bonus_rule_id' => $this->bonus_rule_id,
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

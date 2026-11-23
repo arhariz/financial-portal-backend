@@ -27,6 +27,8 @@ class AgentCreditPurchase extends Model
         'amount_bdt',
         'amount_usd',
         'bonus_amount_usd',
+        'bonus_rule_id',
+        'agent_tier',
         'exchange_rate_id',
         'idempotency_key',
         'created_by',
@@ -41,6 +43,7 @@ class AgentCreditPurchase extends Model
             'amount_bdt' => 'decimal:4',
             'amount_usd' => 'decimal:4',
             'bonus_amount_usd' => 'decimal:4',
+            'agent_tier' => 'integer',
         ];
     }
 
