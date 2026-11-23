@@ -98,9 +98,9 @@ final class Manifest
         foreach (array_diff($expectedRoles, $dbRoles) as $missing) {
             $issues[] = "missing role: {$missing}";
         }
-        foreach (array_diff($dbRoles, $expectedRoles) as $extra) {
-            $issues[] = "orphan role: {$extra}";
-        }
+
+        // Runtime-created roles (not declared in config) are admin data under Q-005 and are
+        // intentionally not flagged here; sync() never deletes them either.
 
         foreach (self::roles() as $slug => $granted) {
             $role = Role::where('name', $slug)->where('guard_name', $guard)->first();

@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-085)
+# Last Updated: 2026-11-23 (D-086)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,8 +16,8 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-085 — **WP4-T01 DONE**: `WalletService::deposit()` + `walletFor()` (DB transaction + lockForUpdate, integer-scaled 4dp, idempotent wallet creation, non-positive rejection); `WalletServiceTest` 5 tests (148/148, 1476 assertions) red→green; reconciliation holds after deposits. Next card: **WP4-T02**. |
-| Test Suite | **148 tests / 1476 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-086 — **WP3-T08 DONE / Q-005 CLOSED**: runtime Filament `RoleResource` (create/edit/delete + permissions multi-select) gated on `roles.manage`; `RolePolicy` (delete blocked when users assigned); `RoleObserver` audit; `Manifest::check()` ignores runtime roles; `RoleResourceTest` 6 tests (154/154, 1483 assertions). Next card: **WP3-T09** (still blocked Q-006) or **WP4-T02**. |
+| Test Suite | **154 tests / 1483 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
 | Active Phase | Auth/RBAC phase — Laravel 13.43.0 + Filament 5 landed; **WP2 COMPLETE (T01–T11 DONE)**; Ledger Health widget verified with data (OPS-11); WP3-T01 DONE (T08–T10 blocked Q-005/6/7) |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
@@ -38,7 +38,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 |---|---|---:|---|---|
 | 1 | Laravel 13 bootstrap + Filament 5 skeleton | 7 | None — **ALL DONE** | WP1 COMPLETE (T01–T07 DONE) |
 | 2 | Schema/ledger migrations + guard tests | 11 | None — **ALL DONE** | WP2 COMPLETE (T01–T11 DONE) |
-| 3 | Auth + RBAC | 10 | None | WP3-T07 (T01–T06 done; T08–T10 blocked Q-005/6/7) |
+| 3 | Auth + RBAC | 10 | None | WP3-T09 (T01–T08 + T07 done; T09–T10 blocked Q-006/7) |
 | 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | WP4-T02 (T01 + T09 DONE; T02–T08 remain) |
 | 5 | Investment positions + P&L distribution | 7 | WP4 | WP5-T01 |
 | 6 | KYC workflow + approvals | 5 | WP2 | WP6-T01 |
@@ -48,7 +48,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 10 | Database seeders & demo fixtures | 12 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); T04 wallets/ledger, T05 KYC, **T09–T12 added for missing coverage (D-062)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
-**Total task cards: 99.** Current active card: **WP4-T02** (Exchange rate admin CRUD + history). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP4-T01/T09**, **WP9-T01/T02**, WP3-T01/T02/T03/T04/T05/T06, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 99.** Current active card: **WP4-T02** (Exchange rate admin CRUD + history). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP4-T01/T09**, **WP9-T01/T02**, WP3-T01/T02/T03/T04/T05/T06/T08, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -58,7 +58,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Q-002 | Define concrete admin-defined commission deduction types | CLOSED — D-030: loss_adjustment, reversal, admin_adjustment |
 | Q-003 | Choose concrete agent tier names | CLOSED — D-031: Seed / Growth / Master Investor |
 | Q-004 | Redis vs database queue | CLOSED — Redis on DigitalOcean VPS (D-022/D-024) |
-| Q-005 | **Role management: code-defined or runtime?** Roles/permissions currently live in `config/role_matrix.php` and are deployed by `permissions:sync`. Plan §1 lists "roles" under Super Admin + Admin, implying an admin screen, but there is no role-create UI. Decide whether roles stay code-defined (immutable, deployed) or become a Filament RoleResource backed by the `roles` table — and if the latter, who may create a role and what happens to `permissions:sync --check` as the source of truth. | OPEN — separate session |
+| Q-005 | **Role management: code-defined or runtime?** | **CLOSED — D-086**: **runtime** Filament `RoleResource` (`app/Filament/Resources/Roles/*`, `RolePolicy`, `RoleObserver`) backed by Spatie's `roles` table; create/edit/delete gated on `roles.manage` (Super Admin + Admin); `permissions:sync` syncs the 12 locked roles + 30 permissions only and never deletes runtime roles; `--check` verifies locked roles/perms and ignores runtime roles. |
 | Q-006 | **Per-user permission overrides.** Plan §1 allows "per-user overrides by Super Admin"; Spatie supports direct `model_has_permissions`, but there is no UI, policy or precedence rule. Decide how overrides are granted, and whether they are additive only or can subtract a role-granted permission (deny-by-default vs deny-override). | OPEN — separate session |
 | Q-007 | **User profile management.** `user_profiles` (Schema §2: full_name, date_of_birth, address, city, country, id_number) is planned in WP2-T01 but has no CRUD/UI card. Decide which fields are admin-editable vs user-editable, whether KYC-sensitive fields (`id_number`) are masked/audit-logged (SEC-06/07), and whether the profile lives inside the Users resource or its own resource. | OPEN — separate session |
 | Q-008 | **Host disk capacity (blocks all gates).** Windows `C:` hit 0 bytes on 2026-11-21 (truncated Pint phar, `errno=28`). D-046 cleared ~660 MB; D-050 re-measured 0.24 GB; WP11-T01 (D-054) re-ran the gate: **C: 3.19 GB free > 2 GB**, PHP/Composer/Node/MySQL/Redis all green. No cache deletion was required because the gate was already satisfied. | **CLOSED — D-054: gate green, 3.19 GB free** |
@@ -154,6 +154,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-083 | WP3-T05 close | `GuardService` (`canInvest`/`canWithdraw`/`ensure*`) enforces KYC-approved + active status (SEC-02/03) for both invest and withdraw; `EnsureMoneyActionAllowed` middleware + `money.action` alias. `GuardServiceTest` 6 tests (137/137, 1427 assertions) red→green: approved-active allowed, pending/rejected/none KYC blocked, suspended blocked even with approved KYC. Class-level `@property` enum declarations added to `User` to fix Larastan type inference. Gates: PHPStan 0, Pint pass, PHPUnit **137/137 (1427 assertions)**. Next card: **WP3-T06**. |
 | D-084 | WP3-T06 close | `AuditService` + `LoginHistoryService` + auto-discovered listeners (`LogSuccessfulLogin`, `LogFailedLogin`, `LogLogout`) writing `audit_logs` (actor, role, IP, UA, changes) and `login_history` (logged_in_at/logged_out_at). `AuditLogTest` 6 tests (143/143, 1458 assertions) red→green: login history + audit row with actor/ip/ua, failed login audit without history, logout updates logged_out_at, append-only guards, JSON round-trip. SEC-07 satisfied. Gates: PHPStan 0, Pint pass, PHPUnit **143/143 (1458 assertions)**. Next card: **WP3-T07**. |
 | D-085 | WP4-T01 close | `WalletService::deposit()` + `walletFor()`: DB transaction + `lockForUpdate`, integer-scaled 4dp arithmetic (no floats), idempotent wallet creation, non-positive amount rejection, immutable ledger row with `balance_after`, `created_by` actor. `WalletServiceTest` 5 tests (148/148, 1476 assertions) red→green: credit + ledger row + balance, wallet auto-creation, 4dp precision, accumulation, non-positive rejection, reconciliation holds. Class-level `@property string $balance` added to `Wallet` to fix Larastan inference. Gates: PHPStan 0, Pint pass, PHPUnit **148/148 (1476 assertions)**. Next card: **WP4-T02**. |
+| D-086 | WP3-T08 close / Q-005 closed | Owner decision: roles become a **runtime** Filament `RoleResource` backed by Spatie's `roles` table; create/edit/delete gated on `roles.manage` (Super Admin + Admin); `permissions:sync` syncs the 12 locked roles + 30 permissions only and never deletes runtime roles; `--check` verifies locked roles/perms and ignores runtime roles. Delivered `app/Filament/Resources/Roles/*`, `RolePolicy` (delete blocked when users assigned), `RoleObserver` audit, `Manifest::check()` amendment, `RoleResourceTest` 6 tests (154/154, 1483 assertions). Q-005 CLOSED. Q-006/Q-007 remain open (block WP3-T09/T10). Gates: PHPStan 0, Pint pass, PHPUnit **154/154 (1483 assertions)**. Next card: **WP4-T02**. |
 
 ## DEFERRED ITEMS
 
@@ -201,6 +202,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-083 | 2026-11-23 | **WP3-T05 DONE** — `GuardService` (canInvest/canWithdraw/ensure*) + `EnsureMoneyActionAllowed` middleware + `money.action` alias; KYC-approved + active required; pending/rejected/none KYC and suspended all block; `GuardServiceTest` 6 tests. Next card: **WP3-T06**. |
 | D-084 | 2026-11-23 | **WP3-T06 DONE** — `AuditService` + `LoginHistoryService` + 3 auto-discovered listeners; `AuditLogTest` 6 tests (append-only, JSON round-trip, actor/ip/ua). Next card: **WP3-T07**. |
 | D-085 | 2026-11-23 | **WP4-T01 DONE** — `WalletService::deposit()` + `walletFor()` (DB transaction + lockForUpdate, integer-scaled 4dp, idempotent wallet creation, non-positive rejection); `WalletServiceTest` 5 tests (148/148, 1476 assertions) red→green; reconciliation holds after deposits. Next card: **WP4-T02**. |
+| D-086 | 2026-11-23 | **WP3-T08 DONE / Q-005 CLOSED** — runtime Filament `RoleResource` (create/edit/delete + permissions multi-select) gated on `roles.manage`; `RolePolicy` (delete blocked when users assigned); `RoleObserver` audit; `Manifest::check()` ignores runtime roles; `RoleResourceTest` 6 tests (154/154, 1483 assertions). Next card: **WP4-T02**. |
 
 Archived history → `docs/State_Ledger_Archive.md` (through D-082).
 
