@@ -19,6 +19,37 @@ class Reports extends Page
 
     protected static ?int $navigationSort = 1;
 
+    public string $activeTab = 'overview';
+
+    /** @var array<string, string> */
+    private const TAB_ICONS = [
+        'overview' => 'heroicon-o-squares-2x2',
+        'ledger_wallets' => 'heroicon-o-scale',
+        'investment_pnl' => 'heroicon-o-chart-bar',
+        'agents_commissions' => 'heroicon-o-user-group',
+        'kyc_security' => 'heroicon-o-shield-check',
+        'money_flow' => 'heroicon-o-banknotes',
+        'operations' => 'heroicon-o-cog-6-tooth',
+        'exports' => 'heroicon-o-arrow-down-tray',
+    ];
+
+    public function mount(): void
+    {
+        $this->setTab(request()->string('tab')->toString());
+    }
+
+    public function setTab(string $key): void
+    {
+        if (array_key_exists($key, $this->getTabs())) {
+            $this->activeTab = $key;
+        }
+    }
+
+    public function getTabIcon(string $key): string
+    {
+        return self::TAB_ICONS[$key] ?? 'heroicon-o-rectangle-stack';
+    }
+
     public static function canAccess(): bool
     {
         return auth()->user()?->can('reports.view') ?? false;
