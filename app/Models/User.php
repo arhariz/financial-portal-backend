@@ -19,6 +19,10 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @property UserStatus $status
+ * @property KycStatus $kyc_status
+ */
 #[Fillable(['name', 'email', 'password', 'status', 'kyc_status', 'referral_code_used'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
