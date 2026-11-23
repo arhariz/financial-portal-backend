@@ -129,19 +129,20 @@ final class WalletService
         ?User $actor = null,
         ?WalletTransactionType $debitType = null,
         ?WalletTransactionType $creditType = null,
+        ?User $destinationUser = null,
     ): WalletTransaction {
         if ($this->toMinorUnits($amount) <= 0) {
             throw new InvalidArgumentException('Transfer amount must be greater than zero.');
         }
 
-        if ($from === $to) {
+        if ($from === $to && ($destinationUser ?? $user)->id === $user->id) {
             throw new InvalidArgumentException('Source and destination wallets must differ.');
         }
 
-        return DB::transaction(function () use ($user, $from, $to, $amount, $transactionType, $referenceType, $referenceId, $actor, $debitType, $creditType): WalletTransaction {
+        return DB::transaction(function () use ($user, $from, $to, $amount, $transactionType, $referenceType, $referenceId, $actor, $debitType, $creditType, $destinationUser): WalletTransaction {
             $source = Wallet::where('user_id', $user->id)->where('type', $from)->firstOrFail();
             $destination = Wallet::firstOrCreate(
-                ['user_id' => $user->id, 'type' => $to],
+                ['user_id' => ($destinationUser ?? $user)->id, 'type' => $to],
                 ['currency' => 'USD', 'balance' => '0.0000'],
             );
 

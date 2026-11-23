@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\AgentCreditController;
+use App\Http\Controllers\AgentCreditTransferController;
 use App\Http\Controllers\CapitalReleaseController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\TransferController;
@@ -20,6 +21,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->post('/capital-releases', [CapitalReleaseController::class, 'store'])->name('api.v1.capital-releases.store');
     Route::middleware('auth:sanctum')->post('/transfers', [TransferController::class, 'store'])->name('api.v1.transfers.store');
     Route::middleware('auth:sanctum')->post('/agent-credits', [AgentCreditController::class, 'store'])->name('api.v1.agent-credits.store');
+    Route::middleware('auth:sanctum')->post('/agent-credit-transfers', [AgentCreditTransferController::class, 'store'])->name('api.v1.agent-credit-transfers.store');
     Route::get('/health', fn () => response()->json([
         'status' => 'ok',
         'app' => config('app.name'),
