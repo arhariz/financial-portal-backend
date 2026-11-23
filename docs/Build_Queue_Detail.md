@@ -1,6 +1,6 @@
 # docs/Build_Queue_Detail.md — Task cards for the live BUILD_QUEUE
 # Authority: Owner / CTO
-# Last Updated: 2026-11-23 (D-059)
+# Last Updated: 2026-11-23 (D-061)
 # Source of truth for: granular implementation tasks, dependencies, verification
 # Does NOT contain: executed state (docs/State_Ledger.md), code rules (rules/*.md), business policy (docs/EXECUTION_LOCKS_ACTIVE.md)
 # Conflict rule: STATE_LEDGER wins for current queue position; this file defines HOW each item is split.
@@ -157,7 +157,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 
 ## WP10 — Database seeders & demo fixtures (8 tasks)
 
-> **Progress (2026-11-21, D-043):** WP10-T01, WP10-T02 **DONE** — `DatabaseSeeder` + `RolePermissionSeeder` + `UserSeeder` (30 permissions / 12 roles / 13 users, idempotent). Next card: **WP10-T03** (blocked by WP2-T04/T06).
+> **Progress (2026-11-23, D-061):** WP10-T01, WP10-T02 **DONE** — `DatabaseSeeder` + `RolePermissionSeeder` + `UserSeeder` (30 permissions / 12 roles / 13 users, idempotent). **T04 must seed WP2-T03 wallets/ledger and T05 must seed WP2-T02 KYC** — no seeder files were created in the WP2 cards (owner decision D-061; TST-13 sequencing exception). Next card: **WP10-T03** (blocked by WP2-T04/T06).
 
 Every feature ships a seeder that creates the minimum data needed to exercise it (TST-13). Seeders are local/staging only, idempotent, and always invoked with `--class`.
 

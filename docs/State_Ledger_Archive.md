@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-060)
+# Last Updated: 2026-11-23 (D-061)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-056)
+## Archived entry log (through D-057)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -52,6 +52,7 @@
 | D-054 | 2026-11-23 | **WP11-T01 DONE** — disk gate re-run green (C: 3.19 GB > 2 GB), no cache deletion needed; **Q-008 CLOSED**. Next card: **WP11-T03**. |
 | D-055 | 2026-11-23 | **WP11-T03 DONE** — gitleaks 8.30.1, Trivy 0.76.2, Semgrep 1.186.0 installed + on PATH; all version commands exit 0. Gate E satisfied. Next card: **WP11-T04**. |
 | D-056 | 2026-11-23 | **WP11-T04 DONE** — Boost v2.10.4 + `boost:install --guidelines`; AGENTS.md/CLAUDE.md regenerated and re-read. **WP11 COMPLETE**. Next card: **WP1-T07** (CI workflow). |
+| D-057 | 2026-11-23 | **WP1-T07 DONE** — `.github/workflows/ci.yml` added (test + PHPStan L6 + Pint); YAML valid; all three commands exit 0 locally (18 tests / 120 assertions, 0 PHPStan errors). **WP1 COMPLETE**. Next card: **WP2-T01**. |
 
 ## Archived implemented modules
 
