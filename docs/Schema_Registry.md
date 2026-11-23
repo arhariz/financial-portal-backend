@@ -65,9 +65,9 @@ Canonical registry of database design. This is a **design contract**, not yet-im
 |---|---|---|
 | `notification_templates` | id, `key`, channel (`email`/`sms`/`in_app`/`push`), subject, body, variables JSON, enabled | Admin-editable. |
 | `notifications` | id, user_id, template_key, channel, payload JSON, status (`queued`/`sent`/`failed`), sent_at, created_at | |
-| `notification_preferences` | id, user_id, channel, event, enabled | Security alerts cannot be disabled. |
+| `notification_preferences` | id, user_id, channel, event, enabled | Security alerts cannot be disabled — enforced by `config/notification_events.php` (`security_alert.mandatory = true`). |
 | `dashboard_layouts` | id, role_id, user_id (nullable), widgets JSON, updated_by, timestamps | Per-role default + per-user override. |
-| `audit_logs` | id, actor_id, actor_role, action, subject_type, subject_id, ip, user_agent, changes JSON, created_at | All staff actions. |
+| `audit_logs` | id, actor_id, actor_role, action, subject_type, subject_id, ip, user_agent, changes JSON, created_at | All staff actions; append-only (SEC-07), no updates or deletes. |
 | `login_history` | id, user_id, ip, user_agent, device, logged_in_at, logged_out_at | |
 
 ## 3. Money Flow Invariants

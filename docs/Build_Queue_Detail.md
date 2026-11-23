@@ -36,7 +36,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 
 ## WP2 — Schema + ledger migrations (11 tasks)
 
-> **Progress (2026-11-23, D-069):** WP2-T01…T09 **DONE** — identity + KYC + wallet/ledger + exchange-rate + money-request + investment + distribution + agent + commission schema with enums, factories and guard tests. `getColumnListing()` + MySQL `information_schema` verified on dev DB; append-only ledger + commission guards active; 72 tests / 495 assertions, PHPStan 0, Pint pass. Next card: **WP2-T10** (notification/dashboard/audit tables).
+> **Progress (2026-11-23, D-070):** WP2-T01…T10 **DONE** — identity + KYC + wallet/ledger + exchange-rate + money-request + investment + distribution + agent + commission + notification/dashboard/audit schema with enums, factories and guard tests. `getColumnListing()` + MySQL `information_schema` verified on dev DB; append-only ledger + commission + audit guards active; 81 tests / 585 assertions, PHPStan 0, Pint pass. Next card: **WP2-T11** (schema guard suite).
 
 | ID | Task | Scope / files | Inputs | Rules | Verify / Done |
 |---|---|---|---|---|---|
@@ -49,7 +49,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 | WP2-T07 | Distribution tables **(DONE, D-067)** | 2 migrations; enum `PnlDistributionStatus`; models + factories; `tests/Feature/DistributionSchemaTest.php` (6 tests) | Schema §2, D-010/029, D-064, D-067 | PNL-04/05, MON-08 | signed `decimal(18,4)` + `decimal(10,6)` ✅; sum-to-posted (integer-scaled) ✅; all FK/date indexes on dev MySQL ✅; 59 tests/398 assertions ✅; PHPStan 0 ✅; Pint pass ✅ |
 | WP2-T08 | Agent tables **(DONE, D-068)** | 2 migrations; `config/agent_tiers.php` (D-031 labels); models + factories; `tests/Feature/AgentSchemaTest.php` (6 tests) | Schema §2, D-031, D-068 | COM-01/08 | integer tier ✅; D-031 labels in config ✅; `decimal(18,4)` + indexes on dev MySQL ✅; 65 tests/432 assertions ✅; PHPStan 0 ✅; Pint pass ✅ |
 | WP2-T09 | Commission tables **(DONE, D-069)** | `deduction_profiles`, `commission_rules`, `commissions` + `config/deduction_types.php`, 3 enums, models/factories, `tests/Feature/CommissionSchemaTest.php` (7 tests) | Schema §2, D-030 | COM-02..07 | 3 D-030 default profiles seeded idempotently ✅; append-only `Commission` ✅; `decimal(18,4)`/`decimal(10,6)` + all indexes verified on dev MySQL ✅; 7 new tests (63 assertions), suite 72/72 (495), PHPStan 0, Pint pass ✅ |
-| WP2-T10 | Notification/dashboard/audit tables | `notification_templates`, `notifications`, `notification_preferences`, `dashboard_layouts`, `audit_logs`, `login_history` | Schema §2 | SEC-07, FIL-04 | audit append-only test |
+| WP2-T10 | Notification/dashboard/audit tables **(DONE, D-070)** | `notification_templates`, `notifications`, `notification_preferences`, `dashboard_layouts`, `audit_logs`, `login_history` + 3 enums + `config/notification_events.php` + models/factories + `tests/Feature/NotificationAuditSchemaTest.php` (9 tests) | Schema §2 | SEC-07, FIL-04 | audit append-only update/delete guards throw ✅; 5 locked event groups + mandatory security alerts ✅; all FK/status/date indexes + JSON columns verified on dev MySQL ✅; 9 new tests (90 assertions), suite 81/81 (585), PHPStan 0, Pint pass ✅ |
 | WP2-T11 | Schema guard suite | `tests/Unit/Schema*Test.php` | Schema_Registry | DB-01..08, TST-03/04 | zero float columns, all FK indexes |
 
 ## WP3 — Auth + RBAC (10 tasks)
