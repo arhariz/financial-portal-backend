@@ -35,7 +35,7 @@ A company-managed, forex-style investment portal. Investors fund a wallet, inves
 - Admin-managed symbols; one position per investment; timezone Asia/Dhaka.
 - Eligibility: second business day after investment (Fri/Sat/Sun → Tuesday), then every subsequent daily distribution until capital withdrawn.
 - Staff enters P&L per symbol + trade date → clicks Distribute → proportional split by current position capital among eligible positions.
-- Profit → profit wallet; loss → reduces position capital. Profit transferred into investment creates a new position.
+- Profit → profit wallet; loss → debit the profit wallet first up to its available balance, then debit the remainder from position capital (immutable `loss_adjustment` rows; block the entry if funds cannot cover it). Profit transferred into investment creates a new position. (D-064 supersedes D-010 for loss handling.)
 - Corrections/reversals allowed with role permission and full audit; account-level P&L reports.
 
 ### Section 5 — Commission / Referral (MLM)

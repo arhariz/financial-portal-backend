@@ -31,7 +31,7 @@ A company-managed, forex-style investment platform where investors deposit BDT (
 1. All dates use **Asia/Dhaka**; timestamps stored in UTC and converted for display.
 2. Investing and withdrawal require **approved KYC**; registration and deposit do not.
 3. P&L splits are proportional to **current capital**, not original deposit.
-4. Profit lands in the **profit wallet**; losses reduce **position capital**. Profit→investment creates a **new position**.
+4. Profit lands in the **profit wallet**; a loss debits the **profit wallet** first up to its available balance, then debits the remainder from **position capital** (two immutable `loss_adjustment` rows; block if insufficient). Profit→investment creates a **new position**. (D-064)
 5. Capital never returns to cash automatically — only via **admin-approved release + 24h**.
 6. Commission is a **platform cost**; the downline's amount is never reduced.
 7. Role bonus from credit purchase is **not** commissionable by upline.

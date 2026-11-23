@@ -1,6 +1,6 @@
 # rules/money.md — MON, TME, WAL, PNL, COM rules
 # Authority: Owner / CTO
-# Last Updated: 2026-11-21 (D-029, D-030, D-031)
+# Last Updated: 2026-11-23 (D-029, D-030, D-031, D-064)
 # Source of truth for: MON-01..08, TME-01..04, WAL-01..06, PNL-01..07, COM-01..08
 # Does NOT contain: database mechanics (backend.md), security policy, testing, operations
 # Conflict rule: STATE_LEDGER for state; CONSTITUTION for code; EXECUTION_LOCKS for business policy.
@@ -15,7 +15,7 @@ MON-02 | Balance change | Append-only `wallet_transactions` row + wallet update 
 MON-03 | Ledger immutability | Never UPDATE/DELETE ledger, distribution or commission rows; corrections are reversal rows | append-only test
 MON-04 | Atomicity | Deposit approval, distribution, withdrawal, credit purchase, transfer, commission posting = one `DB::transaction()` with `lockForUpdate()` | code + concurrency test
 MON-05 | Reconciliation | For every wallet: credits − debits = balance; distribution items sum exactly to posted P&L | TST-04
-MON-06 | No negative wallets | Losses reduce position capital; wallets never below zero | boundary test
+MON-06 | No negative wallets | On a loss, debit the profit wallet up to its available balance, then debit the remainder from position capital; wallets and capital never below zero — if total available is insufficient, block the P&L entry for admin correction (D-064) | boundary test
 MON-07 | Client money | API sends decimal strings; no JS/Dart binary-float arithmetic | grep + FE/MOB tests
 MON-08 | Rounding remainder | Largest-remainder allocation at 4dp; leftover assigned to largest share, ties by position id; never silent drift | distribution test
 
@@ -42,7 +42,7 @@ PNL-02 | Positions | One position per investment; stores capital, investment dat
 PNL-03 | Eligibility | System auto-flags eligible positions by TME-02 | job test
 PNL-04 | Distribution scope | One distribution per symbol + trade date | uniqueness test
 PNL-05 | Split basis | Current capital of eligible positions, not original amount (MON-08 remainder) | proportional test
-PNL-06 | P&L destination | Profit → profit wallet; loss → reduces position capital | ledger test
+PNL-06 | P&L destination | Profit → profit wallet; loss → profit wallet first up to available balance, remainder → position capital; two immutable `loss_adjustment` debits per user reference the distribution; compensating distribution with `reversal_of_id` credits profit wallet first, then capital (D-064) | ledger test
 PNL-07 | Corrections | Reversal entry with `reversal_of_id`, role permission + audit | reversal test
 
 ## SECTION 5 — COMMISSION / MLM (COM)

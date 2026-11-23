@@ -10,7 +10,7 @@ Installed **2026-11-21**, before any implementation. Skills are project-scoped a
 |---|---|
 | `fp-project-context` | Must-load context at the start of every task; points to plan/context/constitution/schema/ledger. |
 | `fp-money-ledger` | DECIMAL money, immutable ledger, atomic money flows, reconciliation, no negative balances, Asia/Dhaka dates. |
-| `fp-pnl-distribution` | Locked Section 4: positions, T+2/weekend eligibility, per-symbol distribution, current-capital split, profit wallet vs loss to capital. |
+| `fp-pnl-distribution` | Locked Section 4: positions, T+2/weekend eligibility, per-symbol distribution, current-capital split, profit to profit wallet, loss to profit wallet first then position capital (D-064). |
 | `fp-commission-mlm` | Locked Section 5: downline, tier×level matrix, events, platform cost, net base, vesting, clawback, auto-promotion. |
 | `fp-auth-kyc` | Locked Sections 1–2: roles/permission matrix, multi-role, Sanctum cookie vs Bearer, KYC workflow, suspension. |
 | `fp-local-verification-gate` | Mandatory localhost-first gate before staging/production; fresh migrations, tests, money-path E2E, reconciliation. |

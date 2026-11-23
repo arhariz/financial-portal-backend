@@ -75,5 +75,5 @@ Canonical registry of database design. This is a **design contract**, not yet-im
 1. A wallet balance changes **only** by inserting a `wallet_transactions` row and updating the wallet in the same DB transaction.
 2. Sum of all credits minus debits for a wallet must equal its balance (reconcilable at any time).
 3. Investment capital = sum of active `positions.capital` (the `investment` wallet balance is a maintained aggregate for reconciliation).
-4. No negative wallet balances; losses reduce position capital and are recorded as `loss_adjustment`.
+4. No negative wallet balances; a loss debits the profit wallet first up to its available balance, then debits the remainder from position capital — each debit is an immutable `loss_adjustment` row referencing the distribution. If profit wallet + remaining capital cannot cover the loss, block the P&L entry for admin correction (D-064).
 5. Reversals reference the original entry via `reversal_of_id` / `reference_id` and never delete rows.

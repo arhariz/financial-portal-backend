@@ -18,7 +18,7 @@ Read `fp-project-context` and `fp-money-ledger` first. Use **only** real data fr
    - Net flow = deposits − withdrawals; note pending approvals queue as constrained liquidity.
 3. **Investment performance**
    - P&L posted per symbol/trade date; distributed profit vs loss; count of distribution runs and reversals.
-   - Investor-level P&L from `pnl_distribution_items` (profit wallet credits, capital reductions).
+   - Investor-level P&L from `pnl_distribution_items` (profit wallet credits; loss debits profit wallet first, then capital reductions — D-064).
 4. **Commission & agent economics**
    - Role bonuses (agent credit purchases) vs MLM commissions — report separately; MLM is a platform cost.
    - Pending/vested/cancelled commissions by tier and level; clawback exposure from withdrawals before vesting.

@@ -20,7 +20,7 @@ Source: `docs/plan.md` §6, `docs/Constitution.md` 19d. **Never deploy before al
 3. **Manual money-path E2E with synthetic data only:**
    - manual deposit submission + admin approval → cash wallet
    - invest → position created with correct eligibility date
-   - staff enters symbol P&L + Distribute → profit to profit wallet / loss to position capital
+   - staff enters symbol P&L + Distribute → profit to profit wallet / loss to profit wallet first, then position capital (D-064)
    - profit transfer → new position; profit withdrawal
    - capital release request → approval → 24h → cash wallet → separate withdrawal
    - agent credit purchase → cash + commission bonus; in-app credit transfer to investor

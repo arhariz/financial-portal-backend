@@ -14,7 +14,7 @@ Source of truth: `rules/money.md` (MON-01..08, TME-01..04, WAL-01..06, PNL-01..0
 3. **Ledger rows are append-only.** No UPDATE, no DELETE. Corrections are new compensating rows referencing the original via `reversal_of_id` / `reference_id`.
 4. **All money flows are atomic** with row locking where concurrency is possible. Wrap deposit approval, distribution, withdrawal, credit purchase, transfer, and commission posting in one DB transaction.
 5. **Reconciliation must always hold:** for every wallet, `sum(credits) − sum(debits) = balance`. Distribution items must sum exactly to the distribution amount.
-6. **No negative wallet balances.** Losses reduce *position capital*, not the wallet below zero.
+6. **No negative wallet balances.** A loss debits the *profit wallet* first up to its available balance, then debits the remainder from *position capital*; both stay ≥ 0, and a loss that cannot be covered blocks the entry for admin correction (D-064).
 7. **Asia/Dhaka** defines business dates; store UTC timestamps. T+2 eligibility and the 48h capital-release rule are exact — never approximate.
 
 ## Locked money flows (summary)

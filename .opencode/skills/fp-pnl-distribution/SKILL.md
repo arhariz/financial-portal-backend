@@ -1,6 +1,6 @@
 ---
 name: fp-pnl-distribution
-description: Locked Investment & P&L Engine rules (plan Section 4) — symbols, positions, T+2 eligibility, per-symbol daily P&L entry, proportional distribution, profit wallet, loss to position capital, corrections. Use when implementing or reviewing any investment, position, symbol, distribution job, P&L report, or eligibility logic.
+description: Locked Investment & P&L Engine rules (plan Section 4) — symbols, positions, T+2 eligibility, per-symbol daily P&L entry, proportional distribution, profit wallet, loss to profit wallet first then position capital, corrections. Use when implementing or reviewing any investment, position, symbol, distribution job, P&L report, or eligibility logic.
 ---
 
 # Investment & P&L Engine (plan §4 — locked)
@@ -27,7 +27,7 @@ Formal rules: `PNL-01..07`, `TME-01..04`, `MON-01/05/08` in `rules/money.md`. Lo
 - Scope: **one symbol + one trade date**.
 - Staff enters signed P&L → clicks **Distribute**.
 - Split base: each eligible position's **current capital** (after prior losses, transfers-in, withdrawals), NOT original amount.
-- Profit → **profit wallet** (separate). Loss → reduces **position capital**.
+- Profit → **profit wallet** (separate). Loss → debit **profit wallet** first up to its available balance, then debit the remainder from **position capital**; two immutable `loss_adjustment` rows per user referencing the distribution; block the entry if funds cannot cover it (D-064).
 - Idempotent (no double distribution), re-runnable via compensating reversal entry with `reversal_of_id`.
 - Corrections/reversals require role permission and full audit.
 

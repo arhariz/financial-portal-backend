@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-062)
+# Last Updated: 2026-11-23 (D-064)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,7 +16,7 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-063 — **WP2-T04 DONE**: `exchange_rates` table + `ExchangeRate` model/factory + guard tests; `decimal(12,4)` and history/FK indexes verified on dev MySQL. Next card: **WP2-T05**. |
+| Last Entry | D-064 — Owner-confirmed **profit-wallet-first loss absorption** (100/110 example); D-010 loss part superseded; PNL-06/MON-06/Schema §3 #4/plan §4 + dependent prompts/skills amended. **Q-010 CLOSED.** Next card: **WP2-T05**. |
 | Test Suite | **41 tests / 246 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
 | Active Phase | Schema phase in progress — Laravel 13.43.0 + Filament 5 + RBAC landed; WP2 schema T01–T04 DONE (T05–T11 remain) |
@@ -63,6 +63,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Q-007 | **User profile management.** `user_profiles` (Schema §2: full_name, date_of_birth, address, city, country, id_number) is planned in WP2-T01 but has no CRUD/UI card. Decide which fields are admin-editable vs user-editable, whether KYC-sensitive fields (`id_number`) are masked/audit-logged (SEC-06/07), and whether the profile lives inside the Users resource or its own resource. | OPEN — separate session |
 | Q-008 | **Host disk capacity (blocks all gates).** Windows `C:` hit 0 bytes on 2026-11-21 (truncated Pint phar, `errno=28`). D-046 cleared ~660 MB; D-050 re-measured 0.24 GB; WP11-T01 (D-054) re-ran the gate: **C: 3.19 GB free > 2 GB**, PHP/Composer/Node/MySQL/Redis all green. No cache deletion was required because the gate was already satisfied. | **CLOSED — D-054: gate green, 3.19 GB free** |
 | Q-009 | **GitHub plan blocks repo hardening.** On the private free-plan repo, secret scanning returned 422 and branch protection 403. Owner chose **public visibility**; D-053 applied and verified secret scanning + push protection + branch protection. | **CLOSED — D-053: repo public, all hardening enabled & verified** |
+| Q-010 | **Loss absorption order (owner directive, 2026-11-23).** Owner requires: on a daily P&L loss, deduct first from the user's **profit wallet** up to its available balance (never below zero), then deduct the remainder from **investment balance / position capital**. Example: prior profit 100, loss 110 → profit wallet 100→0, investment balance −10. This conflicts with locked D-010, PNL-06, MON-06, `docs/plan.md` §4 line 38 and `docs/Schema_Registry.md` §3 #4. Blocked work: WP2-T07, WP5 P&L engine, TST-04 reconciliation. Needs Decision D-064 + rule/doc amendments before code. Open sub-questions: (a) loss exceeding profit wallet + remaining capital; (b) multi-position remainder split across eligible positions by current capital; (c) immutable-ledger encoding of the two debits; (d) reversal/correction handling; (e) effect on commission net base (D-030 `loss_adjustment`). | **CLOSED — D-064: owner confirmed profit-wallet-first loss absorption with all five defaults** |
 
 ## DECISION LOG (locked — D-xxx never archived)
 
@@ -77,7 +78,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-007 | 3 | Capital release: request→approval→24h→cash wallet→separate withdrawal; commission→cash first. |
 | D-008 | 3 | Agent credit: BDT at admin rate → USD cash + role bonus to commission wallet; in-app transfer with ledger. |
 | D-009 | 4 | One position per investment; T+2/weekend eligibility in Asia/Dhaka; ongoing until withdrawal. |
-| D-010 | 4 | Distribute per symbol + trade date; split by current capital; profit→profit wallet, loss→position capital; new position on reinvest. |
+| D-010 | 4 | Distribute per symbol + trade date; split by current capital; profit→profit wallet, loss→position capital; new position on reinvest. **Loss-handling part superseded by D-064**; distribution/reinvest parts unchanged. |
 | D-011 | 4 | Corrections/reversals with role permission + audit. |
 | D-012 | 5 | MLM: agents refer investors + agents; configurable events; platform cost. |
 | D-013 | 5 | Tier × level rate matrix, admin depth; net base after admin-defined deductions; role bonus excluded. |
@@ -131,6 +132,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-061 | Seeder sequencing | Owner decision: **do not create feature seeders now**; follow the build queue. The WP2 cards shipped schema + factories + guard tests only. Seeders for `wallets`/`wallet_transactions` remain **WP10-T04**, KYC seeders remain **WP10-T05**; `DatabaseSeeder` continues orchestrating only `RolePermissionSeeder` + `UserSeeder` until WP10 lands. TST-13 ("every feature ships a seeder") and the Boost AGENTS.md "factories and seeders for new models" guideline are recorded as a **deliberate sequencing exception**, not a waiver — WP10 must add idempotent, `--class`-invoked seeders for the new tables and verify on a fresh test DB. No seeder files created in this session. **SUPERSEDED by D-062** — owner clarified seeders are mandatory per feature; see D-062. |
 | D-062 | Seeder policy (corrects D-061) | Owner correction: **every feature must ship a seeder with sample data so its function can be checked** (TST-13 intent). Seeder tasks **already in the build queue stay in WP10 — do not pull them forward**; any feature without seeder coverage must be **added to the build queue**. Audit result: existing WP10 T01–T08 cover RBAC/users, market, wallets, KYC, investments/P&L, commissions and demo; missing coverage added as **WP10-T09** (`UserProfileSeeder`), **WP10-T10** (`MoneyRequestSeeder`), **WP10-T11** (`AgentSeeder` + referrals), **WP10-T12** (`NotificationSeeder` — templates/notifications/preferences/dashboard_layouts/audit_logs/login_history). WP10 **8 → 12** tasks; total cards **95 → 99**. Active card unchanged (**WP2-T04**). |
 | D-063 | WP2-T04 close | `exchange_rates` table + `ExchangeRate` model/factory + `tests/Feature/ExchangeRateSchemaTest.php` (6 tests): `bdt_per_usd DECIMAL(12,4)`, `effective_from DATE`, `set_by` RESTRICT FK to users, `created_at` only, explicit indexes on effective_from/set_by/created_at (DB-04). Red→green TDD (TST-01); dev MySQL `information_schema` + `SHOW INDEX` verified. Seeder coverage remains WP10 per D-062 (not pulled forward). Gates: PHPStan 0, Pint pass, PHPUnit **41/41 (246 assertions)**. Next card: **WP2-T05**. DONE widget dependency: Ledger Reconciliation (WP9-T02), required only when WP2 is marked DONE. |
+| D-064 | Loss absorption (supersedes D-010 loss part) | Owner-confirmed rule: on a daily P&L loss, debit the user's **profit wallet** first up to its available balance (never below zero), then debit the remainder from **investment balance / position capital**. Prior profit 100 / loss 110 → profit wallet 100→0, capital −10. Five confirmed defaults: (a) if profit wallet + remaining capital is insufficient, **block the P&L entry for admin correction** — never negative; (b) profit wallet is per-user and debited once, residual split across eligible positions by current capital with MON-08 largest-remainder; (c) **two immutable `loss_adjustment` ledger rows** per user (profit-wallet debit + investment-wallet debit) referencing the distribution; (d) compensating distribution with `reversal_of_id` credits profit wallet first, then capital — reversal rows only; (e) commission net base / D-030 `loss_adjustment` semantics **unchanged**. Amends PNL-06, MON-06, Schema §3 #4, plan §4, project_Context §4, Prompt_Library WP5/P-004 and the fp-pnl/fp-gate/fp-cfo skills. **Q-010 CLOSED.** |
 
 ## DEFERRED ITEMS
 
@@ -162,12 +164,12 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-060 | 2026-11-23 | **WP2-T03 DONE** — wallets + append-only ledger + enums + guarded models; MySQL `decimal(18,4)` verified; 35 tests/228 assertions, PHPStan 0, Pint pass. Next card: **WP2-T04**. |
 | D-061 | 2026-11-23 | (Superseded) documented "no new seeders now" — owner corrected this in D-062. |
 | D-062 | 2026-11-23 | Owner correction: seeder data mandatory for every feature; queued seeder cards stay in WP10, missing coverage added as **WP10-T09…T12**; WP10 8→12, total 95→99. D-061 superseded. |
 | D-063 | 2026-11-23 | **WP2-T04 DONE** — `exchange_rates` table + model/factory + guard tests; `decimal(12,4)` + 3 indexes verified on dev MySQL; 41 tests/246 assertions, PHPStan 0, Pint pass. Next card: **WP2-T05**. |
+| D-064 | 2026-11-23 | Owner confirmed **profit-wallet-first loss absorption** (profit 100 / loss 110 → wallet 0, capital −10); five defaults accepted; D-010 loss part superseded; PNL-06/MON-06/Schema §3 #4/plan §4 + prompts/skills amended. **Q-010 CLOSED.** |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-059).
+Archived history → `docs/State_Ledger_Archive.md` (through D-060).
 
 ---
 

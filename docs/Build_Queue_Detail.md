@@ -46,7 +46,7 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 | WP2-T04 | Exchange rates **(DONE, D-063)** | `exchange_rates` + model + factory + `tests/Feature/ExchangeRateSchemaTest.php` (6 tests) | Schema §2, D-063 | MON-01, DB-04 | `decimal(12,4)` ✅; 3 indexes on dev MySQL ✅; 41 tests/246 assertions ✅; PHPStan 0 ✅; Pint pass ✅ |
 | WP2-T05 | Money request tables | `manual_deposits`, `withdrawal_requests`, `capital_release_requests` | Schema §2 | DB-01/04/08 | status enums validated |
 | WP2-T06 | Investment tables | `symbols`, `positions` | Schema §2, D-009/029 | PNL-01/02, DB-01 | eligibility date column + index |
-| WP2-T07 | Distribution tables | `pnl_distributions`, `pnl_distribution_items` | Schema §2, D-010/029 | PNL-04/05, MON-08 | sum-to-posted constraint test |
+| WP2-T07 | Distribution tables | `pnl_distributions`, `pnl_distribution_items` | Schema §2, D-010/029, D-064 | PNL-04/05, MON-08 | sum-to-posted across profit-wallet debit + capital reduction (D-064) |
 | WP2-T08 | Agent tables | `agents`, `referrals` | Schema §2, D-031 | COM-01/08 | tier integer + display label config |
 | WP2-T09 | Commission tables | `deduction_profiles`, `commission_rules`, `commissions` | Schema §2, D-030 | COM-02..07 | default deduction types seeded |
 | WP2-T10 | Notification/dashboard/audit tables | `notification_templates`, `notifications`, `notification_preferences`, `dashboard_layouts`, `audit_logs`, `login_history` | Schema §2 | SEC-07, FIL-04 | audit append-only test |
@@ -89,8 +89,8 @@ Each card obeys GOV-05 (no arbitrary size limits) and TST-12 (exact CI commands)
 | WP5-T02 | Position creation + eligibility date | `OpenPositionAction`, T+2 calculator | D-009, TME-02 | PNL-02/03 | weekend fixture test |
 | WP5-T03 | Eligibility query scope | model scope + staff view | TME-02/03 | PNL-03 | eligible list correct |
 | WP5-T04 | Daily P&L entry (draft) | `PnlDistributionResource`, FormRequest | plan §4 | PNL-04, MON-01 | one per symbol+date |
-| WP5-T05 | Distribute job + largest remainder | queued job, items, wallet postings | D-010/029 | PNL-05/06, MON-08 | proportional + sum exact |
-| WP5-T06 | Reversal/correction | reversal action + permission | D-011 | PNL-07, MON-03 | compensating entries only |
+| WP5-T05 | Distribute job + largest remainder | queued job, items, wallet postings | D-010/029, D-064 | PNL-05/06, MON-08 | profit-wallet-first loss split + sum exact (D-064) |
+| WP5-T06 | Reversal/correction | reversal action + permission | D-011, D-064 | PNL-07, MON-03 | compensating entries; profit wallet credited before capital (D-064) |
 | WP5-T07 | P&L reports | investor/symbol/date report queries | plan §6 | REP-01/02 | filters + export test |
 
 ## WP6 — KYC workflow (5 tasks)

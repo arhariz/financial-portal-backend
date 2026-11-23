@@ -178,7 +178,7 @@ TASK CARD: [WP5-T01..WP5-T07]
 After SESSION BOOTSTRAP, implement only this card.
 Rules: PNL-01..07, TME-01..04, MON-01/05/08, QUE-01..05, TST-08, REP-02.
 Eligibility in Asia/Dhaka: second business day; Fri/Sat/Sun → Tuesday; ongoing until withdrawal.
-Distribution: one per symbol + trade date; split by current capital; profit → profit wallet, loss → position capital; largest remainder so items sum exactly.
+Distribution: one per symbol + trade date; split by current capital; profit → profit wallet; loss → profit wallet first up to available balance, remainder → position capital; two immutable `loss_adjustment` rows; block if insufficient; largest remainder so items sum exactly (D-064).
 Verify: proportional accuracy, weekend fixture, reversal via compensating entry, concurrent run, no double distribution.
 Closeout: fp-task-closeout + P&L Distribution widget dependency (WP9-T03).
 ```
@@ -292,7 +292,7 @@ Tests: success, insufficient balance, invalid KYC, suspension, concurrent double
 ```
 Apply MON-01..08, TME-02/03, PNL-01..07, QUE-01..05, TST-08.
 DistributePnl(symbol, trade_date): eligible positions by Asia/Dhaka T+2; share = current capital / total;
-largest-remainder allocation; profit → profit wallet, loss → position capital; items sum exactly to posted P&L.
+largest-remainder allocation; profit → profit wallet, loss → profit wallet first then position capital; two immutable `loss_adjustment` rows; items sum exactly to posted P&L (D-064).
 Idempotent, reversible via reversal_of_id, audited. Tests: proportional, weekend, reversal, concurrent.
 ```
 
