@@ -1,6 +1,6 @@
 # STATE_LEDGER_ARCHIVE.md — Rotated detailed entries
 # Authority: Owner / CTO — append only; never edit past entries.
-# Last Updated: 2026-11-23 (D-062)
+# Last Updated: 2026-11-23 (D-069)
 # Source of truth for: history rows rotated out of the active ledger
 # Active ledger: docs/State_Ledger.md — decisions D-xxx are NEVER archived.
 # Retention: active ledger keeps last 4 detailed entries + snapshot + queue.
@@ -8,7 +8,7 @@
 
 ---
 
-## Archived entry log (through D-058)
+## Archived entry log (through D-065)
 
 | Entry | Date | Detail |
 |---|---|---|
@@ -60,6 +60,7 @@
 | D-062 | 2026-11-23 | Owner correction: seeder data mandatory for every feature; queued seeder cards stay in WP10, missing coverage added as **WP10-T09…T12**; WP10 8→12, total 95→99. D-061 superseded. |
 | D-063 | 2026-11-23 | **WP2-T04 DONE** — `exchange_rates` table + model/factory + guard tests; `decimal(12,4)` + 3 indexes verified on dev MySQL; 41 tests/246 assertions, PHPStan 0, Pint pass. Next card: **WP2-T05**. |
 | D-064 | 2026-11-23 | Owner confirmed **profit-wallet-first loss absorption** (profit 100 / loss 110 → wallet 0, capital −10); five defaults accepted; D-010 loss part superseded; PNL-06/MON-06/Schema §3 #4/plan §4 + prompts/skills amended. **Q-010 CLOSED.** |
+| D-065 | 2026-11-23 | **WP2-T05 DONE** — manual deposits + withdrawal/capital-release request tables, status enums, models/factories, guard tests; `decimal(18,4)` + indexes verified; 47 tests/318 assertions, PHPStan 0, Pint pass. Next card: **WP2-T06**. |
 
 ## Archived implemented modules
 

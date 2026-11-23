@@ -56,9 +56,9 @@ Canonical registry of database design. This is a **design contract**, not yet-im
 |---|---|---|
 | `agents` | id, user_id, referral_code (unique), tier (1/2/3), upline_agent_id (nullable), status, total_sales DECIMAL(18,4), active_referrals_count, created_at | Tier 1/2/3 display labels are **Seed Investor / Growth Investor / Master Investor** (config, not code). (COM-08, D-031) |
 | `referrals` | id, agent_id, referred_user_id, level, created_at | Downline edge; level = distance from referring agent. |
-| `deduction_profiles` | id, name, rules JSON, created_by, timestamps | Admin-defined deductions for net commission base. Enabled by default: `loss_adjustment`, `reversal`, `admin_adjustment` (mandatory note). New types require a Decision. (COM-07, D-030) |
+| `deduction_profiles` | id, name, rules JSON, created_by, timestamps | Admin-defined deductions for net commission base. Enabled by default: `loss_adjustment`, `reversal`, `admin_adjustment` (mandatory note). New types require a Decision. Defaults seeded idempotently by the migration via `config/deduction_types.php` (unique `name`). (COM-07, D-030) |
 | `commission_rules` | id, event (`investment`/`profit_distribution`/`credit_purchase`), agent_tier (1/2/3), level INT, rate DECIMAL(10,6), enabled, holding_period_hours, deduction_profile_id, timestamps | Matrix tier × level. |
-| `commissions` | id, agent_id, rule_id, event, source_user_id, source_reference_type, source_reference_id, base_amount DECIMAL(18,4), amount DECIMAL(18,4), status (`pending`/`vested`/`cancelled`/`reversed`), vest_at, wallet_transaction_id, timestamps | Clawback on early withdrawal. |
+| `commissions` | id, agent_id, rule_id, event, source_user_id, source_reference_type, source_reference_id, base_amount DECIMAL(18,4), amount DECIMAL(18,4), status (`pending`/`vested`/`cancelled`/`reversed`), vest_at, wallet_transaction_id, timestamps | Clawback on early withdrawal. Append-only rows — corrections are reversal rows (MON-03). |
 
 ### Notifications, dashboards & audit
 | Table | Key columns | Notes |

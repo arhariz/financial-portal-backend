@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-068)
+# Last Updated: 2026-11-23 (D-069)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,10 +16,10 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-068 — **WP2-T08 DONE**: `agents` + `referrals` tables, integer tier + D-031 display-label config, models/factories and guard tests; `decimal(18,4)` total_sales + indexes verified on dev MySQL. Next card: **WP2-T09**. |
-| Test Suite | **65 tests / 432 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-069 — **WP2-T09 DONE**: `deduction_profiles` + `commission_rules` + `commissions` tables, D-030 default deduction types seeded, three enums, models/factories, append-only commission guard, `CommissionSchemaTest` (7 tests); `decimal(18,4)`/`decimal(10,6)` + indexes + 3 seeded defaults verified on dev MySQL. Next card: **WP2-T10**. |
+| Test Suite | **72 tests / 495 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
-| Active Phase | Schema phase in progress — Laravel 13.43.0 + Filament 5 + RBAC landed; WP2 schema T01–T08 DONE (T09–T11 remain) |
+| Active Phase | Schema phase in progress — Laravel 13.43.0 + Filament 5 + RBAC landed; WP2 schema T01–T09 DONE (T10–T11 remain) |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
 | Plan version | 1.4 (locked) |
 | Files | `docs/plan.md`, `docs/project_Context.md`, `docs/Schema_Registry.md`, `docs/Constitution.md`, `docs/DOCS_MANIFEST.md`, `docs/EXECUTION_LOCKS_ACTIVE.md`, `docs/Feature_Flags_Registry.md`, `docs/Build_Queue_Detail.md`, `docs/Admin_Observability_Spec.md`, `docs/State_Ledger.md`, `docs/State_Ledger_Archive.md`, `docs/Prompt_Library.md`, `docs/Skills_Registry.md`, `rules/` (9), 12 custom skills, Laravel 13.43.0 skeleton (app/config/database/routes/resources/tests), 13 docs relocated to `docs/` |
@@ -37,7 +37,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | # | Work package | Tasks | Blocked by | Next task |
 |---|---|---:|---|---|
 | 1 | Laravel 13 bootstrap + Filament 5 skeleton | 7 | None — **ALL DONE** | WP1 COMPLETE (T01–T07 DONE) |
-| 2 | Schema/ledger migrations + guard tests | 11 | None (D-029) | WP2-T09 (T01–T08 DONE) |
+| 2 | Schema/ledger migrations + guard tests | 11 | None (D-029) | WP2-T10 (T01–T09 DONE) |
 | 3 | Auth + RBAC | 10 | None | WP3-T01 (T07 done; T08–T10 blocked Q-005/6/7) |
 | 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | WP4-T01 |
 | 5 | Investment positions + P&L distribution | 7 | WP4 | WP5-T01 |
@@ -48,7 +48,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 10 | Database seeders & demo fixtures | 12 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); T04 wallets/ledger, T05 KYC, **T09–T12 added for missing coverage (D-062)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
-**Total task cards: 99.** Current active card: **WP2-T09** (commission tables). **WP1 (T01–T07)**, **WP2-T01/T02/T03/T04/T05/T06/T07/T08**, WP3-T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 99.** Current active card: **WP2-T10** (notification/dashboard/audit tables). **WP1 (T01–T07)**, **WP2-T01/T02/T03/T04/T05/T06/T07/T08/T09**, WP3-T07, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -137,6 +137,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-066 | WP2-T06 close | Two additive migrations: `symbols` (unique `code`, category metal/crypto/energy/forex, status active/paused, `min_investment DECIMAL(18,4)`, NULL-on-delete creator, timestamps) and `positions` (user + symbol RESTRICT FKs, `capital`/`original_amount DECIMAL(18,4)`, `investment_date`/`eligible_date DATE` — eligibility column indexed per card, status active/closed, source cash/profit, timestamps). PHP-backed enums `SymbolCategory`/`SymbolStatus`/`PositionStatus`/`PositionSource`; models + factories; `InvestmentSchemaTest` (6 tests, 41 assertions) covers columns, no float columns, enums, eligibility DATE + index, all FK/status/date indexes, unique symbol code. MySQL `decimal(18,4)` + DATE eligibility verified. Gates: PHPStan 0, Pint pass, PHPUnit **53/53 (359 assertions)**. Next card: **WP2-T07** (D-064 loss split applies). DONE widget: Ledger Reconciliation (WP9-T02), required only when WP2 is marked DONE. |
 | D-067 | WP2-T07 close | Two additive migrations: `pnl_distributions` (symbol FK, `trade_date DATE`, signed `profit_loss DECIMAL(18,4)`, nullable `entry_by` + `reversal_of_id` self-FK, status draft/distributed/reversed, `distributed_at`, timestamps) and `pnl_distribution_items` (distribution/position/user FKs, `share_ratio DECIMAL(10,6)`, `amount DECIMAL(18,4)`, nullable `wallet_transaction_id`, `created_at` only). Enum `PnlDistributionStatus`; models/factories; `DistributionSchemaTest` (6 tests, 39 assertions) covers columns, no float columns, signed decimal round-trip, enums, all FK/date indexes, reversal relation, and exact integer-scaled sum of items to posted amount (TST-04/05). MySQL `decimal(18,4)`/`decimal(10,6)` verified. **D-064 encoding:** both `loss_adjustment` debit rows reference the distribution through the existing `wallet_transactions.reference_type`/`reference_id`; `pnl_distribution_items.wallet_transaction_id` links the position-level capital debit — no new column needed. One-per-symbol+trade-date uniqueness is left to the WP5 application guard so compensating reversal distributions remain possible. Gates: PHPStan 0, Pint pass, PHPUnit **59/59 (398 assertions)**. Next card: **WP2-T08**. DONE widget: Ledger Reconciliation (WP9-T02), required only when WP2 is marked DONE. |
 | D-068 | WP2-T08 close | Two additive migrations: `agents` (unique `user_id` + `referral_code`, integer `tier` 1/2/3 per COM-08, nullable RESTRICT self-FK `upline_agent_id`, status via existing `UserStatus`, `total_sales DECIMAL(18,4)`, `active_referrals_count`, `created_at` only) and `referrals` (agent + user RESTRICT FKs, `level`, `created_at` only). New `config/agent_tiers.php` holds D-031 display labels **Seed / Growth / Master Investor** as config, not code (COM-08); no default tier invented. Models + factories; `AgentSchemaTest` (6 tests, 34 assertions) covers columns, integer tier, decimal round-trip, config labels, account-status enum, all FK/filter indexes and unique referral code. MySQL `decimal(18,4)` + indexes verified. Agent seeder remains WP10-T11 per D-062. Gates: PHPStan 0, Pint pass, PHPUnit **65/65 (432 assertions)**. Next card: **WP2-T09**. DONE widget: Ledger Reconciliation (WP9-T02), required only when WP2 is marked DONE. |
+| D-069 | WP2-T09 close | Three additive migrations: `deduction_profiles` (unique `name`, `rules` JSON, nullable NULL-on-delete `created_by`, timestamps), `commission_rules` (event `investment`/`profit_distribution`/`credit_purchase`, integer `agent_tier`/`level`, `rate DECIMAL(10,6)`, `enabled`, `holding_period_hours`, NULL-on-delete `deduction_profile_id`, timestamps, indexes) and `commissions` (agent/rule/source-user RESTRICT FKs, polymorphic source reference, `base_amount`/`amount DECIMAL(18,4)`, status pending/vested/cancelled/reversed, nullable `vest_at` + NULL-on-delete `wallet_transaction_id`, timestamps, indexes). `config/deduction_types.php` + `DeductionType` enum hold the D-030/COM-07 locked defaults; the three profiles are seeded **in the migration** via idempotent `insertOrIgnore` (unique name) — no new type invented (GOV-01); commission sample-data seeder stays WP10 per D-062. Enums `CommissionEvent`/`CommissionStatus`/`DeductionType`; models + factories; `Commission` blocks update/delete (MON-03). `CommissionSchemaTest` (7 tests, 63 assertions) red→green: columns, 6dp/4dp round-trip, enums, seeded defaults (incl. admin_adjustment `requires_note`), indexes, append-only guards. MySQL `information_schema` confirms `decimal(10,6)`, `decimal(18,4)`, all indexes and exactly 3 seeded profiles. Gates: PHPStan 0, Pint pass, PHPUnit **72/72 (495 assertions)**. Next card: **WP2-T10**. DONE widget: Ledger Reconciliation (WP9-T02), required only when WP2 is marked DONE. |
 
 ## DEFERRED ITEMS
 
@@ -163,17 +164,18 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Quality gates (WP1-T04) | Static analysis + tests | **DONE** | `phpstan.neon` L6 + Larastan (zero baseline); `pint.json` PSR-12; 11 tests / 106 assertions; 7 initial PHPStan errors fixed at source |
 | Database seeders (WP10-T01/T02) | Seed data | **DONE** | `DatabaseSeeder` → `RolePermissionSeeder` + `UserSeeder`; 30 permissions / 12 roles / 13 users / 13 assignments; idempotent; dev-only password `Password@123` |
 | User management (WP3-T07) | Admin panel | **DONE** | `app/Filament/Resources/Users/*` + `app/Policies/UserPolicy.php`; list/create/edit gated by `users.view` / `users.manage`; non-admin → 403 |
+| Commission schema (WP2-T09) | Schema/ledger | **DONE** | `deduction_profiles`/`commission_rules`/`commissions`; D-030 defaults seeded in migration; enums + models/factories; append-only `Commission`; `CommissionSchemaTest` 7 tests |
 
 ## ENTRY LOG — last 4 detailed entries
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-065 | 2026-11-23 | **WP2-T05 DONE** — manual deposits + withdrawal/capital-release request tables, status enums, models/factories, guard tests; `decimal(18,4)` + indexes verified; 47 tests/318 assertions, PHPStan 0, Pint pass. Next card: **WP2-T06**. |
 | D-066 | 2026-11-23 | **WP2-T06 DONE** — `symbols`/`positions` tables + enums + models/factories + guard tests; `decimal(18,4)` + DATE eligibility column/index verified; 53 tests/359 assertions, PHPStan 0, Pint pass. Next card: **WP2-T07**. |
 | D-067 | 2026-11-23 | **WP2-T07 DONE** — `pnl_distributions`/`pnl_distribution_items` + status enum + models/factories + guard tests; signed `decimal(18,4)`/`decimal(10,6)` + sum-to-posted verified; 59 tests/398 assertions, PHPStan 0, Pint pass. Next card: **WP2-T08**. |
 | D-068 | 2026-11-23 | **WP2-T08 DONE** — `agents`/`referrals` tables + D-031 tier-label config + models/factories + guard tests; integer tier + `decimal(18,4)` verified; 65 tests/432 assertions, PHPStan 0, Pint pass. Next card: **WP2-T09**. |
+| D-069 | 2026-11-23 | **WP2-T09 DONE** — `deduction_profiles`/`commission_rules`/`commissions` + D-030 defaults seeded (3 profiles) + 3 enums + models/factories + append-only guard; `decimal(18,4)`/`decimal(10,6)` + indexes + seeds verified on dev MySQL; 72 tests/495 assertions, PHPStan 0, Pint pass. Next card: **WP2-T10**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-064).
+Archived history → `docs/State_Ledger_Archive.md` (through D-065).
 
 ---
 
