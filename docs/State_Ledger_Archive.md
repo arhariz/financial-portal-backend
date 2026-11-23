@@ -56,6 +56,7 @@
 | D-058 | 2026-11-23 | **WP2-T01 DONE** — identity migrations + enums + user_profiles; `getColumnListing()` verified; 24 tests/160 assertions, PHPStan 0, Pint pass. Next card: **WP2-T02**. |
 | D-059 | 2026-11-23 | **WP2-T02 DONE** — KYC tables + enums + CRUD/review smoke tests; explicit FK indexes added after test gap; 29 tests/197 assertions, PHPStan 0, Pint pass. Next card: **WP2-T03**. |
 | D-060 | 2026-11-23 | **WP2-T03 DONE** — wallets + append-only ledger + enums + guarded models; MySQL `decimal(18,4)` verified; 35 tests/228 assertions, PHPStan 0, Pint pass. Next card: **WP2-T04**. |
+| D-061 | 2026-11-23 | (Superseded) documented "no new seeders now" — owner corrected this in D-062. |
 
 ## Archived implemented modules
 
