@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\UserProfile;
 use App\Observers\RoleObserver;
+use App\Observers\UserProfileObserver;
 use App\Policies\PermissionPolicy;
 use App\Policies\RolePolicy;
+use App\Policies\UserProfilePolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\Models\Permission;
@@ -29,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Permission::class, PermissionPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(UserProfile::class, UserProfilePolicy::class);
         Role::observe(RoleObserver::class);
+        UserProfile::observe(UserProfileObserver::class);
     }
 }
