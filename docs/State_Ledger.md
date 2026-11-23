@@ -1,7 +1,7 @@
 # STATE_LEDGER.md — Executed state, blockers, flags and the live build queue
 # Authority: Owner / CTO — append only; never edit past entries.
 # Owner / approver: Owner / CTO
-# Last Updated: 2026-11-23 (D-093)
+# Last Updated: 2026-11-23 (D-095)
 # Source of truth for: executed state, phase, blockers, issues, flags, infrastructure, schema, build queue, entry log
 # Does NOT contain: code rules, table inventory, founder locks
 # Retention: last 4 DETAILED entries + queue + snapshot; older details rotate unchanged to docs/State_Ledger_Archive.md
@@ -16,8 +16,8 @@
 
 | Field | Value |
 |---|---|
-| Last Entry | D-093 — **WP4-T06 DONE**: internal transfer service (cash/profit/commission → cash/investment) with idempotency, T+2 position creation and two immutable ledger rows; `InternalTransferTest` 19 tests (232/232, 1725 assertions) red→green. Next card: **WP4-T07**. |
-| Test Suite | **232 tests / 1725 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
+| Last Entry | D-095 — **WP4-T07 DONE**: admin-supplied role bonus (D-094) + BDT→USD at current admin rate → cash face value + commission bonus, two immutable rows, no MLM/upline row; `AgentCreditTest` 13 tests (245/245, 1770 assertions) red→green. Next card: **WP4-T08**. |
+| Test Suite | **245 tests / 1770 assertions passing** — PHPUnit 12.5.12; no coverage driver (xdebug/pcov absent) |
 | Static Analysis | PHPStan **L6 + Larastan, zero baseline** green (`--memory-limit=2G`); `pint --test` (PSR-12) green; ESLint/tsc + flutter analyze pending WP8 |
 | Active Phase | Auth/RBAC phase — Laravel 13.43.0 + Filament 5 landed; **WP2 COMPLETE (T01–T11 DONE)**; Ledger Health widget verified with data (OPS-11); WP3-T01 DONE (T08–T10 blocked Q-005/6/7) |
 | Execution Mode | Localhost-first; production only after `fp-local-verification-gate`; mobile independent track |
@@ -39,7 +39,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 1 | Laravel 13 bootstrap + Filament 5 skeleton | 7 | None — **ALL DONE** | WP1 COMPLETE (T01–T07 DONE) |
 | 2 | Schema/ledger migrations + guard tests | 11 | None — **ALL DONE** | WP2 COMPLETE (T01–T11 DONE) |
 | 3 | Auth + RBAC | 10 | None — **ALL DONE** | WP3 COMPLETE (T01–T10 DONE) |
-| 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | WP4-T07 (T01–T06 + T09 DONE; T07–T08 remain) |
+| 4 | Wallet engine + exchange rate + manual deposits | 9 | WP2, WP3 | WP4-T08 (T01–T07 + T09 DONE; T08 remains) |
 | 5 | Investment positions + P&L distribution | 7 | WP4 | WP5-T01 |
 | 6 | KYC workflow + approvals | 5 | WP2 | WP6-T01 |
 | 7 | MLM commissions | 10 | WP5, D-030/031 | WP7-T01 |
@@ -48,7 +48,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | 10 | Database seeders & demo fixtures | 12 | WP2, WP4–WP7 (T01–T02 need none) | WP10-T03 (T01, T02 done); T04 wallets/ledger, T05 KYC, **T09–T12 added for missing coverage (D-062)** |
 | 11 | Repository & environment setup | 5 | None — **ALL DONE** | WP11 COMPLETE (T01–T05 DONE) |
 
-**Total task cards: 99.** Current active card: **WP4-T07** (Agent credit purchase + role bonus). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP3 COMPLETE (T01–T10)**, **WP4-T01/T02/T03/T04/T05/T06/T09**, **WP9-T01/T02**, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
+**Total task cards: 99.** Current active card: **WP4-T08** (Agent credit transfer to investor). **WP1 (T01–T07)**, **WP2 COMPLETE (T01–T11)**, **WP3 COMPLETE (T01–T10)**, **WP4-T01/T02/T03/T04/T05/T06/T07/T09**, **WP9-T01/T02**, WP10-T01/T02 and **all WP11 (T01–T05)** are DONE (CI D-057; disk green; repo/hardening D-052/D-053; scanners D-055; Boost D-056). WP3-T08…T10 are blocked on Q-005/Q-006/Q-007. WP9 is the final cross-module package and WP10 the seeder/verification layer — no project is "complete" until `fp-admin-report-health` returns HEALTHY **and** `php artisan db:seed --class=DatabaseSeeder` succeeds on a fresh test DB (TST-13).
 
 ## KNOWN ISSUES — OPEN
 
@@ -64,6 +64,7 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Q-008 | **Host disk capacity (blocks all gates).** Windows `C:` hit 0 bytes on 2026-11-21 (truncated Pint phar, `errno=28`). D-046 cleared ~660 MB; D-050 re-measured 0.24 GB; WP11-T01 (D-054) re-ran the gate: **C: 3.19 GB free > 2 GB**, PHP/Composer/Node/MySQL/Redis all green. No cache deletion was required because the gate was already satisfied. | **CLOSED — D-054: gate green, 3.19 GB free** |
 | Q-009 | **GitHub plan blocks repo hardening.** On the private free-plan repo, secret scanning returned 422 and branch protection 403. Owner chose **public visibility**; D-053 applied and verified secret scanning + push protection + branch protection. | **CLOSED — D-053: repo public, all hardening enabled & verified** |
 | Q-010 | **Loss absorption order (owner directive, 2026-11-23).** Owner requires: on a daily P&L loss, deduct first from the user's **profit wallet** up to its available balance (never below zero), then deduct the remainder from **investment balance / position capital**. Example: prior profit 100, loss 110 → profit wallet 100→0, investment balance −10. This conflicts with locked D-010, PNL-06, MON-06, `docs/plan.md` §4 line 38 and `docs/Schema_Registry.md` §3 #4. Blocked work: WP2-T07, WP5 P&L engine, TST-04 reconciliation. Needs Decision D-064 + rule/doc amendments before code. Open sub-questions: (a) loss exceeding profit wallet + remaining capital; (b) multi-position remainder split across eligible positions by current capital; (c) immutable-ledger encoding of the two debits; (d) reversal/correction handling; (e) effect on commission net base (D-030 `loss_adjustment`). | **CLOSED — D-064: owner confirmed profit-wallet-first loss absorption with all five defaults** |
+| Q-011 | **Role-bonus rule for agent credit purchase (WP4-T07).** No rate/amount was locked; plan §3 and `project_Context.md` show only "(e.g. 5%)" and LOCK-07 fixes only MLM separation. GOV-01 blocked the card. | **CLOSED — D-094: admin supplies an explicit USD bonus amount per purchase; no tenant-wide rate invented** |
 
 ## DECISION LOG (locked — D-xxx never archived)
 
@@ -162,6 +163,8 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | D-091 | WP4-T04 close | Withdrawal request flow: `POST /api/v1/withdrawals` with `Idempotency-Key` (API-06) and KYC/suspension gate (`GuardService::ensureCanWithdraw`), `WithdrawalService::request/approve/reject/markPaid` (D-007/LOCK-06: profit withdrawable; approval is intent-only, payment is the single money move), `WalletService::withdraw` (DB transaction + `lockForUpdate`, integer-scaled 4dp, insufficient-funds guard, immutable `withdrawal` ledger row), Filament `/admin/withdrawals` queue gated on `withdrawals.view`/`withdrawals.approve` with confirmation + mandatory payment reference audit and no edit/delete actions; additive idempotency-key migration. `WithdrawalTest` 14 tests red→green (199/199, 1616 assertions); PHPStan L6 0, Pint pass; dev `ledger:reconcile --json` `breakCount: 0`. OPS-11: no widget required — WP4 not closed; WP4 DONE-widget remains WP9-T04. No new business default invented (payout methods `bank`/`crypto` from `Schema_Registry.md:43`). Next card: **WP4-T05**. |
 | D-092 | WP4-T05 close / GOV-02 schema correction | Capital release flow: `POST /api/v1/capital-releases` (KYC/suspension gate, idempotency), `CapitalReleaseService::request/approve/reject/release` (D-007/TME-04/WAL-06), `ReleaseCapital` queued job (named queue `capital-releases`, 3 tries + backoff, ID-only payload, failed-job audit, status-guarded idempotency), `WalletService::transfer` (single transaction, locked wallets, investment→cash, two immutable `capital_release` ledger rows), Filament `/admin/capital-releases` queue gated on `capital_releases.view`/`capital_releases.approve`. GOV-02: `release_at` made nullable at request (only set on approval) via additive `change()` migration — schema aligned to D-007, no rule change. `CapitalReleaseTest` 14 tests red→green (213/213, 1665 assertions); PHPStan L6 0, Pint pass; dev `ledger:reconcile --json` `breakCount: 0`. OPS-11: no widget required — WP4 not closed; WP9-T04 later. Next card: **WP4-T06**. |
 | D-093 | WP4-T06 close / GOV-02 enum correction | Internal transfer service: `POST /api/v1/transfers` (idempotency via new `internal_transfers` table), `InternalTransferService` with locked direction whitelist (cash→investment, profit→cash, profit→investment, commission→cash, commission→investment; Investment→Cash excluded per WAL-06), `WalletService::transfer` extended with optional per-direction ledger types (`TransferOut`/`TransferIn`), `EligibilityDateService` (Asia/Dhaka T+2: +2 calendar days, Fri/Sat/Sun → next Tuesday) creating a fresh active position per invest transfer with investment/eligible dates and original capital. GOV-02: `PositionSource` gained `commission` so commission→investment records its true origin (WAL-05); `InvestmentSchemaTest` expectation updated; no business value invented. `InternalTransferTest` 19 tests red→green (232/232, 1725 assertions); PHPStan L6 0, Pint pass; dev `ledger:reconcile --json` `breakCount: 0`. OPS-11: no widget required — WP4 not closed; WP9-T04 later. Next card: **WP4-T07**. |
+| D-094 | Role bonus / Q-011 (owner decision) | For agent credit purchases, an **authorized admin (`agent_credit.manage`) supplies the explicit USD bonus amount per purchase**; there is no tenant-wide or tier-wide bonus rate and **no default is invented**. The service credits face value USD (BDT ÷ current admin rate, DECIMAL 18,4) to the agent's cash wallet plus the supplied bonus to the commission wallet, each as an immutable ledger row in one transaction. COM-05/LOCK-07 preserved: the bonus is separate from MLM, no upline commission row is created. `commission_rules` is not repurposed. Values trace to this Decision and D-008; WP4-T07 unblocked. |
+| D-095 | WP4-T07 close | Agent credit purchase: `POST /api/v1/agent-credits` (admin-only, `agent_credit.manage`, idempotency via new `agent_credit_purchases` table), `AgentCreditService` converts BDT at `ExchangeRateService::current()` with `bcdiv` 4dp and credits USD face value to cash (`deposit`) plus the **admin-supplied** USD bonus to commission (`role_bonus`) as two immutable rows in one transaction; zero bonus writes only the face-value row. Target must be an active `agents` record with approved KYC + active status; no `commissions` row/upline payout is created (COM-05/LOCK-07/D-094). Filament `/admin/agent-credits` read-only queue gated on `agent_credit.view`. `AgentCreditTest` 13 tests red→green (245/245, 1770 assertions); PHPStan L6 0, Pint pass; dev `ledger:reconcile --json` `breakCount: 0`. OPS-11: no widget required — WP4 not closed; WP9-T04 later. Next card: **WP4-T08**. |
 
 ## DEFERRED ITEMS
 
@@ -208,17 +211,18 @@ Individual tasks live in `docs/Build_Queue_Detail.md` — load **one card at a t
 | Withdrawal flow (WP4-T04) | Money integrity | **DONE** | `WithdrawalController` request + idempotency, `WithdrawalService` approve/reject/pay (atomic `WalletService::withdraw` debit + immutable ledger), Filament `/admin/withdrawals` queue gated on `withdrawals.view`/`withdrawals.approve`, `WithdrawalTest` 14 tests |
 | Capital release (WP4-T05) | Money integrity | **DONE** | `CapitalReleaseController` request + idempotency, `CapitalReleaseService` approve (24h gate)/reject/release, `ReleaseCapital` named-queue job with failed audit, `WalletService::transfer` (investment→cash, two immutable ledger rows), Filament `/admin/capital-releases`, `CapitalReleaseTest` 14 tests |
 | Internal transfers (WP4-T06) | Money integrity | **DONE** | `TransferController` + idempotent `InternalTransferService` with locked direction whitelist, `EligibilityDateService` (Asia/Dhaka T+2) creating fresh positions on invest transfers, `WalletService::transfer` typed ledger rows, `InternalTransferTest` 19 tests |
+| Agent credit purchase (WP4-T07) | Money integrity | **DONE** | Admin-only `AgentCreditController` + `AgentCreditService` (BDT at current rate → cash face value + admin-supplied commission bonus, two immutable rows, no MLM payout), Filament `/admin/agent-credits` read-only, `AgentCreditTest` 13 tests |
 
 ## ENTRY LOG — last 4 detailed entries
 
 | Entry | Date | Detail |
 |---|---|---|
-| D-090 | 2026-11-23 | **WP4-T03 DONE** — owner-approved S3 adapter; signed R2 proof URL, idempotent manual-deposit submit at current admin rate, Filament approve/reject queue (`deposits.view`/`deposits.approve`), atomic cash-wallet credit + immutable ledger row + audit, `ManualDepositTest` 12 tests (185/185, 1564 assertions) red→green. Next card: **WP4-T04**. |
-| D-091 | 2026-11-23 | **WP4-T04 DONE** — withdrawal request (KYC/suspension gate + idempotency), Filament approve/reject/pay queue, atomic `WalletService::withdraw` debit + immutable ledger row on payment, `WithdrawalTest` 14 tests (199/199, 1616 assertions) red→green. Next card: **WP4-T05**. |
 | D-092 | 2026-11-23 | **WP4-T05 DONE / GOV-02 correction** — capital release request → 24h approval → named-queue job → atomic investment→cash transfer (two immutable ledger rows); `release_at` nullable until approval; `CapitalReleaseTest` 14 tests (213/213, 1665 assertions) red→green. Next card: **WP4-T06**. |
 | D-093 | 2026-11-23 | **WP4-T06 DONE / GOV-02 enum fix** — idempotent internal transfers with locked direction whitelist, Asia/Dhaka T+2 position creation, typed immutable ledger rows; `PositionSource` gained `commission` for WAL-05; `InternalTransferTest` 19 tests (232/232, 1725 assertions) red→green. Next card: **WP4-T07**. |
+| D-094 | 2026-11-23 | **Q-011 CLOSED / GOV-01 resolved** — owner decided the agent-credit role bonus is an explicit USD amount supplied per purchase by an admin with `agent_credit.manage`; no tenant-wide rate or invented default; COM-05 separation preserved. |
+| D-095 | 2026-11-23 | **WP4-T07 DONE** — admin-only agent credit purchase at current rate → cash face value + admin-supplied commission bonus (two immutable rows, no upline commission); `AgentCreditTest` 13 tests (245/245, 1770 assertions) red→green. Next card: **WP4-T08**. |
 
-Archived history → `docs/State_Ledger_Archive.md` (through D-089).
+Archived history → `docs/State_Ledger_Archive.md` (through D-091).
 
 ---
 

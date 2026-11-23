@@ -35,6 +35,7 @@ Canonical registry of database design. This is a **design contract**, not yet-im
 | `wallets` | id, user_id, type (`cash`/`investment`/`profit`/`commission`), currency (`USD`), balance DECIMAL(18,4), timestamps | Unique (user_id, type). Balance updated only via ledger transaction. |
 | `wallet_transactions` | id, uuid, wallet_id, direction (`debit`/`credit`), amount DECIMAL(18,4), balance_after DECIMAL(18,4), type (deposit, withdrawal, transfer_in, transfer_out, invest, profit_distribution, loss_adjustment, commission, role_bonus, capital_release, reversal, adjustment), reference_type, reference_id, counterparty_wallet_id, created_by, created_at | **Immutable append-only ledger.** |
 | `internal_transfers` | id, user_id, from_wallet_type, to_wallet_type, amount_usd DECIMAL(18,4), symbol_id (nullable), position_id (nullable), idempotency_key (nullable, unique with user_id), created_at | Idempotent user transfer request; references the two immutable ledger rows and any new position. |
+| `agent_credit_purchases` | id, user_id (agent), amount_bdt DECIMAL(18,4), amount_usd DECIMAL(18,4), bonus_amount_usd DECIMAL(18,4) (admin-supplied per D-094), exchange_rate_id, idempotency_key (nullable, unique with user_id), created_by (admin), timestamps | Credit purchase record; references the cash `deposit` and commission `role_bonus` ledger rows. No MLM/upline row (COM-05). |
 
 ### Money operations
 | Table | Key columns | Notes |
