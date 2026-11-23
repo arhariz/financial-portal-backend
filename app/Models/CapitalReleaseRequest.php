@@ -9,7 +9,16 @@ use Database\Factories\CapitalReleaseRequestFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property CapitalReleaseStatus $status
+ * @property string $amount_usd
+ * @property Carbon|null $requested_at
+ * @property Carbon|null $approved_at
+ * @property Carbon|null $release_at
+ * @property Carbon|null $released_at
+ */
 class CapitalReleaseRequest extends Model
 {
     /** @use HasFactory<CapitalReleaseRequestFactory> */
@@ -25,6 +34,7 @@ class CapitalReleaseRequest extends Model
     protected $fillable = [
         'user_id',
         'amount_usd',
+        'idempotency_key',
         'status',
         'approved_by',
         'approved_at',
@@ -41,6 +51,10 @@ class CapitalReleaseRequest extends Model
         return [
             'amount_usd' => 'decimal:4',
             'status' => CapitalReleaseStatus::class,
+            'requested_at' => 'datetime',
+            'approved_at' => 'datetime',
+            'release_at' => 'datetime',
+            'released_at' => 'datetime',
         ];
     }
 

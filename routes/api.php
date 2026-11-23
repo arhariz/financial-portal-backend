@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CapitalReleaseController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\WithdrawalController;
 use Illuminate\Http\Request;
@@ -14,6 +15,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->post('/deposits/proof-url', [DepositController::class, 'proofUrl'])->name('api.v1.deposits.proof-url');
     Route::middleware('auth:sanctum')->post('/deposits', [DepositController::class, 'store'])->name('api.v1.deposits.store');
     Route::middleware('auth:sanctum')->post('/withdrawals', [WithdrawalController::class, 'store'])->name('api.v1.withdrawals.store');
+    Route::middleware('auth:sanctum')->post('/capital-releases', [CapitalReleaseController::class, 'store'])->name('api.v1.capital-releases.store');
     Route::get('/health', fn () => response()->json([
         'status' => 'ok',
         'app' => config('app.name'),

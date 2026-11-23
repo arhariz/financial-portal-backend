@@ -113,6 +113,88 @@ final class WalletService
         });
     }
 
+    /**
+     * Move funds between two wallets of the same user in one transaction,
+     * writing one immutable debit and one immutable credit (MON-02/04/05,
+     * WAL-06). Returns the destination (credit) ledger row.
+     */
+    public function transfer(
+        User $user,
+        WalletType $from,
+        WalletType $to,
+        string $amount,
+        WalletTransactionType $transactionType,
+        ?string $referenceType = null,
+        ?int $referenceId = null,
+        ?User $actor = null,
+    ): WalletTransaction {
+        if ($this->toMinorUnits($amount) <= 0) {
+            throw new InvalidArgumentException('Transfer amount must be greater than zero.');
+        }
+
+        if ($from === $to) {
+            throw new InvalidArgumentException('Source and destination wallets must differ.');
+        }
+
+        return DB::transaction(function () use ($user, $from, $to, $amount, $transactionType, $referenceType, $referenceId, $actor): WalletTransaction {
+            $source = Wallet::where('user_id', $user->id)->where('type', $from)->firstOrFail();
+            $destination = Wallet::firstOrCreate(
+                ['user_id' => $user->id, 'type' => $to],
+                ['currency' => 'USD', 'balance' => '0.0000'],
+            );
+
+            $walletIds = [$source->id, $destination->id];
+            sort($walletIds);
+
+            foreach ($walletIds as $walletId) {
+                Wallet::where('id', $walletId)->lockForUpdate()->firstOrFail();
+            }
+
+            $lockedSource = Wallet::where('id', $source->id)->firstOrFail();
+            $lockedDestination = Wallet::where('id', $destination->id)->firstOrFail();
+
+            if ($this->toMinorUnits((string) $lockedSource->balance) < $this->toMinorUnits($amount)) {
+                throw new InvalidArgumentException('Insufficient source wallet balance.');
+            }
+
+            $sourceBalance = $this->subtractDecimalStrings((string) $lockedSource->balance, $amount);
+            $destinationBalance = $this->addDecimalStrings((string) $lockedDestination->balance, $amount);
+
+            WalletTransaction::create([
+                'uuid' => (string) Str::uuid(),
+                'wallet_id' => $lockedSource->id,
+                'direction' => TransactionDirection::Debit,
+                'amount' => $amount,
+                'balance_after' => $sourceBalance,
+                'type' => $transactionType,
+                'reference_type' => $referenceType,
+                'reference_id' => $referenceId,
+                'counterparty_wallet_id' => $lockedDestination->id,
+                'created_by' => $actor?->id,
+            ]);
+
+            $credit = WalletTransaction::create([
+                'uuid' => (string) Str::uuid(),
+                'wallet_id' => $lockedDestination->id,
+                'direction' => TransactionDirection::Credit,
+                'amount' => $amount,
+                'balance_after' => $destinationBalance,
+                'type' => $transactionType,
+                'reference_type' => $referenceType,
+                'reference_id' => $referenceId,
+                'counterparty_wallet_id' => $lockedSource->id,
+                'created_by' => $actor?->id,
+            ]);
+
+            $lockedSource->balance = $sourceBalance;
+            $lockedSource->save();
+            $lockedDestination->balance = $destinationBalance;
+            $lockedDestination->save();
+
+            return $credit;
+        });
+    }
+
     public function walletFor(User $user, WalletType $type): Wallet
     {
         return Wallet::firstOrCreate(
